@@ -4,7 +4,14 @@ import { MessageCircle, Plus } from "lucide-vue-next"
 import { useI18n } from "vue-i18n"
 
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import AppLayout from "@/layouts/AppLayout.vue"
 import {
   aiConversationPath,
@@ -73,24 +80,44 @@ function formatDate(dateStr: string): string {
         <p>{{ t("ai.no_conversations") }}</p>
       </div>
 
-      <div v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <Card v-for="conversation in conversations" :key="conversation.id">
-          <CardHeader>
-            <CardTitle class="text-lg">
-              <Link
-                :href="aiConversationPath(conversation.id)"
-                class="hover:underline"
-              >
-                {{ conversation.title }}
-              </Link>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p class="text-muted-foreground text-sm">
-              {{ formatDate(conversation.updated_at) }}
-            </p>
-          </CardContent>
-        </Card>
+      <div v-else class="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{{ t("ai.conversations") }}</TableHead>
+              <TableHead class="text-right">{{
+                t("common.actions")
+              }}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow
+              v-for="conversation in conversations"
+              :key="conversation.id"
+            >
+              <TableCell>
+                <div class="space-y-1">
+                  <Link
+                    :href="aiConversationPath(conversation.id)"
+                    class="font-medium hover:underline"
+                  >
+                    {{ conversation.title }}
+                  </Link>
+                  <p class="text-muted-foreground text-sm">
+                    {{ formatDate(conversation.updated_at) }}
+                  </p>
+                </div>
+              </TableCell>
+              <TableCell class="text-right">
+                <Button variant="outline" size="sm" as-child>
+                  <Link :href="aiConversationPath(conversation.id)">
+                    {{ t("common.view") }}
+                  </Link>
+                </Button>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
       </div>
     </div>
   </AppLayout>
