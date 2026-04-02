@@ -3,7 +3,6 @@ import { Link } from "@inertiajs/vue3"
 import {
   BookOpen,
   CalendarDays,
-  ClipboardCheck,
   LayoutGrid,
   MessageCircle,
   Users,
@@ -44,7 +43,7 @@ const mainNavItems = computed<NavItem[]>(() => {
     },
   ]
 
-  // Admin: full academic management
+  // Admin: academic structure management
   if (can.value.manage_academic_periods) {
     items.push({
       title: t("nav.academic_periods"),
@@ -53,46 +52,21 @@ const mainNavItems = computed<NavItem[]>(() => {
     })
   }
 
-  // Admin: exercises management
-  if (can.value.manage_exercises) {
+  // Tutor & Tutorado: my sections (dashboard shows them)
+  if (isTutor.value || isTutorado.value) {
     items.push({
-      title: t("nav.exercises"),
+      title: t("nav.my_sections"),
       href: academicPeriodsPath(),
-      icon: BookOpen,
-    })
-  }
-
-  // Admin: attendance reports
-  if (can.value.view_attendance_statistics) {
-    items.push({
-      title: t("nav.attendance_reports"),
-      href: dashboardPath(),
-      icon: ClipboardCheck,
-    })
-  }
-
-  // Tutor: my sections
-  if (isTutor.value) {
-    items.push({
-      title: t("nav.my_sections"),
-      href: dashboardPath(),
       icon: Users,
     })
   }
 
-  // Tutorado: my sections + exercises + AI chat
-  if (isTutorado.value) {
-    items.push({
-      title: t("nav.my_sections"),
-      href: dashboardPath(),
-      icon: Users,
-    })
-    items.push({
-      title: t("nav.exercises"),
-      href: dashboardPath(),
-      icon: BookOpen,
-    })
-  }
+  // Exercises: visible to all (admin manages, others browse)
+  items.push({
+    title: t("nav.exercises"),
+    href: academicPeriodsPath(),
+    icon: BookOpen,
+  })
 
   // AI Chat: available to all roles
   items.push({
