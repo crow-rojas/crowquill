@@ -1,0 +1,24 @@
+{
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome",
+    "total_students": "Total students",
+    "total_tutors": "Total tutors",
+    "active_sections": "Active sections",
+    "active_period": "Active period",
+    "my_sections": "My sections",
+    "upcoming_sessions": "Upcoming sessions",
+    "recent_exercises": "Recent exercises",
+    "take_attendance": "Take attendance",
+    "no_upcoming": "No upcoming sessions",
+    "no_sections": "You have no assigned sections",
+    "no_exercises": "No exercises available",
+    "attendance_overview": "Attendance overview",
+    "view_all": "View all",
+    "enrolled_students": "Enrolled students",
+    "week": "Week",
+    "ai_chat": "AI Chat",
+    "ai_chat_description": "Get help with your exercises",
+    "no_active_period": "No active period"
+  }
+}

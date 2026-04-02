@@ -1,0 +1,24 @@
+{
+  "dashboard": {
+    "title": "Panel",
+    "welcome": "Bienvenido/a",
+    "total_students": "Total de estudiantes",
+    "total_tutors": "Total de tutores",
+    "active_sections": "Secciones activas",
+    "active_period": "Periodo activo",
+    "my_sections": "Mis secciones",
+    "upcoming_sessions": "Sesiones pr\u00f3ximas",
+    "recent_exercises": "Ejercicios recientes",
+    "take_attendance": "Tomar asistencia",
+    "no_upcoming": "No hay sesiones pr\u00f3ximas",
+    "no_sections": "No tienes secciones asignadas",
+    "no_exercises": "No hay ejercicios disponibles",
+    "attendance_overview": "Resumen de asistencia",
+    "view_all": "Ver todo",
+    "enrolled_students": "Estudiantes inscritos",
+    "week": "Semana",
+    "ai_chat": "Chat con IA",
+    "ai_chat_description": "Obt\u00e9n ayuda con tus ejercicios",
+    "no_active_period": "No hay periodo activo"
+  }
+}
