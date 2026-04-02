@@ -72,6 +72,8 @@ bin/rails db:seed          # Seed database
 bin/rails routes           # List routes
 bundle exec rspec          # Run backend tests
 bunx vitest run            # Run frontend tests
+bun run test:coverage      # Run frontend coverage gate (>=80%)
+bun run test:coverage:full # Run full frontend coverage report (informational)
 bun run check              # TypeScript check
 bun run lint               # ESLint
 bun run format             # Prettier check

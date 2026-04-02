@@ -19,5 +19,5 @@ pre-push:
       run: bun run check
     rspec:
       run: bundle exec rspec --format progress
-    vitest:
-      run: bunx vitest run
+    vitest_coverage_gate:
+      run: bun run test:coverage:gate

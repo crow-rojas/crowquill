@@ -104,8 +104,8 @@ jobs:
         with:
           bundler-cache: true
 
-      - name: Run frontend tests
-        run: bunx vitest run
+      - name: Run frontend coverage gate
+        run: bun run test:coverage:gate
 
       - name: Run backend tests
         env:

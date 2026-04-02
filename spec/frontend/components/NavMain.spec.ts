@@ -1,6 +1,7 @@
 import { usePage } from "@inertiajs/vue3"
 import { mount } from "@vue/test-utils"
 import { describe, expect, it, vi } from "vitest"
+import { defineComponent, markRaw } from "vue"
 
 import NavMain from "@/components/NavMain.vue"
 
@@ -33,7 +34,7 @@ function mockPage(url: string) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const fakeIcon = { template: "<svg/>" } as any
+const fakeIcon = markRaw(defineComponent({ template: "<svg/>" })) as any
 
 describe("NavMain", () => {
   it("marks item active when page.url matches href exactly", () => {

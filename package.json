@@ -61,6 +61,8 @@
     "format:fix": "bun run format -- --write",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "bun run test:coverage:gate",
+    "test:coverage:gate": "COVERAGE_SCOPE=gate vitest run --coverage",
+    "test:coverage:full": "COVERAGE_SCOPE=full vitest run --coverage"
   }
 }
