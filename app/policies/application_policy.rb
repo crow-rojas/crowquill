@@ -1,0 +1,22 @@
+# frozen_string_literal: true
+
+class ApplicationPolicy
+  attr_reader :membership, :record
+
+  def initialize(membership, record = nil)
+    @membership = membership
+    @record = record
+  end
+
+  def admin?
+    membership&.admin?
+  end
+
+  def tutor_or_above?
+    membership&.tutor_or_above?
+  end
+
+  def admin_or_above?
+    membership&.admin_or_above?
+  end
+end

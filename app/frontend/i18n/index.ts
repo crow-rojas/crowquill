@@ -3,9 +3,11 @@ import { createI18n } from "vue-i18n"
 import enAuth from "@/i18n/locales/en/auth.json"
 import enCommon from "@/i18n/locales/en/common.json"
 import enNav from "@/i18n/locales/en/nav.json"
+import enOnboarding from "@/i18n/locales/en/onboarding.json"
 import esAuth from "@/i18n/locales/es/auth.json"
 import esCommon from "@/i18n/locales/es/common.json"
 import esNav from "@/i18n/locales/es/nav.json"
+import esOnboarding from "@/i18n/locales/es/onboarding.json"
 
 function getStoredLocale(): "es" | "en" {
   if (typeof document === "undefined") return "es"
@@ -24,8 +26,8 @@ const i18n = createI18n({
   locale: getStoredLocale(),
   fallbackLocale: "en",
   messages: {
-    es: { ...esCommon, ...esAuth, ...esNav },
-    en: { ...enCommon, ...enAuth, ...enNav },
+    es: { ...esCommon, ...esAuth, ...esNav, ...esOnboarding },
+    en: { ...enCommon, ...enAuth, ...enNav, ...enOnboarding },
   },
 })
 
