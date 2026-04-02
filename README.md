@@ -4,7 +4,7 @@ Built with Rails 8 + Inertia.js + Vue 3. Rails owns routing, Vue owns rendering.
 
 ## Tech Stack
 
-- **Backend:** Rails 8 + Ruby 4.0
+- **Backend:** Rails 8 + Ruby 4.0.2
 - **Frontend:** Vue 3 + TypeScript via Inertia.js
 - **UI:** shadcn-vue + Tailwind CSS 4
 - **Build:** Vite (via `vite_rails` + Bun)
