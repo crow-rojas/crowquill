@@ -8,29 +8,27 @@ RSpec.describe "AiMessages", type: :request do
   let(:membership) { create(:membership, :tutorado, user: user, organization: organization) }
   let(:conversation) { create(:ai_conversation, user: user) }
 
-  let(:mock_messages_resource) { instance_double(Anthropic::Resources::Messages) }
-  let(:mock_client) { instance_double(Anthropic::Client, messages: mock_messages_resource) }
-
-  let(:mock_usage) { double(input_tokens: 100, output_tokens: 30) }
-  let(:mock_text_block) { double(text: "Let me help you think about this.") }
-  let(:mock_response) { double(content: [mock_text_block], usage: mock_usage) }
+  let(:mock_result) do
+    {content: "Let me help you think about this.", input_tokens: 100, output_tokens: 30}
+  end
 
   before do
     membership
     sign_in_as(user)
-    allow(Anthropic::Client).to receive(:new).and_return(mock_client)
-    allow(mock_messages_resource).to receive(:create).and_return(mock_response)
   end
 
   describe "POST /ai_conversations/:ai_conversation_id/ai_messages" do
     it "creates a user message and an assistant message" do
+      service_double = instance_double(AiTutorService, call: mock_result)
+      allow(AiTutorService).to receive(:new).and_return(service_double)
+
       expect {
         post ai_conversation_ai_messages_path(conversation), params: {ai_message: {content: "How do I solve x^2 = 4?"}}
       }.to change(AiMessage, :count).by(2)
 
       expect(response).to redirect_to(ai_conversation_path(conversation))
 
-      messages = conversation.ai_messages.order(:created_at)
+      messages = conversation.ai_messages.order(:id)
       expect(messages.first.role).to eq("user")
       expect(messages.first.content).to eq("How do I solve x^2 = 4?")
       expect(messages.last.role).to eq("assistant")
@@ -41,9 +39,9 @@ RSpec.describe "AiMessages", type: :request do
     end
 
     it "handles API errors by setting status to failed" do
-      allow(mock_messages_resource).to receive(:create).and_raise(
-        Anthropic::Errors::APIError.new(url: "https://api.anthropic.com", status: 500, message: "API error")
-      )
+      error_result = {content: "I'm sorry, I encountered an error. Please try again.", input_tokens: nil, output_tokens: nil, error: true}
+      service_double = instance_double(AiTutorService, call: error_result)
+      allow(AiTutorService).to receive(:new).and_return(service_double)
 
       post ai_conversation_ai_messages_path(conversation), params: {ai_message: {content: "Help"}}
 
