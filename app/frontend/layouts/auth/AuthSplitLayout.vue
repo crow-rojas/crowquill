@@ -9,7 +9,7 @@ defineProps<{
   description?: string
 }>()
 
-const appName = import.meta.env.VITE_APP_NAME ?? "Vue Starter Kit"
+const appName = import.meta.env.VITE_APP_NAME ?? "Crowquill"
 </script>
 
 <template>

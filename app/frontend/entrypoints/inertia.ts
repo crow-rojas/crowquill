@@ -6,7 +6,7 @@ import { initializeTheme } from "@/composables/useAppearance"
 import i18n from "@/i18n"
 import PersistentLayout from "@/layouts/PersistentLayout.vue"
 
-const appName = import.meta.env.VITE_APP_NAME ?? "Vue Starter Kit"
+const appName = import.meta.env.VITE_APP_NAME ?? "Crowquill"
 
 createInertiaApp({
   // Set default page title

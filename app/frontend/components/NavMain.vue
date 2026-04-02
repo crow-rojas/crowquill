@@ -26,7 +26,11 @@ const { t } = useI18n()
       <SidebarMenuItem v-for="item in items" :key="item.title">
         <SidebarMenuButton
           as-child
-          :is-active="item.href === page.url"
+          :is-active="
+            item.href === '/'
+              ? page.url === '/'
+              : page.url === item.href || page.url.startsWith(item.href + '/')
+          "
           :tooltip="item.title"
         >
           <Link :href="item.href">
