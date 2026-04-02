@@ -42,7 +42,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     title: t("exercises.title"),
     href: courseExerciseSetsPath(props.exercise_set.course.id),
   },
-  { title: t("exercises.edit"), href: "#" },
+  { title: t("exercises.edit"), href: exerciseSetPath(props.exercise_set.id) },
 ]
 
 const form = useForm({

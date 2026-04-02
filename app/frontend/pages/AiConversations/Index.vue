@@ -29,7 +29,7 @@ const { t } = useI18n()
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: t("nav.dashboard"), href: dashboardPath() },
-  { title: t("ai.title"), href: "#" },
+  { title: t("ai.title"), href: aiConversationsPath() },
 ]
 
 const form = useForm({

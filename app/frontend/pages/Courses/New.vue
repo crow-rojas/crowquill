@@ -35,7 +35,10 @@ const breadcrumbs: BreadcrumbItem[] = [
     title: props.academic_period.name,
     href: academicPeriodPath(props.academic_period.id),
   },
-  { title: t("courses.new"), href: "#" },
+  {
+    title: t("courses.new"),
+    href: academicPeriodCoursesPath(props.academic_period.id),
+  },
 ]
 
 const form = useForm({

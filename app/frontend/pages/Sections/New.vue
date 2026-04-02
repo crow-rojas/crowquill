@@ -40,7 +40,7 @@ const breadcrumbs: BreadcrumbItem[] = [
   { title: t("nav.dashboard"), href: dashboardPath() },
   { title: t("academic_periods.title"), href: academicPeriodsPath() },
   { title: props.course.name, href: coursePath(props.course.id) },
-  { title: t("sections.new"), href: "#" },
+  { title: t("sections.new"), href: courseSectionsPath(props.course.id) },
 ]
 
 const tutorOptions = props.tutors.map((tutor) => ({

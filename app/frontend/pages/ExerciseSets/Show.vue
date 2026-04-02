@@ -38,7 +38,10 @@ const breadcrumbs: BreadcrumbItem[] = [
     title: t("exercises.title"),
     href: courseExerciseSetsPath(props.exercise_set.course.id),
   },
-  { title: props.exercise_set.title, href: "#" },
+  {
+    title: props.exercise_set.title,
+    href: exerciseSetPath(props.exercise_set.id),
+  },
 ]
 
 function deleteExerciseSet() {

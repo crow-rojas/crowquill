@@ -34,7 +34,7 @@ const { t } = useI18n()
 const breadcrumbs: BreadcrumbItem[] = [
   { title: t("nav.dashboard"), href: dashboardPath() },
   { title: t("academic_periods.title"), href: academicPeriodsPath() },
-  { title: t("sections.edit"), href: "#" },
+  { title: t("sections.edit"), href: sectionPath(props.section.id) },
 ]
 
 const tutorOptions = props.tutors.map((tutor) => ({

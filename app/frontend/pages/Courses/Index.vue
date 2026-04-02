@@ -41,7 +41,10 @@ const breadcrumbs: BreadcrumbItem[] = [
     title: props.academic_period.name,
     href: academicPeriodPath(props.academic_period.id),
   },
-  { title: t("courses.title"), href: "#" },
+  {
+    title: t("courses.title"),
+    href: academicPeriodPath(props.academic_period.id),
+  },
 ]
 
 function deleteCourse(course: Course) {

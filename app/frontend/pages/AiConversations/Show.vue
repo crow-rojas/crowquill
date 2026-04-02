@@ -26,7 +26,7 @@ const messagesEnd = ref<HTMLDivElement | null>(null)
 const breadcrumbs: BreadcrumbItem[] = [
   { title: t("nav.dashboard"), href: dashboardPath() },
   { title: t("ai.title"), href: aiConversationsPath() },
-  { title: props.conversation.title, href: "#" },
+  { title: props.conversation.title, href: aiConversationsPath() },
 ]
 
 function scrollToBottom() {

@@ -31,7 +31,10 @@ const { t } = useI18n()
 const breadcrumbs: BreadcrumbItem[] = [
   { title: t("nav.dashboard"), href: dashboardPath() },
   { title: t("academic_periods.title"), href: academicPeriodsPath() },
-  { title: t("academic_periods.edit"), href: "#" },
+  {
+    title: t("academic_periods.edit"),
+    href: academicPeriodPath(props.academic_period.id),
+  },
 ]
 
 const form = useForm({

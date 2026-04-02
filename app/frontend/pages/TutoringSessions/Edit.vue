@@ -44,7 +44,10 @@ const breadcrumbs: BreadcrumbItem[] = [
     title: t("sessions.title"),
     href: sectionTutoringSessionsPath(section.id),
   },
-  { title: t("sessions.edit"), href: "#" },
+  {
+    title: t("sessions.edit"),
+    href: tutoringSessionPath(props.tutoring_session.id),
+  },
 ]
 
 const statusOptions = [
