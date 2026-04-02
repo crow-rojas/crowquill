@@ -6,12 +6,6 @@ import { useI18n } from "vue-i18n"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import {
   Table,
   TableBody,
   TableCell,
@@ -201,27 +195,47 @@ function deleteCourse() {
             <p>{{ t("exercises.no_exercises") }}</p>
           </div>
 
-          <div v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <Card v-for="exercise in exercise_sets" :key="exercise.id">
-              <CardHeader>
-                <div class="flex items-center justify-between">
-                  <CardTitle class="text-lg">
-                    <Link
-                      :href="exerciseSetPath(exercise.id)"
-                      class="hover:underline"
-                    >
-                      {{ exercise.title }}
-                    </Link>
-                  </CardTitle>
-                  <Badge v-if="!exercise.published" variant="secondary">
-                    {{ t("exercises.draft") }}
-                  </Badge>
-                </div>
-                <CardDescription>
-                  {{ t("exercises.week_number") }}: {{ exercise.week_number }}
-                </CardDescription>
-              </CardHeader>
-            </Card>
+          <div v-else class="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{{ t("exercises.name") }}</TableHead>
+                  <TableHead class="text-right">{{
+                    t("exercises.week_number")
+                  }}</TableHead>
+                  <TableHead class="text-right">{{
+                    t("common.actions")
+                  }}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow v-for="exercise in exercise_sets" :key="exercise.id">
+                  <TableCell class="font-medium">
+                    <div class="flex flex-wrap items-center gap-2">
+                      <Link
+                        :href="exerciseSetPath(exercise.id)"
+                        class="hover:underline"
+                      >
+                        {{ exercise.title }}
+                      </Link>
+                      <Badge v-if="!exercise.published" variant="secondary">
+                        {{ t("exercises.draft") }}
+                      </Badge>
+                    </div>
+                  </TableCell>
+                  <TableCell class="text-right">{{
+                    exercise.week_number
+                  }}</TableCell>
+                  <TableCell class="text-right">
+                    <Button variant="outline" size="sm" as-child>
+                      <Link :href="exerciseSetPath(exercise.id)">
+                        {{ t("common.view") }}
+                      </Link>
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
           </div>
         </TabsContent>
       </Tabs>

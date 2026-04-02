@@ -5,7 +5,14 @@ import { useI18n } from "vue-i18n"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import { usePermissions } from "@/composables/usePermissions"
 import AppLayout from "@/layouts/AppLayout.vue"
 import {
@@ -61,36 +68,57 @@ const breadcrumbs: BreadcrumbItem[] = [
         <p>{{ t("exercises.no_exercises") }}</p>
       </div>
 
-      <div v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <Card v-for="exerciseSet in exercise_sets" :key="exerciseSet.id">
-          <CardHeader>
-            <div class="flex items-start justify-between gap-2">
-              <CardTitle class="text-lg">
-                <Link
-                  :href="exerciseSetPath(exerciseSet.id)"
-                  class="hover:underline"
-                >
-                  {{ exerciseSet.title }}
-                </Link>
-              </CardTitle>
-              <Badge
-                v-if="can.manage_exercises"
-                :variant="exerciseSet.published ? 'default' : 'secondary'"
-              >
-                {{
-                  exerciseSet.published
-                    ? t("exercises.published")
-                    : t("exercises.draft")
-                }}
-              </Badge>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p class="text-muted-foreground text-sm">
-              {{ t("exercises.week_number") }}: {{ exerciseSet.week_number }}
-            </p>
-          </CardContent>
-        </Card>
+      <div v-else class="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{{ t("exercises.name") }}</TableHead>
+              <TableHead class="text-right">{{
+                t("exercises.week_number")
+              }}</TableHead>
+              <TableHead class="text-right">{{
+                t("common.actions")
+              }}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow
+              v-for="exerciseSet in exercise_sets"
+              :key="exerciseSet.id"
+            >
+              <TableCell class="font-medium">
+                <div class="flex flex-wrap items-center gap-2">
+                  <Link
+                    :href="exerciseSetPath(exerciseSet.id)"
+                    class="hover:underline"
+                  >
+                    {{ exerciseSet.title }}
+                  </Link>
+                  <Badge
+                    v-if="can.manage_exercises"
+                    :variant="exerciseSet.published ? 'default' : 'secondary'"
+                  >
+                    {{
+                      exerciseSet.published
+                        ? t("exercises.published")
+                        : t("exercises.draft")
+                    }}
+                  </Badge>
+                </div>
+              </TableCell>
+              <TableCell class="text-right">{{
+                exerciseSet.week_number
+              }}</TableCell>
+              <TableCell class="text-right">
+                <Button variant="outline" size="sm" as-child>
+                  <Link :href="exerciseSetPath(exerciseSet.id)">
+                    {{ t("common.view") }}
+                  </Link>
+                </Button>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
       </div>
     </div>
   </AppLayout>
