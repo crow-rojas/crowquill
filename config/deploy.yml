@@ -1,8 +1,8 @@
 # Name of your application. Used to uniquely configure containers.
-service: vue_starter_kit
+service: crowquill
 
 # Name of the container image (use your-user/app-name on external registries).
-image: vue_starter_kit
+image: crowquill
 
 # Deploy to these servers.
 servers:
@@ -65,7 +65,7 @@ env:
     # WEB_CONCURRENCY: 2
 
     # Match this to any external database server to configure Active Record correctly
-    # Use vue_starter_kit-db for a db accessory server on same machine via local kamal docker network.
+    # Use crowquill-db for a db accessory server on same machine via local kamal docker network.
     # DB_HOST: 192.168.0.2
 
     # Log everything from Rails
@@ -83,7 +83,7 @@ aliases:
 # Use a persistent storage volume for sqlite database files and local Active Storage files.
 # Recommended to change this to a mounted volume path that is backed up off server.
 volumes:
-  - "vue_starter_kit_storage:/rails/storage"
+  - "crowquill_storage:/rails/storage"
 
 
 # Bridge fingerprinted assets, like JS and CSS, between versions to avoid
@@ -99,7 +99,7 @@ builder:
   # dockerfile: Dockerfile-ssr
   cache:
     type: registry
-    image: your-user/vue_starter_kit-build-cache
+    image: your-user/crowquill-build-cache
     options: mode=max
 
   # # Build image via remote server (useful for faster amd64 builds on arm64 computers)

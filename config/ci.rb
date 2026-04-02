@@ -7,12 +7,12 @@ CI.run do
 
   step "Style: Ruby", "bin/rubocop"
 
-  step "JavaScript: lint", "npm run lint"
-  step "JavaScript: format", "npm run format"
-  step "JavaScript: types check", "npm run check"
+  step "JavaScript: lint", "bun run lint"
+  step "JavaScript: format", "bun run format"
+  step "JavaScript: types check", "bun run check"
 
   step "Security: Gem audit", "bin/bundler-audit"
-  step "Security: NPM vulnerability audit", "npm audit"
+  step "Security: Bun vulnerability audit", "bun pm audit"
   step "Security: Brakeman code analysis", "bin/brakeman --quiet --no-pager --exit-on-warn --exit-on-error"
 
   step "Tests: Rails", "bin/rspec"
