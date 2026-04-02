@@ -13,7 +13,7 @@ University tutoring management platform. Built for PIMU UC (math tutoring) but g
 | Build | Vite (`vite_rails` gem) + Bun |
 | DB | PostgreSQL 17 (ActiveRecord) |
 | Auth | Session-based (`has_secure_password` + Authentication Zero) |
-| Authorization | Custom policy objects + `verify_authorized` concern |
+| Authorization | Pundit (`pundit_user` returns `Current.membership`) |
 | i18n | vue-i18n (`es` default, `en`) |
 | LaTeX | KaTeX + markdown-it + @mdit/plugin-katex + DOMPurify |
 | AI | Claude API via `anthropic` gem (credentials in Rails encrypted credentials) |
@@ -128,12 +128,13 @@ User → AiConversation → AiMessage (status: streaming/complete/failed)
 - **Pessimistic locking** for capacity enforcement: `section.with_lock { ... }`.
 - **Rails encrypted credentials** for API keys (`bin/rails credentials:edit`), never ENV vars for secrets.
 
-### Authorization
+### Authorization (Pundit)
 
-- **Custom policy objects** in `app/policies/`. Base: `ApplicationPolicy.new(membership, record)`.
-- **`authorize!`** in every controller action. Pass `policy_class:` explicitly.
-- **`verify_authorized`** after_action in `InertiaController` — raises if no `authorize!` was called.
-- **`skip_verify_authorized`** for actions without domain authorization (dashboard, settings, onboarding).
+- **Pundit gem** with `include Pundit::Authorization` in `InertiaController`.
+- **`pundit_user`** returns `Current.membership` (not `Current.user`), so policies receive the membership.
+- **`authorize record`** in every controller action. Pass `policy_class:` explicitly. For actions without a record (index, new, create), use a symbol: `authorize :academic_period, policy_class: AcademicPeriodPolicy`.
+- **`verify_authorized`** after_action in `InertiaController` — raises if no `authorize` was called.
+- **`skip_after_action :verify_authorized, only: [...]`** for actions without domain authorization.
 - **Permissions shared via Inertia** in `auth.can` hash. Frontend reads via `usePermissions()` composable.
 - **Role hierarchy:** admin > tutor > tutorado.
 
