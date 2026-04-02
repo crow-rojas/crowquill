@@ -16,8 +16,13 @@ class CoursesController < InertiaController
 
   def show
     authorize! @course, policy_class: CoursePolicy
+
+    exercise_sets = @course.exercise_sets.ordered
+    exercise_sets = exercise_sets.published unless Current.membership&.admin?
+
     render inertia: "Courses/Show", props: {
-      course: @course.as_json(include: :sections)
+      course: @course.as_json(include: {sections: {include: {tutor: {only: %i[id name email]}}}}),
+      exercise_sets: exercise_sets.as_json(only: %i[id title week_number published])
     }
   end
 

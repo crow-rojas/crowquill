@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { Head, Link, router } from "@inertiajs/vue3"
-import { Plus, Users } from "lucide-vue-next"
+import { BookOpen, Plus, Users } from "lucide-vue-next"
 import { useI18n } from "vue-i18n"
 
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -17,14 +18,17 @@ import {
   academicPeriodsPath,
   coursePath,
   editCoursePath,
+  exerciseSetPath,
+  newCourseExerciseSetPath,
   newCourseSectionPath,
   sectionPath,
 } from "@/routes"
 import type { BreadcrumbItem } from "@/types"
-import type { Course, Section } from "@/types/academic"
+import type { Course, ExerciseSet, Section } from "@/types/academic"
 
 const props = defineProps<{
   course: Course & { sections: Section[] }
+  exercise_sets: ExerciseSet[]
 }>()
 
 const { t } = useI18n()
@@ -48,6 +52,7 @@ function deleteCourse() {
 
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="flex flex-col gap-6 p-4 md:p-6">
+      <!-- Course header -->
       <div
         class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
       >
@@ -79,6 +84,7 @@ function deleteCourse() {
         </div>
       </div>
 
+      <!-- Sections -->
       <div class="flex items-center justify-between">
         <h2 class="text-xl font-semibold">{{ t("sections.title") }}</h2>
         <Button v-if="can.manage_sections" as-child size="sm">
@@ -112,12 +118,54 @@ function deleteCourse() {
           <CardContent>
             <div class="text-muted-foreground flex items-center gap-1 text-sm">
               <Users class="h-4 w-4" />
-              <span
-                >{{ t("sections.max_students") }}:
-                {{ section.max_students }}</span
-              >
+              <span>
+                {{ t("sections.max_students") }}:
+                {{ section.max_students }}
+              </span>
             </div>
           </CardContent>
+        </Card>
+      </div>
+
+      <!-- Exercises -->
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl font-semibold">{{ t("exercises.title") }}</h2>
+        <Button v-if="can.manage_exercises" as-child size="sm">
+          <Link :href="newCourseExerciseSetPath(course.id)">
+            <Plus class="mr-1 h-4 w-4" />
+            {{ t("exercises.new") }}
+          </Link>
+        </Button>
+      </div>
+
+      <div
+        v-if="exercise_sets.length === 0"
+        class="text-muted-foreground flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center"
+      >
+        <BookOpen class="mb-4 h-12 w-12 opacity-40" />
+        <p>{{ t("exercises.no_exercises") }}</p>
+      </div>
+
+      <div v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <Card v-for="exercise in exercise_sets" :key="exercise.id">
+          <CardHeader>
+            <div class="flex items-center justify-between">
+              <CardTitle class="text-lg">
+                <Link
+                  :href="exerciseSetPath(exercise.id)"
+                  class="hover:underline"
+                >
+                  {{ exercise.title }}
+                </Link>
+              </CardTitle>
+              <Badge v-if="!exercise.published" variant="secondary">
+                {{ t("exercises.draft") }}
+              </Badge>
+            </div>
+            <CardDescription>
+              {{ t("exercises.week_number") }}: {{ exercise.week_number }}
+            </CardDescription>
+          </CardHeader>
         </Card>
       </div>
     </div>
