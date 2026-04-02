@@ -5,18 +5,20 @@ import { useI18n } from "vue-i18n"
 
 import { Button } from "@/components/ui/button"
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import { usePermissions } from "@/composables/usePermissions"
 import AppLayout from "@/layouts/AppLayout.vue"
 import {
   academicPeriodPath,
   academicPeriodsPath,
   coursePath,
+  courseSectionsPath,
   dashboardPath,
   editCoursePath,
   newAcademicPeriodCoursePath,
@@ -74,36 +76,61 @@ function deleteCourse(course: Course) {
         <p>{{ t("courses.no_courses") }}</p>
       </div>
 
-      <div v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <Card v-for="course in courses" :key="course.id">
-          <CardHeader>
-            <CardTitle class="text-lg">
-              <Link :href="coursePath(course.id)" class="hover:underline">
-                {{ course.name }}
-              </Link>
-            </CardTitle>
-            <CardDescription v-if="course.description">
-              {{ course.description }}
-            </CardDescription>
-          </CardHeader>
-          <CardContent v-if="can.manage_courses">
-            <div class="flex gap-2">
-              <Button variant="outline" size="sm" as-child>
-                <Link :href="editCoursePath(course.id)">
-                  {{ t("common.edit") }}
+      <div v-else class="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{{ t("courses.name") }}</TableHead>
+              <TableHead>{{ t("courses.description") }}</TableHead>
+              <TableHead class="text-right">{{
+                t("common.actions")
+              }}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow v-for="course in courses" :key="course.id">
+              <TableCell class="font-medium">
+                <Link :href="coursePath(course.id)" class="hover:underline">
+                  {{ course.name }}
                 </Link>
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                class="text-destructive"
-                @click="deleteCourse(course)"
-              >
-                {{ t("common.delete") }}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+              </TableCell>
+              <TableCell>{{ course.description || "-" }}</TableCell>
+              <TableCell class="text-right">
+                <div class="flex flex-wrap justify-end gap-2">
+                  <Button variant="outline" size="sm" as-child>
+                    <Link :href="coursePath(course.id)">
+                      {{ t("common.view") }}
+                    </Link>
+                  </Button>
+                  <Button variant="outline" size="sm" as-child>
+                    <Link :href="courseSectionsPath(course.id)">
+                      {{ t("sections.title") }}
+                    </Link>
+                  </Button>
+                  <Button
+                    v-if="can.manage_courses"
+                    variant="outline"
+                    size="sm"
+                    as-child
+                  >
+                    <Link :href="editCoursePath(course.id)">
+                      {{ t("common.edit") }}
+                    </Link>
+                  </Button>
+                  <Button
+                    v-if="can.manage_courses"
+                    variant="outline"
+                    size="sm"
+                    class="text-destructive"
+                    @click="deleteCourse(course)"
+                  >
+                    {{ t("common.delete") }}
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
       </div>
     </div>
   </AppLayout>
