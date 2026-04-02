@@ -15,6 +15,9 @@ RSpec.describe "Courses", type: :request do
   let(:tutorado_user) { create(:user) }
   let(:tutorado_membership) { create(:membership, :tutorado, user: tutorado_user, organization: organization) }
 
+  let(:other_tutor_user) { create(:user) }
+  let(:other_tutor_membership) { create(:membership, :tutor, user: other_tutor_user, organization: organization) }
+
   let(:course) { create(:course, academic_period: academic_period) }
 
   describe "GET /academic_periods/:academic_period_id/courses" do
@@ -64,6 +67,42 @@ RSpec.describe "Courses", type: :request do
       it "returns success" do
         get course_path(course)
         expect(response).to have_http_status(:success)
+      end
+
+      it "only includes sections assigned to the tutor" do
+        own_section = create(:section, course: course, tutor: tutor_user)
+        other_tutor_membership
+        create(:section, course: course, tutor: other_tutor_user)
+
+        get course_path(course)
+
+        section_ids = inertia.props[:course]["sections"].map { |s| s["id"] }
+        expect(section_ids).to contain_exactly(own_section.id)
+      end
+    end
+
+    context "as tutorado" do
+      before { tutorado_membership && sign_in_as(tutorado_user) }
+
+      it "returns success" do
+        get course_path(course)
+        expect(response).to have_http_status(:success)
+      end
+
+      it "hides full sections when the student is not enrolled" do
+        tutor_membership
+        available_section = create(:section, course: course, tutor: tutor_user, max_students: 2)
+        other_tutor_membership
+        full_section = create(:section, course: course, tutor: other_tutor_user, max_students: 1)
+        full_student = create(:user)
+        create(:membership, :tutorado, user: full_student, organization: organization)
+        create(:enrollment, section: full_section, user: full_student)
+
+        get course_path(course)
+
+        section_ids = inertia.props[:course]["sections"].map { |s| s["id"] }
+        expect(section_ids).to include(available_section.id)
+        expect(section_ids).not_to include(full_section.id)
       end
     end
   end

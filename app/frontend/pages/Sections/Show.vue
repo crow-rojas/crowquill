@@ -24,6 +24,7 @@ const props = defineProps<{
   enrollments_count?: number
   current_enrollment?: Enrollment | null
   is_full?: boolean
+  can_view_enrollments?: boolean
 }>()
 
 const { t } = useI18n()
@@ -135,7 +136,12 @@ function deleteSection() {
             </span>
           </h2>
           <div class="flex gap-2">
-            <Button variant="outline" size="sm" as-child>
+            <Button
+              v-if="can_view_enrollments"
+              variant="outline"
+              size="sm"
+              as-child
+            >
               <Link :href="sectionEnrollmentsPath(section.id)">
                 {{ t("enrollment.title") }}
               </Link>

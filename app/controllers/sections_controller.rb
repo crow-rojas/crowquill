@@ -6,7 +6,7 @@ class SectionsController < InertiaController
 
   def index
     authorize :section, policy_class: SectionPolicy
-    sections = @course.sections.includes(:tutor).order(:name)
+    sections = visible_sections(@course.sections).includes(:tutor).order(:name)
 
     render inertia: "Sections/Index", props: {
       course: @course.as_json,
@@ -24,7 +24,8 @@ class SectionsController < InertiaController
       ),
       enrollments_count: @section.enrollments.active.count,
       current_enrollment: current_enrollment&.as_json,
-      is_full: @section.enrollments.active.count >= @section.max_students
+      is_full: @section.enrollments.active.count >= @section.max_students,
+      can_view_enrollments: EnrollmentPolicy.new(Current.membership, @section).index?
     }
   end
 
@@ -97,5 +98,36 @@ class SectionsController < InertiaController
 
   def section_params
     params.require(:section).permit(:name, :tutor_id, :max_students, schedule: {})
+  end
+
+  def visible_sections(scope)
+    return scope if Current.membership&.admin?
+
+    if Current.membership&.tutor?
+      scope.where(tutor_id: Current.user.id)
+    elsif Current.membership&.tutorado?
+      visible_section_ids = tutorado_visible_section_ids(scope)
+      scope.where(id: visible_section_ids)
+    else
+      scope.none
+    end
+  end
+
+  def tutorado_visible_section_ids(scope)
+    section_rows = scope.select(:id, :max_students).to_a
+    return [] if section_rows.empty?
+
+    section_ids = section_rows.map(&:id)
+    active_counts = Enrollment.where(section_id: section_ids, status: "active").group(:section_id).count
+    enrolled_section_ids = Enrollment.where(
+      section_id: section_ids,
+      user_id: Current.user.id,
+      status: "active"
+    ).pluck(:section_id)
+
+    section_rows.filter_map do |section|
+      active_count = active_counts.fetch(section.id, 0)
+      section.id if enrolled_section_ids.include?(section.id) || active_count < section.max_students
+    end
   end
 end

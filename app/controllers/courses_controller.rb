@@ -17,11 +17,14 @@ class CoursesController < InertiaController
   def show
     authorize @course, policy_class: CoursePolicy
 
+    sections = visible_sections(@course.sections).includes(:tutor).order(:name)
     exercise_sets = @course.exercise_sets.ordered
     exercise_sets = exercise_sets.published unless Current.membership&.admin?
 
     render inertia: "Courses/Show", props: {
-      course: @course.as_json(include: {sections: {include: {tutor: {only: %i[id name email]}}}}),
+      course: @course.as_json.merge(
+        "sections" => sections.as_json(include: {tutor: {only: %i[id name email]}})
+      ),
       exercise_sets: exercise_sets.as_json(only: %i[id title week_number published])
     }
   end
@@ -82,5 +85,36 @@ class CoursesController < InertiaController
 
   def course_params
     params.require(:course).permit(:name, :description)
+  end
+
+  def visible_sections(scope)
+    return scope if Current.membership&.admin?
+
+    if Current.membership&.tutor?
+      scope.where(tutor_id: Current.user.id)
+    elsif Current.membership&.tutorado?
+      visible_section_ids = tutorado_visible_section_ids(scope)
+      scope.where(id: visible_section_ids)
+    else
+      scope.none
+    end
+  end
+
+  def tutorado_visible_section_ids(scope)
+    section_rows = scope.select(:id, :max_students).to_a
+    return [] if section_rows.empty?
+
+    section_ids = section_rows.map(&:id)
+    active_counts = Enrollment.where(section_id: section_ids, status: "active").group(:section_id).count
+    enrolled_section_ids = Enrollment.where(
+      section_id: section_ids,
+      user_id: Current.user.id,
+      status: "active"
+    ).pluck(:section_id)
+
+    section_rows.filter_map do |section|
+      active_count = active_counts.fetch(section.id, 0)
+      section.id if enrolled_section_ids.include?(section.id) || active_count < section.max_students
+    end
   end
 end

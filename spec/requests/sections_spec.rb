@@ -17,6 +17,9 @@ RSpec.describe "Sections", type: :request do
   let(:tutorado_membership) { create(:membership, :tutorado, user: tutorado_user, organization: organization) }
 
   let(:section) { create(:section, course: course, tutor: tutor_user) }
+  let(:other_tutor_user) { create(:user) }
+  let(:other_tutor_membership) { create(:membership, :tutor, user: other_tutor_user, organization: organization) }
+  let(:other_section) { create(:section, course: course, tutor: other_tutor_user) }
 
   before do
     # Ensure tutor_membership exists so tutor_user is valid for sections
@@ -42,6 +45,16 @@ RSpec.describe "Sections", type: :request do
         get course_sections_path(course)
         expect(response).to have_http_status(:success)
       end
+
+      it "returns only owned sections" do
+        other_tutor_membership
+        other_section
+
+        get course_sections_path(course)
+
+        section_ids = inertia.props[:sections].map { |s| s["id"] }
+        expect(section_ids).to contain_exactly(section.id)
+      end
     end
 
     context "as tutorado" do
@@ -50,6 +63,20 @@ RSpec.describe "Sections", type: :request do
       it "returns success" do
         get course_sections_path(course)
         expect(response).to have_http_status(:success)
+      end
+
+      it "hides full sections when the user is not enrolled" do
+        other_tutor_membership
+        full_section = create(:section, course: course, tutor: other_tutor_user, max_students: 1)
+        full_student = create(:user)
+        create(:membership, :tutorado, user: full_student, organization: organization)
+        create(:enrollment, section: full_section, user: full_student)
+
+        get course_sections_path(course)
+
+        section_ids = inertia.props[:sections].map { |s| s["id"] }
+        expect(section_ids).to include(section.id)
+        expect(section_ids).not_to include(full_section.id)
       end
     end
   end
@@ -75,6 +102,65 @@ RSpec.describe "Sections", type: :request do
       it "returns success" do
         get section_path(section)
         expect(response).to have_http_status(:success)
+      end
+    end
+
+    context "as tutor viewing another tutor section" do
+      before do
+        other_tutor_membership
+        sign_in_as(tutor_user)
+      end
+
+      it "is not authorized" do
+        get section_path(other_section)
+
+        expect(response).to redirect_to(dashboard_path)
+      end
+    end
+
+    context "as tutorado enrolled in section" do
+      before do
+        tutorado_membership
+        create(:enrollment, section: section, user: tutorado_user)
+        sign_in_as(tutorado_user)
+      end
+
+      it "returns success and allows viewing enrollments" do
+        get section_path(section)
+
+        expect(response).to have_http_status(:success)
+        expect(inertia.props[:can_view_enrollments]).to be true
+      end
+    end
+
+    context "as tutorado viewing available section" do
+      before do
+        tutorado_membership
+        sign_in_as(tutorado_user)
+      end
+
+      it "returns success but cannot view enrollments list" do
+        get section_path(section)
+
+        expect(response).to have_http_status(:success)
+        expect(inertia.props[:can_view_enrollments]).to be false
+      end
+    end
+
+    context "as tutorado viewing full section without enrollment" do
+      before do
+        tutorado_membership
+        full_student = create(:user)
+        create(:membership, :tutorado, user: full_student, organization: organization)
+        section.update!(max_students: 1)
+        create(:enrollment, section: section, user: full_student)
+        sign_in_as(tutorado_user)
+      end
+
+      it "is not authorized" do
+        get section_path(section)
+
+        expect(response).to redirect_to(dashboard_path)
       end
     end
   end

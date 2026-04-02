@@ -8,12 +8,32 @@ RSpec.describe EnrollmentPolicy do
   let(:tutor_membership) { create(:membership, :tutor, organization: organization) }
   let(:tutorado_membership) { create(:membership, :tutorado, organization: organization) }
 
+  let(:academic_period) { create(:academic_period, organization: organization) }
+  let(:course) { create(:course, academic_period: academic_period) }
+  let(:owned_section) { create(:section, course: course, tutor: tutor_membership.user) }
+
+  let(:other_tutor_user) { create(:user) }
+  let!(:other_tutor_membership) { create(:membership, :tutor, user: other_tutor_user, organization: organization) }
+  let(:other_section) { create(:section, course: course, tutor: other_tutor_user) }
+
+  before do
+    create(:enrollment, section: owned_section, user: tutorado_membership.user)
+  end
+
   describe "#index?" do
-    it "allows any member to list enrollments" do
-      [admin_membership, tutor_membership, tutorado_membership].each do |membership|
-        policy = described_class.new(membership)
-        expect(policy.index?).to be true
-      end
+    it "allows admin to list enrollments for any section" do
+      expect(described_class.new(admin_membership, owned_section).index?).to be true
+      expect(described_class.new(admin_membership, other_section).index?).to be true
+    end
+
+    it "allows tutor to list enrollments only for owned sections" do
+      expect(described_class.new(tutor_membership, owned_section).index?).to be true
+      expect(described_class.new(tutor_membership, other_section).index?).to be false
+    end
+
+    it "allows tutorado to list enrollments only for enrolled sections" do
+      expect(described_class.new(tutorado_membership, owned_section).index?).to be true
+      expect(described_class.new(tutorado_membership, other_section).index?).to be false
     end
   end
 

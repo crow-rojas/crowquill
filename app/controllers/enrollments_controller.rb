@@ -5,8 +5,8 @@ class EnrollmentsController < InertiaController
   before_action :set_enrollment, only: %i[update destroy]
 
   def index
-    authorize :enrollment, policy_class: EnrollmentPolicy
-    enrollments = @section.enrollments.includes(:user).order(created_at: :desc)
+    authorize @section, policy_class: EnrollmentPolicy
+    enrollments = scoped_enrollments_for_index
 
     render inertia: "Enrollments/Index", props: {
       section: @section.as_json(
@@ -92,5 +92,12 @@ class EnrollmentsController < InertiaController
     else
       Current.user
     end
+  end
+
+  def scoped_enrollments_for_index
+    base_scope = @section.enrollments.includes(:user).order(created_at: :desc)
+    return base_scope unless Current.membership&.tutorado?
+
+    base_scope.where(user_id: Current.user.id)
   end
 end

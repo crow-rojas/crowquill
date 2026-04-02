@@ -26,9 +26,9 @@ Legend:
 | Academic Periods  | Create / Edit / Delete           | ✅    | ❌    | ❌       | Admin only                                                                     |
 | Courses           | List / View                      | ✅    | ✅    | ✅       | Membership required                                                            |
 | Courses           | Create / Edit / Delete           | ✅    | ❌    | ❌       | Admin only                                                                     |
-| Sections          | List / View                      | ✅    | ✅    | ✅       | Membership required                                                            |
+| Sections          | List / View                      | ✅    | ⚠️    | ⚠️       | Tutor: own sections. Tutorado: enrolled or available sections                  |
 | Sections          | Create / Edit / Delete           | ✅    | ❌    | ❌       | Admin only                                                                     |
-| Enrollments       | List                             | ✅    | ✅    | ✅       | Policy allows all members                                                      |
+| Enrollments       | List                             | ✅    | ⚠️    | ⚠️       | Tutor: own sections. Tutorado: only own enrollment in enrolled sections        |
 | Enrollments       | Create                           | ✅    | ❌    | ✅       | Tutorado can create own enrollment                                             |
 | Enrollments       | Update (withdraw)                | ✅    | ❌    | ⚠️       | Tutorado only for own enrollment                                               |
 | Enrollments       | Delete                           | ✅    | ❌    | ❌       | Admin only                                                                     |
@@ -58,6 +58,22 @@ Tutors can create and update tutoring sessions only when the session belongs to 
 Tutors can only list and view sessions from sections they tutor. Tutorado users can list and view sessions only for sections where they have an active enrollment.
 
 In session details, tutorado users only receive their own enrollment and attendance record.
+
+### Section visibility
+
+Tutors can only see sections assigned to them.
+
+Tutorado users can see sections where they are already enrolled and sections that still have available capacity.
+
+Tutorado users cannot access full sections where they are not enrolled.
+
+### Enrollment list visibility
+
+Admins can view full enrollment rosters.
+
+Tutors can view enrollment rosters only for sections they own.
+
+Tutorado users can open enrollment lists only for sections where they have an active enrollment, and they only receive their own enrollment row.
 
 ### Exercise set visibility
 

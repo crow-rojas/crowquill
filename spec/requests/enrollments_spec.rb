@@ -17,16 +17,21 @@ RSpec.describe "Enrollments", type: :request do
   let(:tutorado_membership) { create(:membership, :tutorado, user: tutorado_user, organization: organization) }
 
   let(:section) { create(:section, course: course, tutor: tutor_user, max_students: 3) }
+  let(:other_tutor_user) { create(:user) }
+  let(:other_tutor_membership) { create(:membership, :tutor, user: other_tutor_user, organization: organization) }
+  let(:other_section) { create(:section, course: course, tutor: other_tutor_user, max_students: 3) }
 
   before do
     tutor_membership
   end
 
   describe "GET /sections/:section_id/enrollments" do
-    before { create(:enrollment, section: section, user: tutorado_user) }
-
     context "as admin" do
-      before { admin_membership && sign_in_as(admin_user) }
+      before do
+        admin_membership
+        create(:enrollment, section: section, user: tutorado_user)
+        sign_in_as(admin_user)
+      end
 
       it "returns success" do
         get section_enrollments_path(section)
@@ -34,12 +39,65 @@ RSpec.describe "Enrollments", type: :request do
       end
     end
 
-    context "as tutorado" do
-      before { tutorado_membership && sign_in_as(tutorado_user) }
+    context "as tutor for owned section" do
+      before do
+        create(:enrollment, section: section, user: tutorado_user)
+        sign_in_as(tutor_user)
+      end
 
       it "returns success" do
         get section_enrollments_path(section)
+
         expect(response).to have_http_status(:success)
+      end
+    end
+
+    context "as tutor for another tutor section" do
+      before do
+        other_tutor_membership
+        create(:enrollment, section: other_section, user: tutorado_user)
+        sign_in_as(tutor_user)
+      end
+
+      it "is not authorized" do
+        get section_enrollments_path(other_section)
+
+        expect(response).to redirect_to(dashboard_path)
+      end
+    end
+
+    context "as tutorado enrolled in section" do
+      before do
+        tutorado_membership
+        create(:enrollment, section: section, user: tutorado_user)
+        other_student = create(:user)
+        create(:membership, :tutorado, user: other_student, organization: organization)
+        create(:enrollment, section: section, user: other_student)
+        sign_in_as(tutorado_user)
+      end
+
+      it "returns success and only includes own enrollment" do
+        get section_enrollments_path(section)
+
+        expect(response).to have_http_status(:success)
+        expect(inertia.props[:enrollments].size).to eq(1)
+        expect(inertia.props[:enrollments].first["user_id"]).to eq(tutorado_user.id)
+      end
+    end
+
+    context "as tutorado not enrolled in section" do
+      before do
+        tutorado_membership
+        other_student = create(:user)
+        create(:membership, :tutorado, user: other_student, organization: organization)
+        create(:enrollment, section: section, user: other_student)
+        sign_in_as(tutorado_user)
+      end
+
+      it "is not authorized" do
+        get section_enrollments_path(section)
+
+        expect(response).to redirect_to(dashboard_path)
       end
     end
   end
