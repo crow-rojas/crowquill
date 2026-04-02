@@ -16,7 +16,8 @@ class InertiaController < ApplicationController
       session: Current.session&.as_json(only: %i[id]),
       membership: Current.membership&.as_json(only: %i[id role]),
       current_role: Current.membership&.role,
-      can: build_permissions
+      can: build_permissions,
+      dev_user_switch: build_dev_user_switch
     }
   }
 
@@ -34,7 +35,7 @@ class InertiaController < ApplicationController
   end
 
   def handle_not_authorized
-    flash[:alert] = "You are not authorized to perform this action."
+    flash[:alert] = t("flash.authorization.not_authorized")
     redirect_back(fallback_location: dashboard_path)
   end
 
@@ -55,6 +56,40 @@ class InertiaController < ApplicationController
       view_attendance_statistics: membership.admin?,
       manage_enrollments: membership.admin?,
       create_ai_conversations: true
+    }
+  end
+
+  def build_dev_user_switch
+    enabled = dev_user_switch_enabled? && Current.organization.present?
+
+    return {
+      enabled: false,
+      current_user_id: Current.user&.id,
+      users: []
+    } unless enabled
+
+    role_order = Membership::ROLES.each_with_index.to_h
+
+    users = Current.organization.memberships.includes(:user).filter_map do |membership|
+      next unless membership.user
+
+      {
+        id: membership.user.id,
+        name: membership.user.name,
+        email: membership.user.email,
+        role: membership.role
+      }
+    end.sort_by do |user|
+      [
+        role_order.fetch(user[:role], Membership::ROLES.length),
+        user[:name].to_s.downcase
+      ]
+    end
+
+    {
+      enabled: true,
+      current_user_id: Current.user&.id,
+      users: users
     }
   end
 end

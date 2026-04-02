@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   post "sign_up", to: "users#create"
 
   resources :sessions, only: [:destroy]
+  post "dev/switch_user", to: "sessions#switch", as: :dev_switch_user
   resource :users, only: [:destroy]
 
   namespace :identity do

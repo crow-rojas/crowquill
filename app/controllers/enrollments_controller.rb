@@ -22,7 +22,7 @@ class EnrollmentsController < InertiaController
     authorize :enrollment, policy_class: EnrollmentPolicy
     @section.with_lock do
       if @section.enrollments.active.count >= @section.max_students
-        redirect_to section_path(@section), alert: "Section is full"
+        redirect_to section_path(@section), alert: t("flash.enrollments.section_full")
         return
       end
 
@@ -34,7 +34,7 @@ class EnrollmentsController < InertiaController
         end
 
         if existing.update(status: "active", commitment_accepted_at: Time.current)
-          redirect_to section_path(@section), notice: "Enrolled successfully"
+          redirect_to section_path(@section), notice: t("flash.enrollments.enrolled")
         else
           redirect_to section_path(@section), inertia: {errors: existing.errors}
         end
@@ -48,7 +48,7 @@ class EnrollmentsController < InertiaController
       )
 
       if @enrollment.save
-        redirect_to section_path(@section), notice: "Enrolled successfully"
+        redirect_to section_path(@section), notice: t("flash.enrollments.enrolled")
       else
         redirect_to section_path(@section), inertia: {errors: @enrollment.errors}
       end
@@ -58,7 +58,7 @@ class EnrollmentsController < InertiaController
   def update
     authorize @enrollment, policy_class: EnrollmentPolicy
     if @enrollment.update(status: "withdrawn")
-      redirect_to section_path(@enrollment.section), notice: "Withdrawn successfully"
+      redirect_to section_path(@enrollment.section), notice: t("flash.enrollments.withdrawn")
     else
       redirect_to section_path(@enrollment.section), inertia: {errors: @enrollment.errors}
     end
@@ -68,7 +68,7 @@ class EnrollmentsController < InertiaController
     authorize @enrollment, policy_class: EnrollmentPolicy
     section = @enrollment.section
     @enrollment.destroy!
-    redirect_to section_enrollments_path(section), notice: "Enrollment deleted successfully"
+    redirect_to section_enrollments_path(section), notice: t("flash.enrollments.deleted")
   end
 
   private

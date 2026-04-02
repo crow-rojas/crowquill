@@ -53,6 +53,16 @@ bin/dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+## Development User Switch
+
+To enable the development-only fast user switcher in the sidebar user menu, set:
+
+```bash
+DEV_USER_SWITCH_ENABLED=true
+```
+
+This feature only works in development mode and is intended for role/view testing without re-authenticating.
+
 ## Common Commands
 
 ```bash
@@ -69,7 +79,7 @@ bun run format             # Prettier check
 
 ## Project Structure
 
-```
+```text
 app/
 ├── controllers/              # Render Inertia responses
 ├── models/                   # ActiveRecord models

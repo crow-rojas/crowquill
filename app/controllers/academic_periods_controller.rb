@@ -29,7 +29,7 @@ class AcademicPeriodsController < InertiaController
     @academic_period = Current.organization.academic_periods.build(academic_period_params)
 
     if @academic_period.save
-      redirect_to academic_period_path(@academic_period), notice: "Academic period created successfully."
+      redirect_to academic_period_path(@academic_period), notice: t("flash.academic_periods.created")
     else
       redirect_to new_academic_period_path, inertia: {errors: @academic_period.errors}
     end
@@ -46,7 +46,7 @@ class AcademicPeriodsController < InertiaController
     authorize @academic_period, policy_class: AcademicPeriodPolicy
 
     if @academic_period.update(academic_period_params)
-      redirect_to academic_period_path(@academic_period), notice: "Academic period updated successfully."
+      redirect_to academic_period_path(@academic_period), notice: t("flash.academic_periods.updated")
     else
       redirect_to edit_academic_period_path(@academic_period), inertia: {errors: @academic_period.errors}
     end
@@ -55,7 +55,7 @@ class AcademicPeriodsController < InertiaController
   def destroy
     authorize @academic_period, policy_class: AcademicPeriodPolicy
     @academic_period.destroy!
-    redirect_to academic_periods_path, notice: "Academic period deleted successfully."
+    redirect_to academic_periods_path, notice: t("flash.academic_periods.deleted")
   end
 
   private

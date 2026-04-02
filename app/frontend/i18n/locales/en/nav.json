@@ -15,7 +15,16 @@
     "my_sections": "My Sections",
     "exercises": "Exercises",
     "attendance_reports": "Attendance Reports",
-    "ai_chat": "AI Chat"
+    "ai_chat": "AI Chat",
+    "dev_switcher": {
+      "label": "Switch user (dev)",
+      "current": "Current",
+      "roles": {
+        "admin": "Admin",
+        "tutor": "Tutor",
+        "tutorado": "Student"
+      }
+    }
   },
   "settings": {
     "title": "Settings",

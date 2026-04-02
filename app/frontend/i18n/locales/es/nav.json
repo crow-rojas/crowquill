@@ -15,7 +15,16 @@
     "my_sections": "Mis Secciones",
     "exercises": "Ejercicios",
     "attendance_reports": "Reportes de Asistencia",
-    "ai_chat": "Chat IA"
+    "ai_chat": "Chat IA",
+    "dev_switcher": {
+      "label": "Cambiar usuario (dev)",
+      "current": "Actual",
+      "roles": {
+        "admin": "Admin",
+        "tutor": "Tutor",
+        "tutorado": "Tutorado"
+      }
+    }
   },
   "settings": {
     "title": "Configuración",

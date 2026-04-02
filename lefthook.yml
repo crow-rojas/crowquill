@@ -16,8 +16,8 @@ pre-push:
   parallel: true
   commands:
     typecheck:
-      run: . "$HOME/.nvm/nvm.sh" && nvm use --silent && bun run check
+      run: bun run check
     rspec:
       run: bundle exec rspec --format progress
     vitest:
-      run: . "$HOME/.nvm/nvm.sh" && nvm use --silent && bunx vitest run
+      run: bunx vitest run

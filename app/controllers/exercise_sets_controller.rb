@@ -38,7 +38,7 @@ class ExerciseSetsController < InertiaController
     @exercise_set = @course.exercise_sets.build(exercise_set_params)
 
     if @exercise_set.save
-      redirect_to exercise_set_path(@exercise_set), notice: "Exercise set created successfully."
+      redirect_to exercise_set_path(@exercise_set), notice: t("flash.exercise_sets.created")
     else
       redirect_to new_course_exercise_set_path(@course), inertia: {errors: @exercise_set.errors}
     end
@@ -55,7 +55,7 @@ class ExerciseSetsController < InertiaController
     authorize @exercise_set, policy_class: ExerciseSetPolicy
 
     if @exercise_set.update(exercise_set_params)
-      redirect_to exercise_set_path(@exercise_set), notice: "Exercise set updated successfully."
+      redirect_to exercise_set_path(@exercise_set), notice: t("flash.exercise_sets.updated")
     else
       redirect_to edit_exercise_set_path(@exercise_set), inertia: {errors: @exercise_set.errors}
     end
@@ -65,19 +65,19 @@ class ExerciseSetsController < InertiaController
     authorize @exercise_set, policy_class: ExerciseSetPolicy
     course = @exercise_set.course
     @exercise_set.destroy!
-    redirect_to course_exercise_sets_path(course), notice: "Exercise set deleted successfully."
+    redirect_to course_exercise_sets_path(course), notice: t("flash.exercise_sets.deleted")
   end
 
   def publish
     authorize @exercise_set, policy_class: ExerciseSetPolicy
     @exercise_set.update!(published: true)
-    redirect_to exercise_set_path(@exercise_set), notice: "Exercise set published."
+    redirect_to exercise_set_path(@exercise_set), notice: t("flash.exercise_sets.published")
   end
 
   def unpublish
     authorize @exercise_set, policy_class: ExerciseSetPolicy
     @exercise_set.update!(published: false)
-    redirect_to exercise_set_path(@exercise_set), notice: "Exercise set unpublished."
+    redirect_to exercise_set_path(@exercise_set), notice: t("flash.exercise_sets.unpublished")
   end
 
   private

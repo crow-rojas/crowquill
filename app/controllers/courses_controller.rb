@@ -38,7 +38,7 @@ class CoursesController < InertiaController
     @course = @academic_period.courses.build(course_params)
 
     if @course.save
-      redirect_to course_path(@course), notice: "Course created successfully."
+      redirect_to course_path(@course), notice: t("flash.courses.created")
     else
       redirect_to new_academic_period_course_path(@academic_period), inertia: {errors: @course.errors}
     end
@@ -55,7 +55,7 @@ class CoursesController < InertiaController
     authorize @course, policy_class: CoursePolicy
 
     if @course.update(course_params)
-      redirect_to course_path(@course), notice: "Course updated successfully."
+      redirect_to course_path(@course), notice: t("flash.courses.updated")
     else
       redirect_to edit_course_path(@course), inertia: {errors: @course.errors}
     end
@@ -65,7 +65,7 @@ class CoursesController < InertiaController
     authorize @course, policy_class: CoursePolicy
     academic_period = @course.academic_period
     @course.destroy!
-    redirect_to academic_period_courses_path(academic_period), notice: "Course deleted successfully."
+    redirect_to academic_period_courses_path(academic_period), notice: t("flash.courses.deleted")
   end
 
   private

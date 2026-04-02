@@ -23,15 +23,27 @@ import esLanding from "@/i18n/locales/es/landing.json"
 import esNav from "@/i18n/locales/es/nav.json"
 import esOnboarding from "@/i18n/locales/es/onboarding.json"
 
+function persistLocaleCookie(locale: "es" | "en") {
+  if (typeof document === "undefined") return
+
+  document.cookie = `app_lang=${locale};path=/;max-age=${60 * 60 * 24 * 365};SameSite=Lax`
+}
+
 function getStoredLocale(): "es" | "en" {
   if (typeof document === "undefined") return "es"
   const match = document.cookie.match(/app_lang=(es|en)/)
-  return (match?.[1] as "es" | "en") ?? "es"
+  if (match?.[1]) {
+    return match[1] as "es" | "en"
+  }
+
+  // Keep backend flash locale aligned with frontend default locale.
+  persistLocaleCookie("es")
+  return "es"
 }
 
 export function setLocale(locale: "es" | "en") {
   i18n.global.locale.value = locale
-  document.cookie = `app_lang=${locale};path=/;max-age=${60 * 60 * 24 * 365};SameSite=Lax`
+  persistLocaleCookie(locale)
   document.documentElement.lang = locale
 }
 

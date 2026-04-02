@@ -29,3 +29,59 @@
 
 en:
   hello: "Hello world"
+  flash:
+    auth:
+      already_signed_in: "You are already signed in"
+    authorization:
+      not_authorized: "You are not authorized to perform this action."
+    sessions:
+      signed_in: "Signed in successfully"
+      invalid_credentials: "That email or password is incorrect"
+      switch_user_unavailable: "Selected user is not available for switching"
+      switched_user: "Switched to %{email}"
+      logged_out: "That session has been logged out"
+    users:
+      signed_up: "Welcome! You have signed up successfully"
+      account_deleted: "Your account has been deleted"
+    academic_periods:
+      created: "Academic period created successfully."
+      updated: "Academic period updated successfully."
+      deleted: "Academic period deleted successfully."
+    courses:
+      created: "Course created successfully."
+      updated: "Course updated successfully."
+      deleted: "Course deleted successfully."
+    sections:
+      created: "Section created successfully."
+      updated: "Section updated successfully."
+      deleted: "Section deleted successfully."
+    enrollments:
+      section_full: "Section is full"
+      enrolled: "Enrolled successfully"
+      withdrawn: "Withdrawn successfully"
+      deleted: "Enrollment deleted successfully"
+    exercise_sets:
+      created: "Exercise set created successfully."
+      updated: "Exercise set updated successfully."
+      deleted: "Exercise set deleted successfully."
+      published: "Exercise set published."
+      unpublished: "Exercise set unpublished."
+    tutoring_sessions:
+      created: "Session created successfully."
+      updated: "Session updated successfully."
+      deleted: "Session deleted successfully."
+    attendances:
+      saved: "Attendance saved successfully."
+    password_resets:
+      check_email: "Check your email for reset instructions"
+      verify_email_required: "You can't reset your password until you verify your email"
+      updated: "Your password was reset successfully. Please sign in"
+      invalid_link: "That password reset link is invalid"
+    email_verifications:
+      verified: "Thank you for verifying your email address"
+      sent: "We sent a verification email to your email address"
+      invalid_link: "That email verification link is invalid"
+    settings:
+      profile_updated: "Your profile has been updated"
+      email_changed: "Your email has been changed"
+      password_changed: "Your password has been changed"

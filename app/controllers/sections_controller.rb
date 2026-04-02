@@ -45,7 +45,7 @@ class SectionsController < InertiaController
     @section = @course.sections.build(section_params)
 
     if @section.save
-      redirect_to section_path(@section), notice: "Section created successfully."
+      redirect_to section_path(@section), notice: t("flash.sections.created")
     else
       redirect_to new_course_section_path(@course), inertia: {errors: @section.errors}
     end
@@ -67,7 +67,7 @@ class SectionsController < InertiaController
     authorize @section, policy_class: SectionPolicy
 
     if @section.update(section_params)
-      redirect_to section_path(@section), notice: "Section updated successfully."
+      redirect_to section_path(@section), notice: t("flash.sections.updated")
     else
       redirect_to edit_section_path(@section), inertia: {errors: @section.errors}
     end
@@ -77,7 +77,7 @@ class SectionsController < InertiaController
     authorize @section, policy_class: SectionPolicy
     course = @section.course
     @section.destroy!
-    redirect_to course_sections_path(course), notice: "Section deleted successfully."
+    redirect_to course_sections_path(course), notice: t("flash.sections.deleted")
   end
 
   private

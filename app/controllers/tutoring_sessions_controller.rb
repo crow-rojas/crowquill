@@ -50,7 +50,7 @@ class TutoringSessionsController < InertiaController
     @tutoring_session = @section.tutoring_sessions.build(tutoring_session_params)
 
     if @tutoring_session.save
-      redirect_to tutoring_session_path(@tutoring_session), notice: "Session created successfully."
+      redirect_to tutoring_session_path(@tutoring_session), notice: t("flash.tutoring_sessions.created")
     else
       redirect_to new_section_tutoring_session_path(@section), inertia: {errors: @tutoring_session.errors}
     end
@@ -70,7 +70,7 @@ class TutoringSessionsController < InertiaController
     authorize @tutoring_session, policy_class: TutoringSessionPolicy
 
     if @tutoring_session.update(tutoring_session_params)
-      redirect_to tutoring_session_path(@tutoring_session), notice: "Session updated successfully."
+      redirect_to tutoring_session_path(@tutoring_session), notice: t("flash.tutoring_sessions.updated")
     else
       redirect_to edit_tutoring_session_path(@tutoring_session), inertia: {errors: @tutoring_session.errors}
     end
@@ -80,7 +80,7 @@ class TutoringSessionsController < InertiaController
     authorize @tutoring_session, policy_class: TutoringSessionPolicy
     section = @tutoring_session.section
     @tutoring_session.destroy!
-    redirect_to section_tutoring_sessions_path(section), notice: "Session deleted successfully."
+    redirect_to section_tutoring_sessions_path(section), notice: t("flash.tutoring_sessions.deleted")
   end
 
   private

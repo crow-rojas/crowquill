@@ -25,7 +25,7 @@ class AttendancesController < InertiaController
       end
     end
 
-    redirect_to tutoring_session_path(@tutoring_session), notice: "Attendance saved successfully."
+    redirect_to tutoring_session_path(@tutoring_session), notice: t("flash.attendances.saved")
   rescue ActiveRecord::RecordInvalid => e
     redirect_to tutoring_session_path(@tutoring_session), inertia: {errors: e.record.errors}
   end

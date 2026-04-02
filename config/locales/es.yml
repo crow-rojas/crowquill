@@ -72,3 +72,59 @@ es:
       default: "%d/%m/%Y %H:%M"
       short: "%d %b %H:%M"
       long: "%d de %B de %Y %H:%M"
+  flash:
+    auth:
+      already_signed_in: "Ya has iniciado sesión"
+    authorization:
+      not_authorized: "No estás autorizado para realizar esta acción."
+    sessions:
+      signed_in: "Sesión iniciada correctamente"
+      invalid_credentials: "El correo o la contraseña son incorrectos"
+      switch_user_unavailable: "El usuario seleccionado no está disponible para cambiar"
+      switched_user: "Cambiado a %{email}"
+      logged_out: "Esa sesión ha sido cerrada"
+    users:
+      signed_up: "Bienvenido. Te registraste correctamente"
+      account_deleted: "Tu cuenta ha sido eliminada"
+    academic_periods:
+      created: "Período académico creado correctamente."
+      updated: "Período académico actualizado correctamente."
+      deleted: "Período académico eliminado correctamente."
+    courses:
+      created: "Curso creado correctamente."
+      updated: "Curso actualizado correctamente."
+      deleted: "Curso eliminado correctamente."
+    sections:
+      created: "Sección creada correctamente."
+      updated: "Sección actualizada correctamente."
+      deleted: "Sección eliminada correctamente."
+    enrollments:
+      section_full: "La sección está llena"
+      enrolled: "Inscripción realizada correctamente"
+      withdrawn: "Retiro realizado correctamente"
+      deleted: "Inscripción eliminada correctamente"
+    exercise_sets:
+      created: "Set de ejercicios creado correctamente."
+      updated: "Set de ejercicios actualizado correctamente."
+      deleted: "Set de ejercicios eliminado correctamente."
+      published: "Set de ejercicios publicado."
+      unpublished: "Set de ejercicios despublicado."
+    tutoring_sessions:
+      created: "Sesión creada correctamente."
+      updated: "Sesión actualizada correctamente."
+      deleted: "Sesión eliminada correctamente."
+    attendances:
+      saved: "Asistencia guardada correctamente."
+    password_resets:
+      check_email: "Revisa tu correo para restablecer tu contraseña"
+      verify_email_required: "No puedes restablecer tu contraseña hasta verificar tu correo"
+      updated: "Tu contraseña fue restablecida correctamente. Inicia sesión"
+      invalid_link: "El enlace para restablecer contraseña no es válido"
+    email_verifications:
+      verified: "Gracias por verificar tu correo electrónico"
+      sent: "Enviamos un correo de verificación a tu dirección de correo"
+      invalid_link: "El enlace de verificación de correo no es válido"
+    settings:
+      profile_updated: "Tu perfil ha sido actualizado"
+      email_changed: "Tu correo ha sido actualizado"
+      password_changed: "Tu contraseña ha sido actualizada"
