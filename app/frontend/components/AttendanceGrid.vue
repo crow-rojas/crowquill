@@ -12,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { tutoringSessionAttendancesPath } from "@/routes"
 import type { Attendance, Enrollment } from "@/types/academic"
 
 const props = defineProps<{
@@ -80,7 +81,7 @@ function statusButtonVariant(
 }
 
 function submit() {
-  form.patch(`/tutoring_sessions/${props.tutoringSessionId}/attendances`)
+  form.patch(tutoringSessionAttendancesPath(props.tutoringSessionId))
 }
 </script>
 

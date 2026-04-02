@@ -11,6 +11,7 @@ import {
   academicPeriodsPath,
   courseExerciseSetsPath,
   coursePath,
+  dashboardPath,
   editExerciseSetPath,
   exerciseSetPath,
   publishExerciseSetPath,
@@ -27,7 +28,7 @@ const { t } = useI18n()
 const { can } = usePermissions()
 
 const breadcrumbs: BreadcrumbItem[] = [
-  { title: t("nav.dashboard"), href: "/dashboard" },
+  { title: t("nav.dashboard"), href: dashboardPath() },
   { title: t("academic_periods.title"), href: academicPeriodsPath() },
   {
     title: props.exercise_set.course.name,

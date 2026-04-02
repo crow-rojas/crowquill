@@ -15,7 +15,14 @@ import {
 } from "@/components/ui/table"
 import { usePermissions } from "@/composables/usePermissions"
 import AppLayout from "@/layouts/AppLayout.vue"
-import { academicPeriodsPath, coursePath, sectionPath } from "@/routes"
+import {
+  academicPeriodsPath,
+  coursePath,
+  dashboardPath,
+  enrollmentPath,
+  sectionEnrollmentsPath,
+  sectionPath,
+} from "@/routes"
 import type { BreadcrumbItem } from "@/types"
 import type { Course, Enrollment, Section } from "@/types/academic"
 
@@ -28,7 +35,7 @@ const { t } = useI18n()
 const { can } = usePermissions()
 
 const breadcrumbs: BreadcrumbItem[] = [
-  { title: t("nav.dashboard"), href: "/dashboard" },
+  { title: t("nav.dashboard"), href: dashboardPath() },
   { title: t("academic_periods.title"), href: academicPeriodsPath() },
   {
     title: props.section.course.name,
@@ -40,17 +47,17 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
   {
     title: t("enrollment.title"),
-    href: `/sections/${props.section.id}/enrollments`,
+    href: sectionEnrollmentsPath(props.section.id),
   },
 ]
 
 function withdrawEnrollment(enrollment: Enrollment) {
-  router.patch(`/enrollments/${enrollment.id}`)
+  router.patch(enrollmentPath(enrollment.id))
 }
 
 function deleteEnrollment(enrollment: Enrollment) {
   if (confirm(t("enrollment.confirm_delete"))) {
-    router.delete(`/enrollments/${enrollment.id}`)
+    router.delete(enrollmentPath(enrollment.id))
   }
 }
 </script>

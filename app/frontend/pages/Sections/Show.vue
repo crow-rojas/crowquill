@@ -11,7 +11,9 @@ import AppLayout from "@/layouts/AppLayout.vue"
 import {
   academicPeriodsPath,
   coursePath,
+  dashboardPath,
   editSectionPath,
+  sectionEnrollmentsPath,
   sectionPath,
 } from "@/routes"
 import type { BreadcrumbItem } from "@/types"
@@ -28,7 +30,7 @@ const { t } = useI18n()
 const { can } = usePermissions()
 
 const breadcrumbs: BreadcrumbItem[] = [
-  { title: t("nav.dashboard"), href: "/dashboard" },
+  { title: t("nav.dashboard"), href: dashboardPath() },
   { title: t("academic_periods.title"), href: academicPeriodsPath() },
   {
     title: props.section.course.name,
@@ -134,7 +136,7 @@ function deleteSection() {
           </h2>
           <div class="flex gap-2">
             <Button variant="outline" size="sm" as-child>
-              <Link :href="`/sections/${section.id}/enrollments`">
+              <Link :href="sectionEnrollmentsPath(section.id)">
                 {{ t("enrollment.title") }}
               </Link>
             </Button>

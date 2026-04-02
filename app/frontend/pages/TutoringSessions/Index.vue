@@ -15,7 +15,15 @@ import {
 } from "@/components/ui/table"
 import { usePermissions } from "@/composables/usePermissions"
 import AppLayout from "@/layouts/AppLayout.vue"
-import { academicPeriodsPath, coursePath, sectionPath } from "@/routes"
+import {
+  academicPeriodsPath,
+  coursePath,
+  dashboardPath,
+  newSectionTutoringSessionPath,
+  sectionPath,
+  sectionTutoringSessionsPath,
+  tutoringSessionPath,
+} from "@/routes"
 import type { BreadcrumbItem } from "@/types"
 import type { Course, Section, TutoringSession } from "@/types/academic"
 
@@ -28,7 +36,7 @@ const { t } = useI18n()
 const { can } = usePermissions()
 
 const breadcrumbs: BreadcrumbItem[] = [
-  { title: t("nav.dashboard"), href: "/dashboard" },
+  { title: t("nav.dashboard"), href: dashboardPath() },
   { title: t("academic_periods.title"), href: academicPeriodsPath() },
   {
     title: props.section.course.name,
@@ -40,7 +48,7 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
   {
     title: t("sessions.title"),
-    href: `/sections/${props.section.id}/tutoring_sessions`,
+    href: sectionTutoringSessionsPath(props.section.id),
   },
 ]
 
@@ -59,7 +67,7 @@ function statusVariant(
 
 function deleteSession(session: TutoringSession) {
   if (confirm(t("sessions.confirm_delete"))) {
-    router.delete(`/tutoring_sessions/${session.id}`)
+    router.delete(tutoringSessionPath(session.id))
   }
 }
 </script>
@@ -77,7 +85,7 @@ function deleteSession(session: TutoringSession) {
           {{ t("sessions.title") }} — {{ section.name }}
         </h1>
         <Button v-if="can.take_attendance" size="sm" as-child>
-          <Link :href="`/sections/${section.id}/tutoring_sessions/new`">
+          <Link :href="newSectionTutoringSessionPath(section.id)">
             <Plus class="mr-1 h-4 w-4" />
             {{ t("sessions.new") }}
           </Link>
@@ -105,7 +113,7 @@ function deleteSession(session: TutoringSession) {
           <TableRow v-for="session in tutoring_sessions" :key="session.id">
             <TableCell>
               <Link
-                :href="`/tutoring_sessions/${session.id}`"
+                :href="tutoringSessionPath(session.id)"
                 class="font-medium hover:underline"
               >
                 {{ session.date }}
@@ -119,7 +127,7 @@ function deleteSession(session: TutoringSession) {
             <TableCell class="text-right">
               <div class="flex justify-end gap-2">
                 <Button variant="outline" size="sm" as-child>
-                  <Link :href="`/tutoring_sessions/${session.id}`">
+                  <Link :href="tutoringSessionPath(session.id)">
                     {{ t("common.view") }}
                   </Link>
                 </Button>

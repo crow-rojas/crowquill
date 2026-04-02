@@ -17,6 +17,7 @@ import {
   academicPeriodCoursesPath,
   academicPeriodPath,
   academicPeriodsPath,
+  dashboardPath,
 } from "@/routes"
 import type { BreadcrumbItem } from "@/types"
 import type { AcademicPeriod } from "@/types/academic"
@@ -28,7 +29,7 @@ const props = defineProps<{
 const { t } = useI18n()
 
 const breadcrumbs: BreadcrumbItem[] = [
-  { title: t("nav.dashboard"), href: "/dashboard" },
+  { title: t("nav.dashboard"), href: dashboardPath() },
   { title: t("academic_periods.title"), href: academicPeriodsPath() },
   {
     title: props.academic_period.name,

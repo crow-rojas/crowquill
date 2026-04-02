@@ -2,6 +2,7 @@
 import { Link, usePage } from "@inertiajs/vue3"
 import { BookOpen, Folder, LayoutGrid, Menu, Search } from "lucide-vue-next"
 import { computed } from "vue"
+import { useI18n } from "vue-i18n"
 
 import AppLogo from "@/components/AppLogo.vue"
 import AppLogoIcon from "@/components/AppLogoIcon.vue"
@@ -45,6 +46,7 @@ const props = withDefaults(defineProps<Props>(), {
   breadcrumbs: () => [],
 })
 
+const { t } = useI18n()
 const page = usePage()
 const auth = computed(() => page.props.auth)
 
@@ -59,8 +61,8 @@ const activeItemStyles = computed(
 
 const mainNavItems: NavItem[] = [
   {
-    title: "Dashboard",
-    href: "/dashboard",
+    title: t("nav.dashboard"),
+    href: dashboardPath(),
     icon: LayoutGrid,
   },
 ]

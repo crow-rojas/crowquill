@@ -13,6 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { sectionEnrollmentsPath } from "@/routes"
 
 const props = defineProps<{
   sectionId: number
@@ -25,7 +26,7 @@ const open = ref(false)
 const form = useForm({})
 
 function handleEnroll() {
-  form.post(`/sections/${props.sectionId}/enrollments`, {
+  form.post(sectionEnrollmentsPath(props.sectionId), {
     onSuccess: () => {
       open.value = false
     },

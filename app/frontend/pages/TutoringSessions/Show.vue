@@ -9,7 +9,15 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { usePermissions } from "@/composables/usePermissions"
 import AppLayout from "@/layouts/AppLayout.vue"
-import { academicPeriodsPath, coursePath, sectionPath } from "@/routes"
+import {
+  academicPeriodsPath,
+  coursePath,
+  dashboardPath,
+  editTutoringSessionPath,
+  sectionPath,
+  sectionTutoringSessionsPath,
+  tutoringSessionPath,
+} from "@/routes"
 import type { BreadcrumbItem } from "@/types"
 import type {
   Attendance,
@@ -37,7 +45,7 @@ const section = props.tutoring_session.section
 const course = section.course!
 
 const breadcrumbs: BreadcrumbItem[] = [
-  { title: t("nav.dashboard"), href: "/dashboard" },
+  { title: t("nav.dashboard"), href: dashboardPath() },
   { title: t("academic_periods.title"), href: academicPeriodsPath() },
   {
     title: course.name,
@@ -49,11 +57,11 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
   {
     title: t("sessions.title"),
-    href: `/sections/${section.id}/tutoring_sessions`,
+    href: sectionTutoringSessionsPath(section.id),
   },
   {
     title: props.tutoring_session.date,
-    href: `/tutoring_sessions/${props.tutoring_session.id}`,
+    href: tutoringSessionPath(props.tutoring_session.id),
   },
 ]
 
@@ -72,7 +80,7 @@ function statusVariant(
 
 function deleteSession() {
   if (confirm(t("sessions.confirm_delete"))) {
-    router.delete(`/tutoring_sessions/${props.tutoring_session.id}`)
+    router.delete(tutoringSessionPath(props.tutoring_session.id))
   }
 }
 </script>
@@ -96,7 +104,7 @@ function deleteSession() {
         </div>
         <div v-if="can.manage_sections" class="flex gap-2">
           <Button variant="outline" size="sm" as-child>
-            <Link :href="`/tutoring_sessions/${tutoring_session.id}/edit`">
+            <Link :href="editTutoringSessionPath(tutoring_session.id)">
               {{ t("common.edit") }}
             </Link>
           </Button>

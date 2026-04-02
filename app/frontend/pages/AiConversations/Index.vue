@@ -6,7 +6,11 @@ import { useI18n } from "vue-i18n"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import AppLayout from "@/layouts/AppLayout.vue"
-import { aiConversationPath, aiConversationsPath } from "@/routes"
+import {
+  aiConversationPath,
+  aiConversationsPath,
+  dashboardPath,
+} from "@/routes"
 import type { BreadcrumbItem } from "@/types"
 import type { AiConversation } from "@/types/academic"
 
@@ -17,7 +21,7 @@ defineProps<{
 const { t } = useI18n()
 
 const breadcrumbs: BreadcrumbItem[] = [
-  { title: t("nav.dashboard"), href: "/dashboard" },
+  { title: t("nav.dashboard"), href: dashboardPath() },
   { title: t("ai.title"), href: "#" },
 ]
 

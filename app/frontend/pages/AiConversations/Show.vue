@@ -8,7 +8,7 @@ import ChatMessage from "@/components/ChatMessage.vue"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useAiChat } from "@/composables/useAiChat"
 import AppLayout from "@/layouts/AppLayout.vue"
-import { aiConversationsPath } from "@/routes"
+import { aiConversationsPath, dashboardPath } from "@/routes"
 import type { BreadcrumbItem } from "@/types"
 import type { AiConversation } from "@/types/academic"
 
@@ -24,7 +24,7 @@ const { processing, sendMessage } = useAiChat(props.conversation.id)
 const messagesEnd = ref<HTMLDivElement | null>(null)
 
 const breadcrumbs: BreadcrumbItem[] = [
-  { title: t("nav.dashboard"), href: "/dashboard" },
+  { title: t("nav.dashboard"), href: dashboardPath() },
   { title: t("ai.title"), href: aiConversationsPath() },
   { title: props.conversation.title, href: "#" },
 ]

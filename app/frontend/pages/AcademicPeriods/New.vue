@@ -14,13 +14,13 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import AppLayout from "@/layouts/AppLayout.vue"
-import { academicPeriodsPath } from "@/routes"
+import { academicPeriodsPath, dashboardPath } from "@/routes"
 import type { BreadcrumbItem } from "@/types"
 
 const { t } = useI18n()
 
 const breadcrumbs: BreadcrumbItem[] = [
-  { title: t("nav.dashboard"), href: "/dashboard" },
+  { title: t("nav.dashboard"), href: dashboardPath() },
   { title: t("academic_periods.title"), href: academicPeriodsPath() },
   { title: t("academic_periods.new"), href: "#" },
 ]

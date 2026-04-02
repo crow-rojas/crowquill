@@ -11,6 +11,7 @@ import AppLayout from "@/layouts/AppLayout.vue"
 import {
   academicPeriodsPath,
   coursePath,
+  dashboardPath,
   exerciseSetPath,
   newCourseExerciseSetPath,
 } from "@/routes"
@@ -26,7 +27,7 @@ const { t } = useI18n()
 const { can } = usePermissions()
 
 const breadcrumbs: BreadcrumbItem[] = [
-  { title: t("nav.dashboard"), href: "/dashboard" },
+  { title: t("nav.dashboard"), href: dashboardPath() },
   { title: t("academic_periods.title"), href: academicPeriodsPath() },
   { title: props.course.name, href: coursePath(props.course.id) },
   { title: t("exercises.title"), href: "#" },
