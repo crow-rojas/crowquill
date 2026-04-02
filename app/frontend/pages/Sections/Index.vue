@@ -5,12 +5,13 @@ import { useI18n } from "vue-i18n"
 
 import { Button } from "@/components/ui/button"
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import { usePermissions } from "@/composables/usePermissions"
 import AppLayout from "@/layouts/AppLayout.vue"
 import {
@@ -20,6 +21,7 @@ import {
   editSectionPath,
   newCourseSectionPath,
   sectionPath,
+  sectionTutoringSessionsPath,
 } from "@/routes"
 import type { BreadcrumbItem } from "@/types"
 import type { Course, Section } from "@/types/academic"
@@ -71,47 +73,72 @@ function deleteSection(section: Section) {
         <p>{{ t("sections.no_sections") }}</p>
       </div>
 
-      <div v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <Card v-for="section in sections" :key="section.id">
-          <CardHeader>
-            <CardTitle class="text-lg">
-              <Link :href="sectionPath(section.id)" class="hover:underline">
-                {{ section.name }}
-              </Link>
-            </CardTitle>
-            <CardDescription v-if="section.tutor">
-              {{ t("sections.tutor") }}: {{ section.tutor.name }}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div class="flex flex-col gap-2">
-              <div
-                class="text-muted-foreground flex items-center gap-1 text-sm"
-              >
-                <Users class="h-4 w-4" />
-                <span
-                  >{{ t("sections.max_students") }}:
-                  {{ section.max_students }}</span
-                >
-              </div>
-              <div v-if="can.manage_sections" class="flex gap-2 pt-2">
-                <Button variant="outline" size="sm" as-child>
-                  <Link :href="editSectionPath(section.id)">
-                    {{ t("common.edit") }}
-                  </Link>
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  class="text-destructive"
-                  @click="deleteSection(section)"
-                >
-                  {{ t("common.delete") }}
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      <div v-else class="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{{ t("sections.name") }}</TableHead>
+              <TableHead>{{ t("sections.tutor") }}</TableHead>
+              <TableHead class="text-right">{{
+                t("sections.max_students")
+              }}</TableHead>
+              <TableHead class="text-right">{{
+                t("common.actions")
+              }}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow v-for="section in sections" :key="section.id">
+              <TableCell class="font-medium">
+                <Link :href="sectionPath(section.id)" class="hover:underline">
+                  {{ section.name }}
+                </Link>
+              </TableCell>
+              <TableCell>{{ section.tutor?.name || "-" }}</TableCell>
+              <TableCell class="text-right">{{
+                section.max_students
+              }}</TableCell>
+              <TableCell class="text-right">
+                <div class="flex flex-wrap justify-end gap-2">
+                  <Button variant="outline" size="sm" as-child>
+                    <Link :href="sectionPath(section.id)">
+                      {{ t("common.view") }}
+                    </Link>
+                  </Button>
+                  <Button
+                    v-if="section.can_view_sessions"
+                    variant="outline"
+                    size="sm"
+                    as-child
+                  >
+                    <Link :href="sectionTutoringSessionsPath(section.id)">
+                      {{ t("sections.sessions_action") }}
+                    </Link>
+                  </Button>
+                  <Button
+                    v-if="can.manage_sections"
+                    variant="outline"
+                    size="sm"
+                    as-child
+                  >
+                    <Link :href="editSectionPath(section.id)">
+                      {{ t("common.edit") }}
+                    </Link>
+                  </Button>
+                  <Button
+                    v-if="can.manage_sections"
+                    variant="outline"
+                    size="sm"
+                    class="text-destructive"
+                    @click="deleteSection(section)"
+                  >
+                    {{ t("common.delete") }}
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
       </div>
     </div>
   </AppLayout>

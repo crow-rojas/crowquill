@@ -76,8 +76,10 @@ RSpec.describe "Courses", type: :request do
 
         get course_path(course)
 
-        section_ids = inertia.props[:course]["sections"].map { |s| s["id"] }
+        sections_payload = inertia.props[:course]["sections"]
+        section_ids = sections_payload.map { |s| s["id"] }
         expect(section_ids).to contain_exactly(own_section.id)
+        expect(sections_payload.first["can_view_sessions"]).to be true
       end
     end
 
@@ -100,9 +102,24 @@ RSpec.describe "Courses", type: :request do
 
         get course_path(course)
 
-        section_ids = inertia.props[:course]["sections"].map { |s| s["id"] }
+        sections_payload = inertia.props[:course]["sections"]
+        section_ids = sections_payload.map { |s| s["id"] }
         expect(section_ids).to include(available_section.id)
         expect(section_ids).not_to include(full_section.id)
+
+        available_payload = sections_payload.find { |s| s["id"] == available_section.id }
+        expect(available_payload["can_view_sessions"]).to be false
+      end
+
+      it "marks enrolled sections as session-visible" do
+        tutor_membership
+        enrolled_section = create(:section, course: course, tutor: tutor_user)
+        create(:enrollment, section: enrolled_section, user: tutorado_user)
+
+        get course_path(course)
+
+        enrolled_payload = inertia.props[:course]["sections"].find { |s| s["id"] == enrolled_section.id }
+        expect(enrolled_payload["can_view_sessions"]).to be true
       end
     end
   end

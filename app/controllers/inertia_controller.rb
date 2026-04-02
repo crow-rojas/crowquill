@@ -17,6 +17,7 @@ class InertiaController < ApplicationController
       membership: Current.membership&.as_json(only: %i[id role]),
       current_role: Current.membership&.role,
       can: build_permissions,
+      academic_period_context: build_academic_period_context,
       dev_user_switch: build_dev_user_switch
     }
   }
@@ -56,6 +57,18 @@ class InertiaController < ApplicationController
       view_attendance_statistics: membership.admin?,
       manage_enrollments: membership.admin?,
       create_ai_conversations: true
+    }
+  end
+
+  def build_academic_period_context
+    return {active: nil, available: []} unless Current.organization
+
+    academic_periods = Current.organization.academic_periods.order(start_date: :desc)
+    active_period = academic_periods.find { |period| period.status == "active" }
+
+    {
+      active: active_period&.as_json(only: %i[id name start_date end_date status]),
+      available: academic_periods.as_json(only: %i[id name start_date end_date status])
     }
   end
 

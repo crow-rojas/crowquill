@@ -6,11 +6,18 @@ class SectionsController < InertiaController
 
   def index
     authorize :section, policy_class: SectionPolicy
-    sections = visible_sections(@course.sections).includes(:tutor).order(:name)
+    sections = visible_sections(@course.sections).includes(:tutor).order(:name).to_a
+    session_visible_section_ids = section_ids_with_visible_sessions(sections)
+
+    sections_payload = sections.map do |section|
+      section.as_json(include: {tutor: {only: %i[id name email]}}).merge(
+        "can_view_sessions" => session_visible_section_ids.include?(section.id)
+      )
+    end
 
     render inertia: "Sections/Index", props: {
       course: @course.as_json,
-      sections: sections.as_json(include: {tutor: {only: %i[id name email]}})
+      sections: sections_payload
     }
   end
 
@@ -131,5 +138,26 @@ class SectionsController < InertiaController
       active_count = active_counts.fetch(section.id, 0)
       section.id if enrolled_section_ids.include?(section.id) || active_count < section.max_students
     end
+  end
+
+  def section_ids_with_visible_sessions(sections)
+    return [] if sections.empty?
+    return sections.map(&:id) if Current.membership&.admin?
+
+    if Current.membership&.tutor?
+      return sections.filter_map do |section|
+        section.id if section.tutor_id == Current.user.id
+      end
+    end
+
+    if Current.membership&.tutorado?
+      return Enrollment.where(
+        section_id: sections.map(&:id),
+        user_id: Current.user.id,
+        status: "active"
+      ).pluck(:section_id)
+    end
+
+    []
   end
 end

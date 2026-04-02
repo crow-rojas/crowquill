@@ -28,6 +28,7 @@ export interface Section {
   tutor?: { id: number; name: string; email: string }
   course?: Course
   enrollments_count?: number
+  can_view_sessions?: boolean
   created_at: string
   updated_at: string
 }

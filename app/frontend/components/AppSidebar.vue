@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Link } from "@inertiajs/vue3"
+import { Link, usePage } from "@inertiajs/vue3"
 import { CalendarDays, LayoutGrid, MessageCircle, Users } from "lucide-vue-next"
 import { computed } from "vue"
 import { useI18n } from "vue-i18n"
@@ -17,16 +17,29 @@ import {
 } from "@/components/ui/sidebar"
 import { usePermissions } from "@/composables/usePermissions"
 import {
+  academicPeriodPath,
   academicPeriodsPath,
   aiConversationsPath,
   dashboardPath,
 } from "@/routes"
-import { type NavItem } from "@/types"
+import { type Auth, type NavItem } from "@/types"
 
 import AppLogo from "./AppLogo.vue"
 
 const { t } = useI18n()
 const { can, isTutor, isTutorado } = usePermissions()
+const page = usePage()
+
+const auth = computed(() => page.props.auth as Partial<Auth> | undefined)
+const academicPeriodContext = computed(() => {
+  return auth.value?.academic_period_context ?? { active: null, available: [] }
+})
+const currentAcademicPeriod = computed(() => academicPeriodContext.value.active)
+const currentPeriodHref = computed(() => {
+  return currentAcademicPeriod.value
+    ? academicPeriodPath(currentAcademicPeriod.value.id)
+    : academicPeriodsPath()
+})
 
 const mainNavItems = computed<NavItem[]>(() => {
   const items: NavItem[] = [
@@ -39,17 +52,27 @@ const mainNavItems = computed<NavItem[]>(() => {
 
   // Admin: grouped academic management
   if (can.value.manage_academic_periods) {
+    const academicManagementItems: NavItem[] = []
+
+    if (currentAcademicPeriod.value) {
+      academicManagementItems.push({
+        title: t("nav.current_period"),
+        href: currentPeriodHref.value,
+        icon: CalendarDays,
+      })
+    }
+
+    academicManagementItems.push({
+      title: t("nav.academic_periods"),
+      href: academicPeriodsPath(),
+      icon: CalendarDays,
+    })
+
     items.push({
       title: t("nav.academic_management"),
       icon: CalendarDays,
       defaultOpen: true,
-      items: [
-        {
-          title: t("nav.academic_periods"),
-          href: academicPeriodsPath(),
-          icon: CalendarDays,
-        },
-      ],
+      items: academicManagementItems,
     })
   }
 
@@ -61,9 +84,9 @@ const mainNavItems = computed<NavItem[]>(() => {
       defaultOpen: true,
       items: [
         {
-          title: t("nav.my_sections"),
-          href: academicPeriodsPath(),
-          icon: Users,
+          title: t("nav.current_period"),
+          href: currentPeriodHref.value,
+          icon: CalendarDays,
         },
       ],
     })

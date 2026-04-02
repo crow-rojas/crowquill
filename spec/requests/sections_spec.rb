@@ -36,6 +36,13 @@ RSpec.describe "Sections", type: :request do
         get course_sections_path(course)
         expect(response).to have_http_status(:success)
       end
+
+      it "includes session visibility for each section" do
+        get course_sections_path(course)
+
+        section_payload = inertia.props[:sections].find { |s| s["id"] == section.id }
+        expect(section_payload["can_view_sessions"]).to be true
+      end
     end
 
     context "as tutor" do
@@ -52,8 +59,11 @@ RSpec.describe "Sections", type: :request do
 
         get course_sections_path(course)
 
-        section_ids = inertia.props[:sections].map { |s| s["id"] }
+        sections_payload = inertia.props[:sections]
+        section_ids = sections_payload.map { |s| s["id"] }
+
         expect(section_ids).to contain_exactly(section.id)
+        expect(sections_payload.first["can_view_sessions"]).to be true
       end
     end
 
@@ -63,6 +73,9 @@ RSpec.describe "Sections", type: :request do
       it "returns success" do
         get course_sections_path(course)
         expect(response).to have_http_status(:success)
+
+        section_payload = inertia.props[:sections].find { |s| s["id"] == section.id }
+        expect(section_payload["can_view_sessions"]).to be false
       end
 
       it "hides full sections when the user is not enrolled" do
@@ -77,6 +90,15 @@ RSpec.describe "Sections", type: :request do
         section_ids = inertia.props[:sections].map { |s| s["id"] }
         expect(section_ids).to include(section.id)
         expect(section_ids).not_to include(full_section.id)
+      end
+
+      it "enables session visibility for enrolled sections" do
+        create(:enrollment, section: section, user: tutorado_user)
+
+        get course_sections_path(course)
+
+        section_payload = inertia.props[:sections].find { |s| s["id"] == section.id }
+        expect(section_payload["can_view_sessions"]).to be true
       end
     end
   end

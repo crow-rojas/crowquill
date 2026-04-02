@@ -15,12 +15,26 @@ export interface DevUserSwitch {
   users: DevSwitchUser[]
 }
 
+export interface AcademicPeriodContextEntry {
+  id: number
+  name: string
+  start_date: string
+  end_date: string
+  status: "draft" | "active" | "archived"
+}
+
+export interface AcademicPeriodContext {
+  active: AcademicPeriodContextEntry | null
+  available: AcademicPeriodContextEntry[]
+}
+
 export interface Auth {
   user: User
   session: Pick<Session, "id">
   membership: Membership | null
   current_role: Role | null
   can: Permissions
+  academic_period_context?: AcademicPeriodContext
   dev_user_switch: DevUserSwitch
 }
 
