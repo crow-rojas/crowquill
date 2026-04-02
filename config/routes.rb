@@ -47,8 +47,8 @@ Rails.application.routes.draw do
     resource :password, only: [:show, :update]
     resource :email, only: [:show, :update]
     resources :sessions, only: [:index]
-    inertia :appearance
-    inertia :language
+    get :appearance, to: "settings/appearance#show"
+    get :language, to: "settings/language#show"
   end
 
   root "home#index"
