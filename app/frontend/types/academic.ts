@@ -32,6 +32,43 @@ export interface Section {
   updated_at: string
 }
 
+export interface ExerciseSet {
+  id: number
+  course_id: number
+  title: string
+  week_number: number
+  content: string
+  metadata: Record<string, unknown>
+  published: boolean
+  course?: Course
+  created_at: string
+  updated_at: string
+}
+
+export interface TutoringSession {
+  id: number
+  section_id: number
+  date: string
+  status: "scheduled" | "completed" | "cancelled"
+  section?: Section & {
+    course?: Course
+    tutor?: { id: number; name: string; email: string }
+  }
+  created_at: string
+  updated_at: string
+}
+
+export interface Attendance {
+  id: number
+  tutoring_session_id: number
+  enrollment_id: number
+  status: "present" | "absent" | "justified"
+  notes: string | null
+  enrollment?: Enrollment
+  created_at: string
+  updated_at: string
+}
+
 export interface Enrollment {
   id: number
   section_id: number

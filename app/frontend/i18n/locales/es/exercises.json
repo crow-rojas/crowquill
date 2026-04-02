@@ -1,0 +1,22 @@
+{
+  "exercises": {
+    "title": "Guias de Ejercicios",
+    "name": "Titulo",
+    "new": "Nueva Guia",
+    "edit": "Editar Guia",
+    "show": "Detalle de Guia",
+    "week_number": "Semana",
+    "content": "Contenido",
+    "published": "Publicado",
+    "draft": "Borrador",
+    "publish": "Publicar",
+    "unpublish": "Despublicar",
+    "no_exercises": "No hay guias de ejercicios",
+    "created_successfully": "Guia de ejercicios creada exitosamente",
+    "updated_successfully": "Guia de ejercicios actualizada exitosamente",
+    "deleted_successfully": "Guia de ejercicios eliminada exitosamente",
+    "preview": "Vista previa",
+    "editor": "Editor",
+    "confirm_delete": "Estas seguro de que deseas eliminar esta guia?"
+  }
+}

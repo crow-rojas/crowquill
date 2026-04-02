@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_02_043046) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_02_044902) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -23,6 +23,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_02_043046) do
     t.string "status", default: "draft", null: false
     t.datetime "updated_at", null: false
     t.index ["organization_id"], name: "index_academic_periods_on_organization_id"
+  end
+
+  create_table "attendances", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "enrollment_id", null: false
+    t.text "notes"
+    t.string "status", default: "absent", null: false
+    t.bigint "tutoring_session_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["enrollment_id"], name: "index_attendances_on_enrollment_id"
+    t.index ["tutoring_session_id", "enrollment_id"], name: "index_attendances_on_tutoring_session_id_and_enrollment_id", unique: true
+    t.index ["tutoring_session_id"], name: "index_attendances_on_tutoring_session_id"
   end
 
   create_table "courses", force: :cascade do |t|
@@ -44,6 +56,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_02_043046) do
     t.index ["section_id", "user_id"], name: "index_enrollments_on_section_id_and_user_id", unique: true
     t.index ["section_id"], name: "index_enrollments_on_section_id"
     t.index ["user_id"], name: "index_enrollments_on_user_id"
+  end
+
+  create_table "exercise_sets", force: :cascade do |t|
+    t.text "content", default: "", null: false
+    t.bigint "course_id", null: false
+    t.datetime "created_at", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.boolean "published", default: false, null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.integer "week_number", null: false
+    t.index ["course_id", "week_number"], name: "index_exercise_sets_on_course_id_and_week_number"
+    t.index ["course_id"], name: "index_exercise_sets_on_course_id"
   end
 
   create_table "memberships", force: :cascade do |t|
@@ -87,6 +112,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_02_043046) do
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
+  create_table "tutoring_sessions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.date "date", null: false
+    t.bigint "section_id", null: false
+    t.string "status", default: "scheduled", null: false
+    t.datetime "updated_at", null: false
+    t.index ["section_id"], name: "index_tutoring_sessions_on_section_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
@@ -98,12 +132,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_02_043046) do
   end
 
   add_foreign_key "academic_periods", "organizations"
+  add_foreign_key "attendances", "enrollments"
+  add_foreign_key "attendances", "tutoring_sessions"
   add_foreign_key "courses", "academic_periods"
   add_foreign_key "enrollments", "sections"
   add_foreign_key "enrollments", "users"
+  add_foreign_key "exercise_sets", "courses"
   add_foreign_key "memberships", "organizations"
   add_foreign_key "memberships", "users"
   add_foreign_key "sections", "courses"
   add_foreign_key "sections", "users", column: "tutor_id"
   add_foreign_key "sessions", "users"
+  add_foreign_key "tutoring_sessions", "sections"
 end

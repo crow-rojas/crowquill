@@ -2,6 +2,9 @@
   "private": true,
   "type": "module",
   "devDependencies": {
+    "@types/dompurify": "^3.2.0",
+    "@types/katex": "^0.16.8",
+    "@types/markdown-it": "^14.1.2",
     "@types/node": "^25.5.0",
     "@vitest/coverage-v8": "^4.1.2",
     "@vue/eslint-config-prettier": "^10.2.0",
@@ -27,6 +30,7 @@
   },
   "dependencies": {
     "@inertiajs/vue3": "^2.3.18",
+    "@mdit/plugin-katex": "^0.25.2",
     "@tailwindcss/forms": "^0.5.11",
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.2.2",
@@ -35,7 +39,10 @@
     "@vueuse/core": "^14.2.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dompurify": "^3.3.3",
+    "katex": "^0.16.44",
     "lucide-vue-next": "^0.577.0",
+    "markdown-it": "^14.1.1",
     "reka-ui": "^2.9.3",
     "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.2.2",

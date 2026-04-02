@@ -1,0 +1,22 @@
+{
+  "exercises": {
+    "title": "Exercise Sets",
+    "name": "Title",
+    "new": "New Exercise Set",
+    "edit": "Edit Exercise Set",
+    "show": "Exercise Set Detail",
+    "week_number": "Week",
+    "content": "Content",
+    "published": "Published",
+    "draft": "Draft",
+    "publish": "Publish",
+    "unpublish": "Unpublish",
+    "no_exercises": "No exercise sets",
+    "created_successfully": "Exercise set created successfully",
+    "updated_successfully": "Exercise set updated successfully",
+    "deleted_successfully": "Exercise set deleted successfully",
+    "preview": "Preview",
+    "editor": "Editor",
+    "confirm_delete": "Are you sure you want to delete this exercise set?"
+  }
+}

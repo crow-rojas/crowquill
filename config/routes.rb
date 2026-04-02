@@ -17,12 +17,23 @@ Rails.application.routes.draw do
   resources :academic_periods, shallow: true do
     resources :courses, shallow: true do
       resources :sections, only: %i[index new create]
+      resources :exercise_sets, only: %i[index new create]
     end
   end
   resources :sections, only: %i[show edit update destroy] do
     resources :enrollments, only: %i[index create]
+    resources :tutoring_sessions, only: %i[index new create]
   end
   resources :enrollments, only: %i[update destroy]
+  resources :tutoring_sessions, only: %i[show edit update destroy] do
+    resource :attendances, only: %i[update]
+  end
+  resources :exercise_sets, only: %i[show edit update destroy] do
+    member do
+      patch :publish
+      patch :unpublish
+    end
+  end
 
   get :dashboard, to: "dashboard#index"
   get :onboarding, to: "onboarding#index"
