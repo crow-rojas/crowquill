@@ -12,7 +12,10 @@
     "sessions": "Sessions",
     "logout": "Log out",
     "academic_periods": "Academic Periods",
-    "my_sections": "My Sections"
+    "my_sections": "My Sections",
+    "exercises": "Exercises",
+    "attendance_reports": "Attendance Reports",
+    "ai_chat": "AI Chat"
   },
   "settings": {
     "title": "Settings",

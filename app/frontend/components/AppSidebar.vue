@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { Link } from "@inertiajs/vue3"
-import { CalendarDays, LayoutGrid } from "lucide-vue-next"
+import {
+  BookOpen,
+  CalendarDays,
+  ClipboardCheck,
+  LayoutGrid,
+  MessageCircle,
+  Users,
+} from "lucide-vue-next"
 import { computed } from "vue"
 import { useI18n } from "vue-i18n"
 
@@ -16,13 +23,17 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { usePermissions } from "@/composables/usePermissions"
-import { academicPeriodsPath, dashboardPath } from "@/routes"
+import {
+  academicPeriodsPath,
+  aiConversationsPath,
+  dashboardPath,
+} from "@/routes"
 import { type NavItem } from "@/types"
 
 import AppLogo from "./AppLogo.vue"
 
 const { t } = useI18n()
-const { can } = usePermissions()
+const { can, isTutor, isTutorado } = usePermissions()
 
 const mainNavItems = computed<NavItem[]>(() => {
   const items: NavItem[] = [
@@ -33,6 +44,7 @@ const mainNavItems = computed<NavItem[]>(() => {
     },
   ]
 
+  // Admin: full academic management
   if (can.value.manage_academic_periods) {
     items.push({
       title: t("nav.academic_periods"),
@@ -40,6 +52,54 @@ const mainNavItems = computed<NavItem[]>(() => {
       icon: CalendarDays,
     })
   }
+
+  // Admin: exercises management
+  if (can.value.manage_exercises) {
+    items.push({
+      title: t("nav.exercises"),
+      href: academicPeriodsPath(),
+      icon: BookOpen,
+    })
+  }
+
+  // Admin: attendance reports
+  if (can.value.view_attendance_statistics) {
+    items.push({
+      title: t("nav.attendance_reports"),
+      href: dashboardPath(),
+      icon: ClipboardCheck,
+    })
+  }
+
+  // Tutor: my sections
+  if (isTutor.value) {
+    items.push({
+      title: t("nav.my_sections"),
+      href: dashboardPath(),
+      icon: Users,
+    })
+  }
+
+  // Tutorado: my sections + exercises + AI chat
+  if (isTutorado.value) {
+    items.push({
+      title: t("nav.my_sections"),
+      href: dashboardPath(),
+      icon: Users,
+    })
+    items.push({
+      title: t("nav.exercises"),
+      href: dashboardPath(),
+      icon: BookOpen,
+    })
+  }
+
+  // AI Chat: available to all roles
+  items.push({
+    title: t("nav.ai_chat"),
+    href: aiConversationsPath(),
+    icon: MessageCircle,
+  })
 
   return items
 })
