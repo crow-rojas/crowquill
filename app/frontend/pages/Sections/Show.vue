@@ -3,6 +3,7 @@ import { Head, Link, router } from "@inertiajs/vue3"
 import { Calendar, Users } from "lucide-vue-next"
 import { useI18n } from "vue-i18n"
 
+import CommitmentDialog from "@/components/CommitmentDialog.vue"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { usePermissions } from "@/composables/usePermissions"
@@ -14,10 +15,13 @@ import {
   sectionPath,
 } from "@/routes"
 import type { BreadcrumbItem } from "@/types"
-import type { Course, Section } from "@/types/academic"
+import type { Course, Enrollment, Section } from "@/types/academic"
 
 const props = defineProps<{
   section: Section & { course: Course }
+  enrollments_count?: number
+  current_enrollment?: Enrollment | null
+  is_full?: boolean
 }>()
 
 const { t } = useI18n()
@@ -118,6 +122,35 @@ function deleteSection() {
             </p>
           </CardContent>
         </Card>
+      </div>
+
+      <div class="flex flex-col gap-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-semibold">
+            {{ t("enrollment.title") }}
+            <span class="text-muted-foreground text-sm font-normal">
+              ({{ enrollments_count ?? 0 }} / {{ section.max_students }})
+            </span>
+          </h2>
+          <div class="flex gap-2">
+            <Button variant="outline" size="sm" as-child>
+              <Link :href="`/sections/${section.id}/enrollments`">
+                {{ t("enrollment.title") }}
+              </Link>
+            </Button>
+            <CommitmentDialog
+              v-if="!current_enrollment"
+              :section-id="section.id"
+              :disabled="is_full"
+            />
+          </div>
+        </div>
+        <p v-if="is_full" class="text-muted-foreground text-sm">
+          {{ t("enrollment.full_section") }}
+        </p>
+        <p v-if="current_enrollment" class="text-sm text-green-600">
+          {{ t("enrollment.committed") }}
+        </p>
       </div>
     </div>
   </AppLayout>

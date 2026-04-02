@@ -19,7 +19,10 @@ Rails.application.routes.draw do
       resources :sections, only: %i[index new create]
     end
   end
-  resources :sections, only: %i[show edit update destroy]
+  resources :sections, only: %i[show edit update destroy] do
+    resources :enrollments, only: %i[index create]
+  end
+  resources :enrollments, only: %i[update destroy]
 
   get :dashboard, to: "dashboard#index"
   get :onboarding, to: "onboarding#index"

@@ -4,6 +4,9 @@ class Section < ApplicationRecord
   belongs_to :course
   belongs_to :tutor, class_name: "User"
 
+  has_many :enrollments, dependent: :destroy
+  has_many :students, through: :enrollments, source: :user
+
   validates :name, presence: true
   validates :max_students, presence: true, numericality: {greater_than: 0}
   validate :tutor_must_be_tutor_or_above

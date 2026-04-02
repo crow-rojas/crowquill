@@ -1,0 +1,22 @@
+{
+  "enrollment": {
+    "title": "Enrollments",
+    "enroll": "Enroll",
+    "withdraw": "Withdraw",
+    "commitment_title": "Enrollment Commitment",
+    "commitment_text": "By enrolling in this section, you commit to attending classes regularly and completing all assigned work. You agree to follow the program's rules and guidelines.",
+    "committed": "Commitment accepted",
+    "full_section": "This section is full",
+    "enrolled_successfully": "Enrolled successfully",
+    "withdrawn_successfully": "Withdrawn successfully",
+    "already_enrolled": "Already enrolled in this section",
+    "status": "Status",
+    "student": "Student",
+    "no_enrollments": "No enrollments yet",
+    "confirm_delete": "Are you sure you want to delete this enrollment?",
+    "statuses": {
+      "active": "Active",
+      "withdrawn": "Withdrawn"
+    }
+  }
+}

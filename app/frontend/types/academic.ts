@@ -31,3 +31,15 @@ export interface Section {
   created_at: string
   updated_at: string
 }
+
+export interface Enrollment {
+  id: number
+  section_id: number
+  user_id: number
+  status: "active" | "withdrawn"
+  commitment_accepted_at: string | null
+  user?: { id: number; name: string; email: string }
+  section?: Section
+  created_at: string
+  updated_at: string
+}

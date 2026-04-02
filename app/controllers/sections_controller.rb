@@ -16,10 +16,15 @@ class SectionsController < InertiaController
 
   def show
     authorize! @section, policy_class: SectionPolicy
+    current_enrollment = Current.user ? @section.enrollments.find_by(user: Current.user) : nil
+
     render inertia: "Sections/Show", props: {
       section: @section.as_json(
         include: {tutor: {only: %i[id name email]}, course: {}}
-      )
+      ),
+      enrollments_count: @section.enrollments.active.count,
+      current_enrollment: current_enrollment&.as_json,
+      is_full: @section.enrollments.active.count >= @section.max_students
     }
   end
 

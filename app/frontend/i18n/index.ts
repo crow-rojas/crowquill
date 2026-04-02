@@ -3,11 +3,13 @@ import { createI18n } from "vue-i18n"
 import enAcademic from "@/i18n/locales/en/academic.json"
 import enAuth from "@/i18n/locales/en/auth.json"
 import enCommon from "@/i18n/locales/en/common.json"
+import enEnrollment from "@/i18n/locales/en/enrollment.json"
 import enNav from "@/i18n/locales/en/nav.json"
 import enOnboarding from "@/i18n/locales/en/onboarding.json"
 import esAcademic from "@/i18n/locales/es/academic.json"
 import esAuth from "@/i18n/locales/es/auth.json"
 import esCommon from "@/i18n/locales/es/common.json"
+import esEnrollment from "@/i18n/locales/es/enrollment.json"
 import esNav from "@/i18n/locales/es/nav.json"
 import esOnboarding from "@/i18n/locales/es/onboarding.json"
 
@@ -28,8 +30,22 @@ const i18n = createI18n({
   locale: getStoredLocale(),
   fallbackLocale: "en",
   messages: {
-    es: { ...esCommon, ...esAuth, ...esNav, ...esOnboarding, ...esAcademic },
-    en: { ...enCommon, ...enAuth, ...enNav, ...enOnboarding, ...enAcademic },
+    es: {
+      ...esCommon,
+      ...esAuth,
+      ...esNav,
+      ...esOnboarding,
+      ...esAcademic,
+      ...esEnrollment,
+    },
+    en: {
+      ...enCommon,
+      ...enAuth,
+      ...enNav,
+      ...enOnboarding,
+      ...enAcademic,
+      ...enEnrollment,
+    },
   },
 })
 

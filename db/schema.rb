@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_02_041413) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_02_043046) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -32,6 +32,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_02_041413) do
     t.string "name", null: false
     t.datetime "updated_at", null: false
     t.index ["academic_period_id"], name: "index_courses_on_academic_period_id"
+  end
+
+  create_table "enrollments", force: :cascade do |t|
+    t.datetime "commitment_accepted_at"
+    t.datetime "created_at", null: false
+    t.bigint "section_id", null: false
+    t.string "status", default: "active", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["section_id", "user_id"], name: "index_enrollments_on_section_id_and_user_id", unique: true
+    t.index ["section_id"], name: "index_enrollments_on_section_id"
+    t.index ["user_id"], name: "index_enrollments_on_user_id"
   end
 
   create_table "memberships", force: :cascade do |t|
@@ -87,6 +99,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_02_041413) do
 
   add_foreign_key "academic_periods", "organizations"
   add_foreign_key "courses", "academic_periods"
+  add_foreign_key "enrollments", "sections"
+  add_foreign_key "enrollments", "users"
   add_foreign_key "memberships", "organizations"
   add_foreign_key "memberships", "users"
   add_foreign_key "sections", "courses"

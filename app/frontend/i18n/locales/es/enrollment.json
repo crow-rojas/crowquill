@@ -1,0 +1,22 @@
+{
+  "enrollment": {
+    "title": "Inscripciones",
+    "enroll": "Inscribirse",
+    "withdraw": "Retirarse",
+    "commitment_title": "Compromiso de Inscripcion",
+    "commitment_text": "Al inscribirte en esta seccion, te comprometes a asistir regularmente a clases y completar todos los trabajos asignados. Aceptas seguir las reglas y directrices del programa.",
+    "committed": "Compromiso aceptado",
+    "full_section": "Esta seccion esta llena",
+    "enrolled_successfully": "Inscrito exitosamente",
+    "withdrawn_successfully": "Retirado exitosamente",
+    "already_enrolled": "Ya estas inscrito en esta seccion",
+    "status": "Estado",
+    "student": "Estudiante",
+    "no_enrollments": "No hay inscripciones aun",
+    "confirm_delete": "Estas seguro de que deseas eliminar esta inscripcion?",
+    "statuses": {
+      "active": "Activo",
+      "withdrawn": "Retirado"
+    }
+  }
+}
