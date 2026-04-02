@@ -39,7 +39,9 @@ const statusOptions = [
 ]
 
 function submit() {
-  form.post(academicPeriodsPath())
+  form
+    .transform((data) => ({ academic_period: data }))
+    .post(academicPeriodsPath())
 }
 </script>
 

@@ -35,7 +35,9 @@ const form = useForm({
 })
 
 function submit() {
-  form.patch(coursePath(props.course.id))
+  form
+    .transform((data) => ({ course: data }))
+    .patch(coursePath(props.course.id))
 }
 </script>
 

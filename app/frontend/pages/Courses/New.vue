@@ -44,7 +44,9 @@ const form = useForm({
 })
 
 function submit() {
-  form.post(academicPeriodCoursesPath(props.academic_period.id))
+  form
+    .transform((data) => ({ course: data }))
+    .post(academicPeriodCoursesPath(props.academic_period.id))
 }
 </script>
 

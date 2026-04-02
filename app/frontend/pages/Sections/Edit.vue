@@ -52,8 +52,10 @@ const form = useForm({
 function submit() {
   form
     .transform((data) => ({
-      ...data,
-      tutor_id: Number(data.tutor_id),
+      section: {
+        ...data,
+        tutor_id: Number(data.tutor_id),
+      },
     }))
     .patch(sectionPath(props.section.id))
 }

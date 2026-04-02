@@ -48,7 +48,9 @@ const statusOptions = [
 ]
 
 function submit() {
-  form.patch(academicPeriodPath(props.academic_period.id))
+  form
+    .transform((data) => ({ academic_period: data }))
+    .patch(academicPeriodPath(props.academic_period.id))
 }
 </script>
 

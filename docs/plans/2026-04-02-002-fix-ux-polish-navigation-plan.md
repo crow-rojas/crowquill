@@ -1,7 +1,7 @@
 ---
 title: "fix: UX polish — navigation, breadcrumbs, hardcoded routes, and frontend tests"
 type: fix
-status: active
+status: completed
 date: 2026-04-02
 origin: docs/plans/2026-04-02-001-feat-tutoring-mvp-plan.md
 ---

@@ -58,8 +58,10 @@ const form = useForm({
 function submit() {
   form
     .transform((data) => ({
-      ...data,
-      tutor_id: Number(data.tutor_id),
+      section: {
+        ...data,
+        tutor_id: Number(data.tutor_id),
+      },
     }))
     .post(courseSectionsPath(props.course.id))
 }

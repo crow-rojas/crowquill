@@ -53,7 +53,9 @@ const form = useForm({
 })
 
 function submit() {
-  form.patch(exerciseSetPath(props.exercise_set.id))
+  form
+    .transform((data) => ({ exercise_set: data }))
+    .patch(exerciseSetPath(props.exercise_set.id))
 }
 </script>
 
