@@ -3,7 +3,7 @@
 class Identity::PasswordResetsController < InertiaController
   skip_before_action :authenticate
   skip_before_action :require_membership
-  skip_verify_authorized :new, :edit, :create, :update
+  skip_after_action :verify_authorized, only: %i[new edit create update]
 
   before_action :set_user, only: %i[ edit update ]
 

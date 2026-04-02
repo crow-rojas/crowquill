@@ -2,7 +2,7 @@
 
 # TODO: Extract query logic into dedicated query objects (DashboardQuery::Admin, etc.)
 class DashboardController < InertiaController
-  skip_verify_authorized :index
+  skip_after_action :verify_authorized, only: %i[index]
 
   def index
     case Current.membership&.role

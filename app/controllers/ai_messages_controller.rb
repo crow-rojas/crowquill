@@ -3,7 +3,7 @@
 class AiMessagesController < InertiaController
   def create
     # TODO: Move to ActiveJob for async processing. Currently blocks Puma thread during Claude API call.
-    authorize! nil, policy_class: AiConversationPolicy
+    authorize :ai_conversation, policy_class: AiConversationPolicy
     conversation = Current.user.ai_conversations.find(params[:ai_conversation_id])
 
     user_message = conversation.ai_messages.create!(

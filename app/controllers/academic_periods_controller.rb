@@ -4,7 +4,7 @@ class AcademicPeriodsController < InertiaController
   before_action :set_academic_period, only: %i[show edit update destroy]
 
   def index
-    authorize! nil, policy_class: AcademicPeriodPolicy
+    authorize :academic_period, policy_class: AcademicPeriodPolicy
     academic_periods = Current.organization.academic_periods.order(start_date: :desc)
 
     render inertia: "AcademicPeriods/Index", props: {
@@ -13,19 +13,19 @@ class AcademicPeriodsController < InertiaController
   end
 
   def show
-    authorize! @academic_period, policy_class: AcademicPeriodPolicy
+    authorize @academic_period, policy_class: AcademicPeriodPolicy
     render inertia: "AcademicPeriods/Show", props: {
       academic_period: @academic_period.as_json(include: :courses)
     }
   end
 
   def new
-    authorize! nil, policy_class: AcademicPeriodPolicy
+    authorize :academic_period, policy_class: AcademicPeriodPolicy
     render inertia: "AcademicPeriods/New"
   end
 
   def create
-    authorize! nil, policy_class: AcademicPeriodPolicy
+    authorize :academic_period, policy_class: AcademicPeriodPolicy
     @academic_period = Current.organization.academic_periods.build(academic_period_params)
 
     if @academic_period.save
@@ -36,14 +36,14 @@ class AcademicPeriodsController < InertiaController
   end
 
   def edit
-    authorize! @academic_period, policy_class: AcademicPeriodPolicy
+    authorize @academic_period, policy_class: AcademicPeriodPolicy
     render inertia: "AcademicPeriods/Edit", props: {
       academic_period: @academic_period.as_json
     }
   end
 
   def update
-    authorize! @academic_period, policy_class: AcademicPeriodPolicy
+    authorize @academic_period, policy_class: AcademicPeriodPolicy
 
     if @academic_period.update(academic_period_params)
       redirect_to academic_period_path(@academic_period), notice: "Academic period updated successfully."
@@ -53,7 +53,7 @@ class AcademicPeriodsController < InertiaController
   end
 
   def destroy
-    authorize! @academic_period, policy_class: AcademicPeriodPolicy
+    authorize @academic_period, policy_class: AcademicPeriodPolicy
     @academic_period.destroy!
     redirect_to academic_periods_path, notice: "Academic period deleted successfully."
   end

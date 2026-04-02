@@ -5,7 +5,7 @@ class SectionsController < InertiaController
   before_action :set_section, only: %i[show edit update destroy]
 
   def index
-    authorize! nil, policy_class: SectionPolicy
+    authorize :section, policy_class: SectionPolicy
     sections = @course.sections.includes(:tutor).order(:name)
 
     render inertia: "Sections/Index", props: {
@@ -15,7 +15,7 @@ class SectionsController < InertiaController
   end
 
   def show
-    authorize! @section, policy_class: SectionPolicy
+    authorize @section, policy_class: SectionPolicy
     current_enrollment = Current.user ? @section.enrollments.find_by(user: Current.user) : nil
 
     render inertia: "Sections/Show", props: {
@@ -29,7 +29,7 @@ class SectionsController < InertiaController
   end
 
   def new
-    authorize! nil, policy_class: SectionPolicy
+    authorize :section, policy_class: SectionPolicy
     tutors = Current.organization.memberships.where(role: %w[admin tutor]).includes(:user).map do |m|
       m.user.as_json(only: %i[id name email])
     end
@@ -41,7 +41,7 @@ class SectionsController < InertiaController
   end
 
   def create
-    authorize! nil, policy_class: SectionPolicy
+    authorize :section, policy_class: SectionPolicy
     @section = @course.sections.build(section_params)
 
     if @section.save
@@ -52,7 +52,7 @@ class SectionsController < InertiaController
   end
 
   def edit
-    authorize! @section, policy_class: SectionPolicy
+    authorize @section, policy_class: SectionPolicy
     tutors = Current.organization.memberships.where(role: %w[admin tutor]).includes(:user).map do |m|
       m.user.as_json(only: %i[id name email])
     end
@@ -64,7 +64,7 @@ class SectionsController < InertiaController
   end
 
   def update
-    authorize! @section, policy_class: SectionPolicy
+    authorize @section, policy_class: SectionPolicy
 
     if @section.update(section_params)
       redirect_to section_path(@section), notice: "Section updated successfully."
@@ -74,7 +74,7 @@ class SectionsController < InertiaController
   end
 
   def destroy
-    authorize! @section, policy_class: SectionPolicy
+    authorize @section, policy_class: SectionPolicy
     course = @section.course
     @section.destroy!
     redirect_to course_sections_path(course), notice: "Section deleted successfully."

@@ -3,7 +3,7 @@
 class Identity::EmailVerificationsController < InertiaController
   skip_before_action :authenticate, only: :show
   skip_before_action :require_membership
-  skip_verify_authorized :show, :create
+  skip_after_action :verify_authorized, only: %i[show create]
 
   before_action :set_user, only: :show
 

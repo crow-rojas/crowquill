@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 class InertiaController < ApplicationController
-  include Authorization
+  include Pundit::Authorization
 
   before_action :resolve_membership
   before_action :require_membership
   after_action :verify_authorized
 
-  rescue_from Authorization::NotAuthorizedError, with: :handle_not_authorized
+  rescue_from Pundit::NotAuthorizedError, with: :handle_not_authorized
 
   inertia_config default_render: true
   inertia_share auth: -> {
@@ -21,6 +21,10 @@ class InertiaController < ApplicationController
   }
 
   private
+
+  def pundit_user
+    Current.membership
+  end
 
   def require_membership
     return if Current.membership
@@ -36,5 +40,21 @@ class InertiaController < ApplicationController
 
   def self.skip_membership_controllers
     %w[onboarding]
+  end
+
+  def build_permissions
+    membership = Current.membership
+    return {} unless membership
+
+    {
+      manage_sections: membership.admin?,
+      manage_exercises: membership.admin?,
+      manage_academic_periods: membership.admin?,
+      manage_courses: membership.admin?,
+      take_attendance: membership.tutor_or_above?,
+      view_attendance_statistics: membership.admin?,
+      manage_enrollments: membership.admin?,
+      create_ai_conversations: true
+    }
   end
 end

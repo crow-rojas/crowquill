@@ -2,7 +2,7 @@
 
 class Settings::PasswordsController < InertiaController
   skip_before_action :require_membership
-  skip_verify_authorized :show, :update
+  skip_after_action :verify_authorized, only: %i[show update]
   before_action :set_user
 
   def show

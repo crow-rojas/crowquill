@@ -5,7 +5,7 @@ class SessionsController < InertiaController
   skip_before_action :require_membership
   before_action :require_no_authentication, only: %i[new create]
   before_action :set_session, only: :destroy
-  skip_verify_authorized :new, :create, :destroy
+  skip_after_action :verify_authorized, only: %i[new create destroy]
 
   def new
   end

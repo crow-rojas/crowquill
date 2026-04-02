@@ -4,7 +4,7 @@ class AttendancesController < InertiaController
   before_action :set_tutoring_session
 
   def update
-    authorize! nil, policy_class: AttendancePolicy
+    authorize :attendance, policy_class: AttendancePolicy
 
     valid_enrollment_ids = @tutoring_session.section.enrollments.pluck(:id)
 

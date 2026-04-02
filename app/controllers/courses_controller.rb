@@ -5,7 +5,7 @@ class CoursesController < InertiaController
   before_action :set_course, only: %i[show edit update destroy]
 
   def index
-    authorize! nil, policy_class: CoursePolicy
+    authorize :course, policy_class: CoursePolicy
     courses = @academic_period.courses.order(:name)
 
     render inertia: "Courses/Index", props: {
@@ -15,7 +15,7 @@ class CoursesController < InertiaController
   end
 
   def show
-    authorize! @course, policy_class: CoursePolicy
+    authorize @course, policy_class: CoursePolicy
 
     exercise_sets = @course.exercise_sets.ordered
     exercise_sets = exercise_sets.published unless Current.membership&.admin?
@@ -27,14 +27,14 @@ class CoursesController < InertiaController
   end
 
   def new
-    authorize! nil, policy_class: CoursePolicy
+    authorize :course, policy_class: CoursePolicy
     render inertia: "Courses/New", props: {
       academic_period: @academic_period.as_json
     }
   end
 
   def create
-    authorize! nil, policy_class: CoursePolicy
+    authorize :course, policy_class: CoursePolicy
     @course = @academic_period.courses.build(course_params)
 
     if @course.save
@@ -45,14 +45,14 @@ class CoursesController < InertiaController
   end
 
   def edit
-    authorize! @course, policy_class: CoursePolicy
+    authorize @course, policy_class: CoursePolicy
     render inertia: "Courses/Edit", props: {
       course: @course.as_json
     }
   end
 
   def update
-    authorize! @course, policy_class: CoursePolicy
+    authorize @course, policy_class: CoursePolicy
 
     if @course.update(course_params)
       redirect_to course_path(@course), notice: "Course updated successfully."
@@ -62,7 +62,7 @@ class CoursesController < InertiaController
   end
 
   def destroy
-    authorize! @course, policy_class: CoursePolicy
+    authorize @course, policy_class: CoursePolicy
     academic_period = @course.academic_period
     @course.destroy!
     redirect_to academic_period_courses_path(academic_period), notice: "Course deleted successfully."

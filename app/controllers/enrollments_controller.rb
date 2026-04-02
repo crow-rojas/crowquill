@@ -5,7 +5,7 @@ class EnrollmentsController < InertiaController
   before_action :set_enrollment, only: %i[update destroy]
 
   def index
-    authorize! nil, policy_class: EnrollmentPolicy
+    authorize :enrollment, policy_class: EnrollmentPolicy
     enrollments = @section.enrollments.includes(:user).order(created_at: :desc)
 
     render inertia: "Enrollments/Index", props: {
@@ -19,7 +19,7 @@ class EnrollmentsController < InertiaController
   end
 
   def create
-    authorize! nil, policy_class: EnrollmentPolicy
+    authorize :enrollment, policy_class: EnrollmentPolicy
     @section.with_lock do
       if @section.enrollments.active.count >= @section.max_students
         redirect_to section_path(@section), alert: "Section is full"
@@ -56,7 +56,7 @@ class EnrollmentsController < InertiaController
   end
 
   def update
-    authorize! @enrollment, policy_class: EnrollmentPolicy
+    authorize @enrollment, policy_class: EnrollmentPolicy
     if @enrollment.update(status: "withdrawn")
       redirect_to section_path(@enrollment.section), notice: "Withdrawn successfully"
     else
@@ -65,7 +65,7 @@ class EnrollmentsController < InertiaController
   end
 
   def destroy
-    authorize! @enrollment, policy_class: EnrollmentPolicy
+    authorize @enrollment, policy_class: EnrollmentPolicy
     section = @enrollment.section
     @enrollment.destroy!
     redirect_to section_enrollments_path(section), notice: "Enrollment deleted successfully"

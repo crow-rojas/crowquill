@@ -2,7 +2,7 @@
 
 class AiConversationsController < InertiaController
   def index
-    authorize! nil, policy_class: AiConversationPolicy
+    authorize :ai_conversation, policy_class: AiConversationPolicy
     conversations = Current.user.ai_conversations.order(updated_at: :desc)
 
     render inertia: "AiConversations/Index", props: {
@@ -11,7 +11,7 @@ class AiConversationsController < InertiaController
   end
 
   def show
-    authorize! nil, policy_class: AiConversationPolicy
+    authorize :ai_conversation, policy_class: AiConversationPolicy
     conversation = Current.user.ai_conversations.find(params[:id])
 
     render inertia: "AiConversations/Show", props: {
@@ -25,7 +25,7 @@ class AiConversationsController < InertiaController
   end
 
   def create
-    authorize! nil, policy_class: AiConversationPolicy
+    authorize :ai_conversation, policy_class: AiConversationPolicy
 
     if params[:ai_conversation][:exercise_set_id].present?
       ExerciseSet.joins(course: {academic_period: :organization})

@@ -5,7 +5,7 @@ class TutoringSessionsController < InertiaController
   before_action :set_tutoring_session, only: %i[show edit update destroy]
 
   def index
-    authorize! nil, policy_class: TutoringSessionPolicy
+    authorize :tutoring_session, policy_class: TutoringSessionPolicy
     sessions = @section.tutoring_sessions.order(date: :desc)
 
     render inertia: "TutoringSessions/Index", props: {
@@ -17,7 +17,7 @@ class TutoringSessionsController < InertiaController
   end
 
   def show
-    authorize! @tutoring_session, policy_class: TutoringSessionPolicy
+    authorize @tutoring_session, policy_class: TutoringSessionPolicy
     section = @tutoring_session.section
     enrollments = section.enrollments.active.includes(:user)
     attendances = @tutoring_session.attendances.includes(enrollment: :user)
@@ -36,7 +36,7 @@ class TutoringSessionsController < InertiaController
   end
 
   def new
-    authorize! nil, policy_class: TutoringSessionPolicy
+    authorize :tutoring_session, policy_class: TutoringSessionPolicy
 
     render inertia: "TutoringSessions/New", props: {
       section: @section.as_json(
@@ -46,7 +46,7 @@ class TutoringSessionsController < InertiaController
   end
 
   def create
-    authorize! nil, policy_class: TutoringSessionPolicy
+    authorize :tutoring_session, policy_class: TutoringSessionPolicy
     @tutoring_session = @section.tutoring_sessions.build(tutoring_session_params)
 
     if @tutoring_session.save
@@ -57,7 +57,7 @@ class TutoringSessionsController < InertiaController
   end
 
   def edit
-    authorize! @tutoring_session, policy_class: TutoringSessionPolicy
+    authorize @tutoring_session, policy_class: TutoringSessionPolicy
 
     render inertia: "TutoringSessions/Edit", props: {
       tutoring_session: @tutoring_session.as_json(
@@ -67,7 +67,7 @@ class TutoringSessionsController < InertiaController
   end
 
   def update
-    authorize! @tutoring_session, policy_class: TutoringSessionPolicy
+    authorize @tutoring_session, policy_class: TutoringSessionPolicy
 
     if @tutoring_session.update(tutoring_session_params)
       redirect_to tutoring_session_path(@tutoring_session), notice: "Session updated successfully."
@@ -77,7 +77,7 @@ class TutoringSessionsController < InertiaController
   end
 
   def destroy
-    authorize! @tutoring_session, policy_class: TutoringSessionPolicy
+    authorize @tutoring_session, policy_class: TutoringSessionPolicy
     section = @tutoring_session.section
     @tutoring_session.destroy!
     redirect_to section_tutoring_sessions_path(section), notice: "Session deleted successfully."
