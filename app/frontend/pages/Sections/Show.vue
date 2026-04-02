@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, Link, router } from "@inertiajs/vue3"
 import { Calendar, Users } from "lucide-vue-next"
+import { computed } from "vue"
 import { useI18n } from "vue-i18n"
 
 import CommitmentDialog from "@/components/CommitmentDialog.vue"
@@ -13,8 +14,10 @@ import {
   coursePath,
   dashboardPath,
   editSectionPath,
+  newSectionTutoringSessionPath,
   sectionEnrollmentsPath,
   sectionPath,
+  sectionTutoringSessionsPath,
 } from "@/routes"
 import type { BreadcrumbItem } from "@/types"
 import type { Course, Enrollment, Section } from "@/types/academic"
@@ -25,6 +28,8 @@ const props = defineProps<{
   current_enrollment?: Enrollment | null
   is_full?: boolean
   can_view_enrollments?: boolean
+  can_view_sessions?: boolean
+  can_create_session?: boolean
 }>()
 
 const { t } = useI18n()
@@ -43,7 +48,97 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ]
 
-const scheduleEntries = Object.entries(props.section.schedule || {})
+interface ScheduleRow {
+  key: string
+  day: string
+  time: string
+  room?: string
+}
+
+function readText(value: unknown): string | undefined {
+  if (typeof value !== "string") {
+    return undefined
+  }
+
+  const normalized = value.trim()
+  return normalized.length > 0 ? normalized : undefined
+}
+
+function titleize(value: string): string {
+  return value
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (character) => character.toUpperCase())
+}
+
+function dayLabel(day: string): string {
+  const normalized = day.trim().toLowerCase()
+  const translated = t(`sections.days.${normalized}`)
+  return translated === `sections.days.${normalized}`
+    ? titleize(normalized)
+    : translated
+}
+
+function formatTimeRange(start?: string, end?: string): string {
+  if (start && end) {
+    return `${start} - ${end}`
+  }
+
+  return start || end || t("sections.unspecified_time")
+}
+
+const scheduleRows = computed<ScheduleRow[]>(() => {
+  if (!props.section.schedule || typeof props.section.schedule !== "object") {
+    return []
+  }
+
+  const schedule = props.section.schedule as Record<string, unknown>
+  const flatDay = readText(schedule.day)
+  const flatStart = readText(schedule.start_time)
+  const flatEnd = readText(schedule.end_time)
+  const flatRoom = readText(schedule.room)
+
+  if (flatDay || flatStart || flatEnd || flatRoom) {
+    return [
+      {
+        key: "flat-schedule",
+        day: flatDay ? dayLabel(flatDay) : t("sections.unspecified_day"),
+        time: formatTimeRange(flatStart, flatEnd),
+        room: flatRoom,
+      },
+    ]
+  }
+
+  return Object.entries(schedule).map(([day, details]) => {
+    if (typeof details === "string") {
+      return {
+        key: day,
+        day: dayLabel(day),
+        time: details,
+      }
+    }
+
+    if (details && typeof details === "object") {
+      const detailRecord = details as Record<string, unknown>
+      const start =
+        readText(detailRecord.start) || readText(detailRecord.start_time)
+      const end = readText(detailRecord.end) || readText(detailRecord.end_time)
+      const room = readText(detailRecord.room)
+
+      return {
+        key: day,
+        day: dayLabel(day),
+        time: formatTimeRange(start, end),
+        room,
+      }
+    }
+
+    return {
+      key: day,
+      day: dayLabel(day),
+      time: details == null ? t("sections.unspecified_time") : String(details),
+    }
+  })
+})
 
 function deleteSection() {
   if (confirm(t("sections.confirm_delete"))) {
@@ -114,10 +209,19 @@ function deleteSection() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div v-if="scheduleEntries.length > 0" class="space-y-1 text-sm">
-              <div v-for="[day, time] in scheduleEntries" :key="day">
-                <span class="font-medium capitalize">{{ day }}:</span>
-                {{ time }}
+            <div v-if="scheduleRows.length > 0" class="space-y-2 text-sm">
+              <div
+                v-for="entry in scheduleRows"
+                :key="entry.key"
+                class="space-y-1 rounded-md border p-3"
+              >
+                <p class="font-medium">{{ entry.day }}</p>
+                <p class="text-muted-foreground">
+                  {{ t("sections.time_label") }}: {{ entry.time }}
+                </p>
+                <p v-if="entry.room" class="text-muted-foreground">
+                  {{ t("sections.room_label") }}: {{ entry.room }}
+                </p>
               </div>
             </div>
             <p v-else class="text-muted-foreground text-sm">
@@ -125,6 +229,22 @@ function deleteSection() {
             </p>
           </CardContent>
         </Card>
+      </div>
+
+      <div
+        v-if="can_view_sessions || can_create_session"
+        class="flex flex-wrap items-center gap-2"
+      >
+        <Button v-if="can_view_sessions" variant="outline" size="sm" as-child>
+          <Link :href="sectionTutoringSessionsPath(section.id)">
+            {{ t("sessions.title") }}
+          </Link>
+        </Button>
+        <Button v-if="can_create_session" size="sm" as-child>
+          <Link :href="newSectionTutoringSessionPath(section.id)">
+            {{ t("sessions.new") }}
+          </Link>
+        </Button>
       </div>
 
       <div class="flex flex-col gap-4">

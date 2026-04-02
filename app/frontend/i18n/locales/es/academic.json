@@ -48,6 +48,19 @@
     "deleted_successfully": "Seccion eliminada exitosamente",
     "confirm_delete": "Estas seguro de que deseas eliminar esta seccion?",
     "select_tutor": "Selecciona un tutor",
-    "no_schedule": "Sin horario definido"
+    "no_schedule": "Sin horario definido",
+    "time_label": "Horario",
+    "room_label": "Sala",
+    "unspecified_day": "Dia no especificado",
+    "unspecified_time": "Horario no especificado",
+    "days": {
+      "monday": "Lunes",
+      "tuesday": "Martes",
+      "wednesday": "Miercoles",
+      "thursday": "Jueves",
+      "friday": "Viernes",
+      "saturday": "Sabado",
+      "sunday": "Domingo"
+    }
   }
 }

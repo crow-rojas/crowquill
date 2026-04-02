@@ -94,6 +94,14 @@ RSpec.describe "Sections", type: :request do
         get section_path(section)
         expect(response).to have_http_status(:success)
       end
+
+      it "includes tutoring session capabilities" do
+        get section_path(section)
+
+        expect(response).to have_http_status(:success)
+        expect(inertia.props[:can_view_sessions]).to be true
+        expect(inertia.props[:can_create_session]).to be true
+      end
     end
 
     context "as tutor" do
@@ -101,7 +109,10 @@ RSpec.describe "Sections", type: :request do
 
       it "returns success" do
         get section_path(section)
+
         expect(response).to have_http_status(:success)
+        expect(inertia.props[:can_view_sessions]).to be true
+        expect(inertia.props[:can_create_session]).to be true
       end
     end
 
@@ -130,6 +141,8 @@ RSpec.describe "Sections", type: :request do
 
         expect(response).to have_http_status(:success)
         expect(inertia.props[:can_view_enrollments]).to be true
+        expect(inertia.props[:can_view_sessions]).to be true
+        expect(inertia.props[:can_create_session]).to be false
       end
     end
 
@@ -144,6 +157,8 @@ RSpec.describe "Sections", type: :request do
 
         expect(response).to have_http_status(:success)
         expect(inertia.props[:can_view_enrollments]).to be false
+        expect(inertia.props[:can_view_sessions]).to be false
+        expect(inertia.props[:can_create_session]).to be false
       end
     end
 

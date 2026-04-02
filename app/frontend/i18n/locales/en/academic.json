@@ -48,6 +48,19 @@
     "deleted_successfully": "Section deleted successfully",
     "confirm_delete": "Are you sure you want to delete this section?",
     "select_tutor": "Select a tutor",
-    "no_schedule": "No schedule defined"
+    "no_schedule": "No schedule defined",
+    "time_label": "Time",
+    "room_label": "Room",
+    "unspecified_day": "Day not specified",
+    "unspecified_time": "Time not specified",
+    "days": {
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday"
+    }
   }
 }

@@ -25,7 +25,9 @@ class SectionsController < InertiaController
       enrollments_count: @section.enrollments.active.count,
       current_enrollment: current_enrollment&.as_json,
       is_full: @section.enrollments.active.count >= @section.max_students,
-      can_view_enrollments: EnrollmentPolicy.new(Current.membership, @section).index?
+      can_view_enrollments: EnrollmentPolicy.new(Current.membership, @section).index?,
+      can_view_sessions: TutoringSessionPolicy.new(Current.membership, @section).index?,
+      can_create_session: TutoringSessionPolicy.new(Current.membership, @section).new?
     }
   end
 
