@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { Head, Link, router } from "@inertiajs/vue3"
-import { Calendar, Users } from "lucide-vue-next"
 import { computed } from "vue"
 import { useI18n } from "vue-i18n"
 
 import CommitmentDialog from "@/components/CommitmentDialog.vue"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table"
 import { usePermissions } from "@/composables/usePermissions"
 import AppLayout from "@/layouts/AppLayout.vue"
 import {
@@ -175,60 +174,46 @@ function deleteSection() {
         </div>
       </div>
 
-      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <Card>
-          <CardHeader>
-            <CardTitle class="flex items-center gap-2 text-base">
-              <Users class="h-4 w-4" />
-              {{ t("sections.tutor") }}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p v-if="section.tutor">{{ section.tutor.name }}</p>
-            <p v-else class="text-muted-foreground">-</p>
-          </CardContent>
-        </Card>
+      <div class="grid gap-4 lg:grid-cols-2">
+        <div class="rounded-md border">
+          <Table>
+            <TableBody>
+              <TableRow>
+                <TableCell class="w-48 font-medium">{{
+                  t("sections.tutor")
+                }}</TableCell>
+                <TableCell>{{ section.tutor?.name || "-" }}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell class="w-48 font-medium">{{
+                  t("sections.max_students")
+                }}</TableCell>
+                <TableCell>{{ section.max_students }}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle class="flex items-center gap-2 text-base">
-              <Users class="h-4 w-4" />
-              {{ t("sections.max_students") }}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>{{ section.max_students }}</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle class="flex items-center gap-2 text-base">
-              <Calendar class="h-4 w-4" />
-              {{ t("sections.schedule") }}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div v-if="scheduleRows.length > 0" class="space-y-2 text-sm">
-              <div
-                v-for="entry in scheduleRows"
-                :key="entry.key"
-                class="space-y-1 rounded-md border p-3"
-              >
-                <p class="font-medium">{{ entry.day }}</p>
-                <p class="text-muted-foreground">
-                  {{ t("sections.time_label") }}: {{ entry.time }}
-                </p>
-                <p v-if="entry.room" class="text-muted-foreground">
-                  {{ t("sections.room_label") }}: {{ entry.room }}
-                </p>
-              </div>
-            </div>
-            <p v-else class="text-muted-foreground text-sm">
-              {{ t("sections.no_schedule") }}
-            </p>
-          </CardContent>
-        </Card>
+        <div class="rounded-md border">
+          <Table v-if="scheduleRows.length > 0">
+            <TableBody>
+              <TableRow v-for="entry in scheduleRows" :key="entry.key">
+                <TableCell class="w-40 font-medium">{{ entry.day }}</TableCell>
+                <TableCell class="space-y-1">
+                  <p class="text-muted-foreground text-sm">
+                    {{ t("sections.time_label") }}: {{ entry.time }}
+                  </p>
+                  <p v-if="entry.room" class="text-muted-foreground text-sm">
+                    {{ t("sections.room_label") }}: {{ entry.room }}
+                  </p>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+          <p v-else class="text-muted-foreground p-4 text-sm">
+            {{ t("sections.no_schedule") }}
+          </p>
+        </div>
       </div>
 
       <div
