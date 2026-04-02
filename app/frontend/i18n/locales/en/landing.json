@@ -1,0 +1,21 @@
+{
+  "landing": {
+    "title": "Crowquill — Tutoring Platform",
+    "hero_title": "Math tutoring, simplified",
+    "hero_subtitle": "All-in-one platform for managing university tutoring: sections, attendance, LaTeX exercises, and an AI tutor that guides without giving answers.",
+    "get_started": "Get started",
+    "sign_in": "Sign in",
+    "sign_up": "Create account",
+    "go_to_dashboard": "Go to dashboard",
+    "features_title": "Everything you need to manage tutoring",
+    "feature_sections": "Sections & groups",
+    "feature_sections_desc": "Organize tutoring by period, course, and section. Assign tutors, control capacity, and manage enrollments.",
+    "feature_exercises": "LaTeX exercises",
+    "feature_exercises_desc": "Create and publish exercises with math notation. Live editor with LaTeX preview.",
+    "feature_attendance": "Attendance tracking",
+    "feature_attendance_desc": "Record attendance per session with a single tap. Dashboard with stats for tutors and admins.",
+    "feature_ai": "AI Tutor",
+    "feature_ai_desc": "Intelligent assistant that guides students step by step, without giving the direct answer.",
+    "footer": "Crowquill — University tutoring platform"
+  }
+}

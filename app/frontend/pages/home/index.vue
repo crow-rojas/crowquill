@@ -1,115 +1,156 @@
 <script setup lang="ts">
 import { Head, Link } from "@inertiajs/vue3"
+import { BookOpen, GraduationCap, MessageCircle, Users } from "lucide-vue-next"
+import { useI18n } from "vue-i18n"
 
-import AppLogoIcon from "@/components/AppLogoIcon.vue"
-import ResourceItem from "@/components/ResourceItem.vue"
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { dashboardPath, signInPath, signUpPath } from "@/routes"
 
-const appName = import.meta.env.VITE_APP_NAME ?? "Vue Starter Kit"
-
-const links = [
-  [
-    {
-      text: "Inertia Rails Docs",
-      href: "https://inertia-rails.dev",
-    },
-    {
-      text: "shadcn/vue Components",
-      href: "https://shadcn-vue.com",
-    },
-    {
-      text: "React Docs",
-      href: "https://react.dev",
-    },
-    {
-      text: "Rails Guides",
-      href: "https://guides.rubyonrails.org",
-    },
-  ],
-]
+const { t } = useI18n()
 </script>
 
 <template>
-  <Head title="Welcome">
-    <link rel="preconnect" href="https://rsms.me/" />
-    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
-  </Head>
+  <Head :title="t('landing.title')" />
+
   <div
-    class="flex min-h-screen flex-col items-center bg-[#FDFDFC] p-6 text-[#1b1b18] lg:justify-center lg:p-8 dark:bg-[#0a0a0a]"
+    class="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900"
   >
-    <header
-      class="mb-6 w-full max-w-[335px] text-sm not-has-[nav]:hidden lg:max-w-4xl"
-    >
-      <nav class="flex items-center justify-end gap-4">
-        <Link
-          v-if="$page.props.auth.user"
-          :href="dashboardPath()"
-          class="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
-        >
-          Dashboard
-        </Link>
-        <template v-else>
-          <Link
-            :href="signInPath()"
-            class="inline-block rounded-sm border border-transparent px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#19140035] dark:text-[#EDEDEC] dark:hover:border-[#3E3E3A]"
-          >
-            Log in
-          </Link>
-          <Link
-            :href="signUpPath()"
-            class="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
-          >
-            Register
-          </Link>
-        </template>
-      </nav>
-    </header>
-    <div
-      class="flex w-full items-center justify-center opacity-100 transition-opacity duration-750 lg:grow starting:opacity-0"
-    >
-      <main
-        class="flex w-full max-w-[335px] flex-col-reverse overflow-hidden rounded-lg lg:max-w-4xl lg:flex-row"
+    <!-- Nav -->
+    <header class="border-b border-slate-200 dark:border-slate-800">
+      <div
+        class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6"
       >
-        <div
-          class="flex-1 rounded-br-lg rounded-bl-lg bg-white p-6 pb-12 text-[13px] leading-[20px] shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] lg:rounded-tl-lg lg:rounded-br-none lg:p-20 dark:bg-[#161615] dark:text-[#EDEDEC] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d]"
-        >
-          <h1 class="mb-1 font-medium">
-            {{ appName }}
-          </h1>
-          <p class="mb-2 text-[#706f6c] dark:text-[#A1A09A]">
-            Rails + Inertia.js + Vue.js + shadcn/vue
-            <br />
-            Here are some resources to begin:
-          </p>
-
-          <ul class="mb-4 flex flex-col lg:mb-6">
-            <li
-              v-for="(link, index) in links[0]"
-              :key="index"
-              class="relative flex items-center gap-4 py-2"
-            >
-              <ResourceItem :text="link.text" :href="link.href" />
-            </li>
-          </ul>
-          <ul class="flex gap-3 text-sm leading-normal">
-            <li>
-              <a
-                href="https://inertia-rails.dev/"
-                target="_blank"
-                class="inline-block rounded-sm border border-black bg-[#1b1b18] px-5 py-1.5 text-sm leading-normal text-white hover:border-black hover:bg-black dark:border-[#eeeeec] dark:bg-[#eeeeec] dark:text-[#1C1C1A] dark:hover:border-white dark:hover:bg-white"
-              >
-                Learn more
-              </a>
-            </li>
-          </ul>
+        <div class="flex items-center gap-2">
+          <GraduationCap class="text-primary h-7 w-7" />
+          <span class="text-xl font-bold tracking-tight">Crowquill</span>
         </div>
+        <nav class="flex items-center gap-3">
+          <Button
+            v-if="$page.props.auth?.user"
+            as-child
+            variant="default"
+            size="sm"
+          >
+            <Link :href="dashboardPath()">
+              {{ t("landing.go_to_dashboard") }}
+            </Link>
+          </Button>
+          <template v-else>
+            <Button as-child variant="ghost" size="sm">
+              <Link :href="signInPath()">
+                {{ t("landing.sign_in") }}
+              </Link>
+            </Button>
+            <Button as-child variant="default" size="sm">
+              <Link :href="signUpPath()">
+                {{ t("landing.sign_up") }}
+              </Link>
+            </Button>
+          </template>
+        </nav>
+      </div>
+    </header>
 
-        <div
-          class="relative -mb-px aspect-[335/376] w-full shrink-0 overflow-hidden rounded-t-lg bg-[#D30001] p-10 text-white lg:mb-0 lg:-ml-px lg:aspect-auto lg:w-[438px] lg:rounded-t-none lg:rounded-r-lg"
+    <!-- Hero -->
+    <section class="mx-auto max-w-6xl px-4 py-16 text-center sm:px-6 sm:py-24">
+      <h1 class="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+        {{ t("landing.hero_title") }}
+      </h1>
+      <p
+        class="text-muted-foreground mx-auto mt-6 max-w-2xl text-lg sm:text-xl"
+      >
+        {{ t("landing.hero_subtitle") }}
+      </p>
+      <div
+        class="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
+      >
+        <Button as-child size="lg" class="min-h-[48px] px-8 text-base">
+          <Link :href="signUpPath()">
+            {{ t("landing.get_started") }}
+          </Link>
+        </Button>
+        <Button
+          as-child
+          variant="outline"
+          size="lg"
+          class="min-h-[48px] px-8 text-base"
         >
-          <AppLogoIcon class="h-full w-full" />
-        </div>
-      </main>
-    </div>
+          <Link :href="signInPath()">
+            {{ t("landing.sign_in") }}
+          </Link>
+        </Button>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="mx-auto max-w-6xl px-4 pb-16 sm:px-6 sm:pb-24">
+      <h2 class="mb-12 text-center text-2xl font-bold sm:text-3xl">
+        {{ t("landing.features_title") }}
+      </h2>
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader>
+            <Users class="text-primary mb-2 h-8 w-8" />
+            <CardTitle class="text-lg">
+              {{ t("landing.feature_sections") }}
+            </CardTitle>
+            <CardDescription>
+              {{ t("landing.feature_sections_desc") }}
+            </CardDescription>
+          </CardHeader>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <BookOpen class="text-primary mb-2 h-8 w-8" />
+            <CardTitle class="text-lg">
+              {{ t("landing.feature_exercises") }}
+            </CardTitle>
+            <CardDescription>
+              {{ t("landing.feature_exercises_desc") }}
+            </CardDescription>
+          </CardHeader>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <GraduationCap class="text-primary mb-2 h-8 w-8" />
+            <CardTitle class="text-lg">
+              {{ t("landing.feature_attendance") }}
+            </CardTitle>
+            <CardDescription>
+              {{ t("landing.feature_attendance_desc") }}
+            </CardDescription>
+          </CardHeader>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <MessageCircle class="text-primary mb-2 h-8 w-8" />
+            <CardTitle class="text-lg">
+              {{ t("landing.feature_ai") }}
+            </CardTitle>
+            <CardDescription>
+              {{ t("landing.feature_ai_desc") }}
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-200 dark:border-slate-800">
+      <div class="mx-auto max-w-6xl px-4 py-8 text-center sm:px-6">
+        <p class="text-muted-foreground text-sm">
+          {{ t("landing.footer") }}
+        </p>
+      </div>
+    </footer>
   </div>
 </template>

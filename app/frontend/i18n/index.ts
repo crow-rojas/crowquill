@@ -8,6 +8,7 @@ import enCommon from "@/i18n/locales/en/common.json"
 import enDashboard from "@/i18n/locales/en/dashboard.json"
 import enEnrollment from "@/i18n/locales/en/enrollment.json"
 import enExercises from "@/i18n/locales/en/exercises.json"
+import enLanding from "@/i18n/locales/en/landing.json"
 import enNav from "@/i18n/locales/en/nav.json"
 import enOnboarding from "@/i18n/locales/en/onboarding.json"
 import esAcademic from "@/i18n/locales/es/academic.json"
@@ -18,6 +19,7 @@ import esCommon from "@/i18n/locales/es/common.json"
 import esDashboard from "@/i18n/locales/es/dashboard.json"
 import esEnrollment from "@/i18n/locales/es/enrollment.json"
 import esExercises from "@/i18n/locales/es/exercises.json"
+import esLanding from "@/i18n/locales/es/landing.json"
 import esNav from "@/i18n/locales/es/nav.json"
 import esOnboarding from "@/i18n/locales/es/onboarding.json"
 
@@ -49,6 +51,7 @@ const i18n = createI18n({
       ...esAttendance,
       ...esDashboard,
       ...esAi,
+      ...esLanding,
     },
     en: {
       ...enCommon,
@@ -61,6 +64,7 @@ const i18n = createI18n({
       ...enAttendance,
       ...enDashboard,
       ...enAi,
+      ...enLanding,
     },
   },
 })

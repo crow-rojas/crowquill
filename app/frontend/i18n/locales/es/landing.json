@@ -1,0 +1,21 @@
+{
+  "landing": {
+    "title": "Crowquill — Plataforma de Tutorías",
+    "hero_title": "Tutorías de matemáticas, simplificadas",
+    "hero_subtitle": "Plataforma integral para gestionar tutorías universitarias: secciones, asistencia, ejercicios con LaTeX y un tutor IA que guía sin dar respuestas.",
+    "get_started": "Comenzar",
+    "sign_in": "Iniciar sesión",
+    "sign_up": "Crear cuenta",
+    "go_to_dashboard": "Ir al dashboard",
+    "features_title": "Todo lo que necesitas para gestionar tutorías",
+    "feature_sections": "Secciones y grupos",
+    "feature_sections_desc": "Organiza tutorías por periodo, curso y sección. Asigna tutores, controla cupos y gestiona inscripciones.",
+    "feature_exercises": "Ejercicios con LaTeX",
+    "feature_exercises_desc": "Crea y publica ejercicios con notación matemática. Editor en vivo con preview de LaTeX.",
+    "feature_attendance": "Control de asistencia",
+    "feature_attendance_desc": "Registra asistencia por sesión con un solo toque. Dashboard con estadísticas para tutores y admins.",
+    "feature_ai": "Tutor IA",
+    "feature_ai_desc": "Asistente inteligente que guía a los estudiantes paso a paso, sin dar la respuesta directa.",
+    "footer": "Crowquill — Plataforma de tutorías universitarias"
+  }
+}
