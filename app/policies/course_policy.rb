@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SectionPolicy < ApplicationPolicy
+class CoursePolicy < ApplicationPolicy
   def index?
     membership.present?
   end
@@ -27,11 +27,5 @@ class SectionPolicy < ApplicationPolicy
 
   def destroy?
     admin?
-  end
-
-  def take_attendance?
-    return true if admin?
-
-    tutor_or_above? && record&.tutor_id == membership.user_id
   end
 end

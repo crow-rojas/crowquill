@@ -1,0 +1,96 @@
+# frozen_string_literal: true
+
+class SectionsController < InertiaController
+  before_action :set_course, only: %i[index new create]
+  before_action :set_section, only: %i[show edit update destroy]
+
+  def index
+    authorize! nil, policy_class: SectionPolicy
+    sections = @course.sections.includes(:tutor).order(:name)
+
+    render inertia: "Sections/Index", props: {
+      course: @course.as_json,
+      sections: sections.as_json(include: {tutor: {only: %i[id name email]}})
+    }
+  end
+
+  def show
+    authorize! @section, policy_class: SectionPolicy
+    render inertia: "Sections/Show", props: {
+      section: @section.as_json(
+        include: {tutor: {only: %i[id name email]}, course: {}}
+      )
+    }
+  end
+
+  def new
+    authorize! nil, policy_class: SectionPolicy
+    tutors = Current.organization.memberships.where(role: %w[admin tutor]).includes(:user).map do |m|
+      m.user.as_json(only: %i[id name email])
+    end
+
+    render inertia: "Sections/New", props: {
+      course: @course.as_json,
+      tutors: tutors
+    }
+  end
+
+  def create
+    authorize! nil, policy_class: SectionPolicy
+    @section = @course.sections.build(section_params)
+
+    if @section.save
+      redirect_to section_path(@section), notice: "Section created successfully."
+    else
+      redirect_to new_course_section_path(@course), inertia: {errors: @section.errors}
+    end
+  end
+
+  def edit
+    authorize! @section, policy_class: SectionPolicy
+    tutors = Current.organization.memberships.where(role: %w[admin tutor]).includes(:user).map do |m|
+      m.user.as_json(only: %i[id name email])
+    end
+
+    render inertia: "Sections/Edit", props: {
+      section: @section.as_json,
+      tutors: tutors
+    }
+  end
+
+  def update
+    authorize! @section, policy_class: SectionPolicy
+
+    if @section.update(section_params)
+      redirect_to section_path(@section), notice: "Section updated successfully."
+    else
+      redirect_to edit_section_path(@section), inertia: {errors: @section.errors}
+    end
+  end
+
+  def destroy
+    authorize! @section, policy_class: SectionPolicy
+    course = @section.course
+    @section.destroy!
+    redirect_to course_sections_path(course), notice: "Section deleted successfully."
+  end
+
+  private
+
+  def set_course
+    @course = Course.joins(academic_period: :organization)
+      .where(organizations: {id: Current.organization.id})
+      .find(params[:course_id])
+  end
+
+  def set_section
+    @section = Section.joins(course: {academic_period: :organization})
+      .where(organizations: {id: Current.organization.id})
+      .includes(:tutor, :course)
+      .find(params[:id])
+  end
+
+  def section_params
+    params.require(:section).permit(:name, :tutor_id, :max_students, schedule: {})
+  end
+end

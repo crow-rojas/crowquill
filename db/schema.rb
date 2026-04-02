@@ -10,9 +10,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_02_035101) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_02_041413) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "academic_periods", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.date "end_date", null: false
+    t.string "name", null: false
+    t.bigint "organization_id", null: false
+    t.date "start_date", null: false
+    t.string "status", default: "draft", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_academic_periods_on_organization_id"
+  end
+
+  create_table "courses", force: :cascade do |t|
+    t.bigint "academic_period_id", null: false
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.index ["academic_period_id"], name: "index_courses_on_academic_period_id"
+  end
 
   create_table "memberships", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -34,6 +54,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_02_035101) do
     t.index ["slug"], name: "index_organizations_on_slug", unique: true
   end
 
+  create_table "sections", force: :cascade do |t|
+    t.bigint "course_id", null: false
+    t.datetime "created_at", null: false
+    t.integer "max_students", default: 12, null: false
+    t.string "name", null: false
+    t.jsonb "schedule", default: {}, null: false
+    t.bigint "tutor_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_id"], name: "index_sections_on_course_id"
+    t.index ["tutor_id"], name: "index_sections_on_tutor_id"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "ip_address"
@@ -53,7 +85,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_02_035101) do
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
+  add_foreign_key "academic_periods", "organizations"
+  add_foreign_key "courses", "academic_periods"
   add_foreign_key "memberships", "organizations"
   add_foreign_key "memberships", "users"
+  add_foreign_key "sections", "courses"
+  add_foreign_key "sections", "users", column: "tutor_id"
   add_foreign_key "sessions", "users"
 end

@@ -14,6 +14,13 @@ Rails.application.routes.draw do
     resource :password_reset,     only: [:new, :edit, :create, :update]
   end
 
+  resources :academic_periods, shallow: true do
+    resources :courses, shallow: true do
+      resources :sections, only: %i[index new create]
+    end
+  end
+  resources :sections, only: %i[show edit update destroy]
+
   get :dashboard, to: "dashboard#index"
   get :onboarding, to: "onboarding#index"
 
