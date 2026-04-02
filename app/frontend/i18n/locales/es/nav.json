@@ -1,0 +1,85 @@
+{
+  "nav": {
+    "platform": "Plataforma",
+    "dashboard": "Inicio",
+    "patients": "Mis Pacientes",
+    "settings": "Configuración",
+    "profile": "Perfil",
+    "password": "Contraseña",
+    "email": "Correo",
+    "appearance": "Apariencia",
+    "language": "Idioma",
+    "sessions": "Sesiones",
+    "logout": "Cerrar sesión"
+  },
+  "settings": {
+    "title": "Configuración",
+    "description": "Administra tu perfil y la configuración de tu cuenta",
+    "profile": {
+      "title": "Información del perfil",
+      "breadcrumb": "Configuración de perfil",
+      "description": "Actualiza tu nombre y correo electrónico",
+      "name": "Nombre",
+      "namePlaceholder": "Nombre completo",
+      "saved": "Guardado."
+    },
+    "email": {
+      "title": "Actualizar correo",
+      "breadcrumb": "Configuración de correo",
+      "description": "Actualiza tu correo electrónico y verifícalo",
+      "address": "Correo electrónico",
+      "addressPlaceholder": "Correo electrónico",
+      "currentPassword": "Contraseña actual",
+      "currentPasswordPlaceholder": "Contraseña actual",
+      "unverified": "Tu correo electrónico no está verificado.",
+      "resendVerification": "Haz clic aquí para reenviar el correo de verificación.",
+      "saved": "Guardado"
+    },
+    "password": {
+      "title": "Actualizar contraseña",
+      "breadcrumb": "Configuración de contraseña",
+      "description": "Asegúrate de usar una contraseña larga y aleatoria para mantener tu cuenta segura",
+      "currentPassword": "Contraseña actual",
+      "currentPasswordPlaceholder": "Contraseña actual",
+      "newPassword": "Nueva contraseña",
+      "newPasswordPlaceholder": "Nueva contraseña",
+      "confirmPassword": "Confirmar contraseña",
+      "confirmPasswordPlaceholder": "Confirmar contraseña",
+      "submit": "Guardar contraseña",
+      "saved": "Guardado."
+    },
+    "sessions": {
+      "title": "Sesiones",
+      "breadcrumb": "Sesiones",
+      "description": "Administra tus sesiones activas en distintos dispositivos",
+      "current": "Actual",
+      "activeSince": "Activa desde:",
+      "logout": "Cerrar sesión"
+    },
+    "appearance": {
+      "title": "Apariencia",
+      "breadcrumb": "Configuración de apariencia",
+      "description": "Actualiza la configuración de apariencia de tu cuenta",
+      "light": "Claro",
+      "dark": "Oscuro",
+      "system": "Sistema"
+    },
+    "language": {
+      "title": "Idioma",
+      "description": "Selecciona el idioma de la interfaz",
+      "spanish": "Español",
+      "english": "Inglés"
+    },
+    "deleteAccount": {
+      "title": "Eliminar cuenta",
+      "description": "Elimina tu cuenta y todos sus recursos",
+      "warning": "Advertencia",
+      "warningText": "Por favor procede con precaución, esto no se puede deshacer.",
+      "button": "Eliminar cuenta",
+      "dialogTitle": "¿Estás seguro de que quieres eliminar tu cuenta?",
+      "dialogDescription": "Una vez que tu cuenta sea eliminada, todos sus recursos y datos serán eliminados permanentemente. Por favor ingresa tu contraseña para confirmar que deseas eliminar tu cuenta permanentemente.",
+      "password": "Contraseña",
+      "passwordPlaceholder": "Contraseña"
+    }
+  }
+}

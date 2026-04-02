@@ -1,0 +1,24 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  host: <%= ENV.fetch("DB_HOST") { "localhost" } %>
+  port: <%= ENV.fetch("DB_PORT") { 5480 } %>
+  username: crowquill
+  password: crowquill
+
+development:
+  <<: *default
+  database: crowquill_development
+
+test:
+  <<: *default
+  database: crowquill_test
+
+production:
+  <<: *default
+  database: crowquill_production
+  username: <%= ENV["CROWQUILL_DATABASE_USERNAME"] %>
+  password: <%= ENV["CROWQUILL_DATABASE_PASSWORD"] %>
+  host: <%= ENV["CROWQUILL_DATABASE_HOST"] %>
+  port: <%= ENV.fetch("CROWQUILL_DATABASE_PORT") { 5432 } %>
