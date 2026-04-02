@@ -5,19 +5,28 @@ require "rails_helper"
 RSpec.describe AiTutorService do
   let(:user) { create(:user) }
   let(:conversation) { create(:ai_conversation, user: user) }
-  let(:mock_messages_resource) { instance_double(Anthropic::Resources::Messages) }
-  let(:mock_client) { instance_double(Anthropic::Client, messages: mock_messages_resource) }
 
-  let(:mock_usage) { double(input_tokens: 150, output_tokens: 50) }
-  let(:mock_text_block) { double(text: "Let's think about this step by step.") }
-  let(:mock_response) { double(content: [mock_text_block], usage: mock_usage) }
+  let(:mock_response) do
+    double(
+      content: "Let's think about this step by step.",
+      input_tokens: 150,
+      output_tokens: 50
+    )
+  end
+
+  let(:mock_chat) do
+    instance_double(RubyLLM::Chat).tap do |chat|
+      allow(chat).to receive(:with_instructions).and_return(chat)
+      allow(chat).to receive(:add_message).and_return(chat)
+      allow(chat).to receive(:ask).and_return(mock_response)
+    end
+  end
 
   describe "#call" do
     it "returns content and token counts on success" do
       create(:ai_message, ai_conversation: conversation, role: "user", content: "How do I solve x^2 = 4?", status: "complete")
-      allow(mock_messages_resource).to receive(:create).and_return(mock_response)
 
-      service = described_class.new(conversation, "How do I solve x^2 = 4?", client: mock_client)
+      service = described_class.new(conversation, "How do I solve x^2 = 4?", chat: mock_chat)
       result = service.call
 
       expect(result[:content]).to eq("Let's think about this step by step.")
@@ -26,67 +35,43 @@ RSpec.describe AiTutorService do
       expect(result[:error]).to be_nil
     end
 
-    it "builds correct message payload with system prompt" do
+    it "sets system prompt and sends user message via ask" do
       create(:ai_message, ai_conversation: conversation, role: "user", content: "Hello", status: "complete")
       create(:ai_message, :assistant, ai_conversation: conversation, content: "Hi! How can I help?", status: "complete")
       create(:ai_message, ai_conversation: conversation, role: "user", content: "What is 2+2?", status: "complete")
 
-      allow(mock_messages_resource).to receive(:create).and_return(mock_response)
-
-      service = described_class.new(conversation, "What is 2+2?", client: mock_client)
+      service = described_class.new(conversation, "What is 2+2?", chat: mock_chat)
       service.call
 
-      expect(mock_messages_resource).to have_received(:create).with(
-        hash_including(
-          model: ENV.fetch("AI_TUTOR_MODEL", "claude-haiku-4-5-20251001"),
-          max_tokens: 2048,
-          system: a_string_including("Socratic math tutor"),
-          messages: [
-            {role: "user", content: "Hello"},
-            {role: "assistant", content: "Hi! How can I help?"},
-            {role: "user", content: "What is 2+2?"}
-          ]
-        )
-      )
+      expect(mock_chat).to have_received(:with_instructions).with(a_string_including("Socratic math tutor"))
+      expect(mock_chat).to have_received(:add_message).with(role: :user, content: "Hello")
+      expect(mock_chat).to have_received(:add_message).with(role: :assistant, content: "Hi! How can I help?")
+      expect(mock_chat).to have_received(:add_message).twice
+      expect(mock_chat).to have_received(:ask).with("What is 2+2?")
     end
 
     it "never includes PII in the API payload" do
       create(:ai_message, ai_conversation: conversation, role: "user", content: "Help me", status: "complete")
-      create(:ai_message, ai_conversation: conversation, role: "user", content: "More help please", status: "complete")
 
-      allow(mock_messages_resource).to receive(:create).and_return(mock_response)
-
-      service = described_class.new(conversation, "More help please", client: mock_client)
+      service = described_class.new(conversation, "Help me", chat: mock_chat)
       service.call
 
-      expect(mock_messages_resource).to have_received(:create) do |args|
-        payload_json = args.to_json
-        expect(payload_json).not_to include(user.email)
-        expect(payload_json).not_to include(user.name)
-        expect(payload_json).not_to include("\"user_id\"")
-
-        args[:messages].each do |msg|
-          expect(msg.keys).to contain_exactly(:role, :content)
-        end
+      expect(mock_chat).to have_received(:with_instructions) do |prompt|
+        expect(prompt).not_to include(user.email)
+        expect(prompt).not_to include(user.name)
       end
+
+      expect(mock_chat).not_to have_received(:add_message).with(hash_including(content: a_string_including(user.email)))
     end
 
     it "does not duplicate the user message already saved in the database" do
-      # Simulate controller flow: user message is saved to DB before calling the service
       create(:ai_message, ai_conversation: conversation, role: "user", content: "What is 2+2?", status: "complete")
 
-      allow(mock_messages_resource).to receive(:create).and_return(mock_response)
-
-      service = described_class.new(conversation, "What is 2+2?", client: mock_client)
+      service = described_class.new(conversation, "What is 2+2?", chat: mock_chat)
       service.call
 
-      expect(mock_messages_resource).to have_received(:create).with(
-        hash_including(
-          messages: [
-            {role: "user", content: "What is 2+2?"}
-          ]
-        )
-      )
+      expect(mock_chat).not_to have_received(:add_message)
+      expect(mock_chat).to have_received(:ask).with("What is 2+2?")
     end
 
     it "excludes streaming messages from history" do
@@ -94,19 +79,12 @@ RSpec.describe AiTutorService do
       create(:ai_message, :assistant, :streaming, ai_conversation: conversation, content: "")
       create(:ai_message, ai_conversation: conversation, role: "user", content: "Second", status: "complete")
 
-      allow(mock_messages_resource).to receive(:create).and_return(mock_response)
-
-      service = described_class.new(conversation, "Second", client: mock_client)
+      service = described_class.new(conversation, "Second", chat: mock_chat)
       service.call
 
-      expect(mock_messages_resource).to have_received(:create).with(
-        hash_including(
-          messages: [
-            {role: "user", content: "First"},
-            {role: "user", content: "Second"}
-          ]
-        )
-      )
+      expect(mock_chat).to have_received(:add_message).with(role: :user, content: "First").once
+      expect(mock_chat).to have_received(:add_message).once
+      expect(mock_chat).to have_received(:ask).with("Second")
     end
 
     it "includes exercise set content in system prompt when present" do
@@ -114,23 +92,20 @@ RSpec.describe AiTutorService do
       conversation_with_exercise = create(:ai_conversation, user: user, exercise_set: exercise_set)
 
       create(:ai_message, ai_conversation: conversation_with_exercise, role: "user", content: "Help me", status: "complete")
-      allow(mock_messages_resource).to receive(:create).and_return(mock_response)
 
-      service = described_class.new(conversation_with_exercise, "Help me", client: mock_client)
+      service = described_class.new(conversation_with_exercise, "Help me", chat: mock_chat)
       service.call
 
-      expect(mock_messages_resource).to have_received(:create).with(
-        hash_including(
-          system: a_string_including("Solve $x^2 + 1 = 0$")
-        )
+      expect(mock_chat).to have_received(:with_instructions).with(
+        a_string_including("Solve $x^2 + 1 = 0$")
       )
     end
 
     it "handles API errors gracefully" do
       create(:ai_message, ai_conversation: conversation, role: "user", content: "Help", status: "complete")
-      allow(mock_messages_resource).to receive(:create).and_raise(Anthropic::Errors::APIError.new(url: "https://api.anthropic.com", status: 429, message: "Rate limited"))
+      allow(mock_chat).to receive(:ask).and_raise(RubyLLM::Error.new("Rate limited"))
 
-      service = described_class.new(conversation, "Help", client: mock_client)
+      service = described_class.new(conversation, "Help", chat: mock_chat)
       result = service.call
 
       expect(result[:error]).to be true
@@ -141,9 +116,9 @@ RSpec.describe AiTutorService do
 
     it "handles connection errors gracefully" do
       create(:ai_message, ai_conversation: conversation, role: "user", content: "Help", status: "complete")
-      allow(mock_messages_resource).to receive(:create).and_raise(Anthropic::Errors::APIConnectionError.new(url: "https://api.anthropic.com", message: "Connection refused"))
+      allow(mock_chat).to receive(:ask).and_raise(RubyLLM::Error.new("Connection refused"))
 
-      service = described_class.new(conversation, "Help", client: mock_client)
+      service = described_class.new(conversation, "Help", chat: mock_chat)
       result = service.call
 
       expect(result[:error]).to be true

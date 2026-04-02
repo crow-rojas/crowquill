@@ -96,7 +96,7 @@ group :test do
   # Clean database state between tests
   gem "database_cleaner-active_record"
 end
-gem "anthropic"
+gem "ruby_llm"
 
 gem "pundit", "~> 2.5"
 gem "dotenv-rails", groups: [:development, :test]

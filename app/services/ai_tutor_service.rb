@@ -16,39 +16,41 @@ class AiTutorService
 
   attr_reader :conversation, :user_message
 
-  def initialize(conversation, user_message, client: nil)
+  def initialize(conversation, user_message, chat: nil)
     @conversation = conversation
     @user_message = user_message
-    @client = client
+    @chat = chat
   end
 
   def call
-    messages = build_messages
-    response = client.messages.create(
-      model: ENV.fetch("AI_TUTOR_MODEL", "claude-haiku-4-5-20251001"),
-      max_tokens: 2048,
-      system: system_prompt,
-      messages: messages
-    )
+    chat_instance = build_chat
+    response = chat_instance.ask(@user_message)
 
-    content = response.content&.first&.text || ""
-    input_tokens = response.usage&.input_tokens
-    output_tokens = response.usage&.output_tokens
-
-    {content: content, input_tokens: input_tokens, output_tokens: output_tokens}
-  rescue Anthropic::Errors::Error => e
+    {
+      content: response.content || "",
+      input_tokens: response.input_tokens,
+      output_tokens: response.output_tokens
+    }
+  rescue RubyLLM::Error => e
     Rails.logger.error("AiTutorService error: #{e.class} - #{e.message}")
     {content: "I'm sorry, I encountered an error. Please try again.", input_tokens: nil, output_tokens: nil, error: true}
   end
 
   private
 
-  def client
-    @client ||= Anthropic::Client.new(api_key: api_key)
+  def build_chat
+    c = @chat || RubyLLM.chat(model: model_id)
+    c.with_instructions(system_prompt)
+
+    build_history.each do |msg|
+      c.add_message(role: msg[:role].to_sym, content: msg[:content])
+    end
+
+    c
   end
 
-  def api_key
-    Rails.application.credentials.dig(:anthropic, :api_key) || ENV["ANTHROPIC_API_KEY"]
+  def model_id
+    ENV.fetch("AI_TUTOR_MODEL", "claude-haiku-4-5-20251001")
   end
 
   def system_prompt
@@ -60,12 +62,18 @@ class AiTutorService
     SYSTEM_PROMPT + exercise_context
   end
 
-  def build_messages
+  def build_history
     history = conversation.ai_messages
       .where(status: "complete")
       .order(:created_at)
       .pluck(:role, :content)
+      .map { |role, content| {role: role, content: content} }
 
-    history.map { |role, content| {role: role, content: content} }
+    # Exclude the last user message — chat.ask() will send it
+    if history.any? && history.last[:role] == "user" && history.last[:content] == @user_message
+      history[0...-1]
+    else
+      history
+    end
   end
 end
