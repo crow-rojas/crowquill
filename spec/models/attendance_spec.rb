@@ -32,6 +32,21 @@ RSpec.describe Attendance do
       expect(duplicate).not_to be_valid
       expect(duplicate.errors[:enrollment_id]).to be_present
     end
+
+    it "requires enrollment to belong to the tutoring session section" do
+      other_section = create(:section, course: course, tutor: tutor_user)
+      other_student = create(:user)
+      other_enrollment = create(:enrollment, section: other_section, user: other_student)
+
+      attendance = build(
+        :attendance,
+        tutoring_session: tutoring_session,
+        enrollment: other_enrollment,
+      )
+
+      expect(attendance).not_to be_valid
+      expect(attendance.errors[:enrollment]).to be_present
+    end
   end
 
   describe "associations" do

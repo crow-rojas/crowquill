@@ -5,22 +5,33 @@ class TutoringSessionsController < InertiaController
   before_action :set_tutoring_session, only: %i[show edit update destroy]
 
   def index
-    authorize :tutoring_session, policy_class: TutoringSessionPolicy
+    authorize @section, policy_class: TutoringSessionPolicy
     sessions = @section.tutoring_sessions.order(date: :desc)
 
     render inertia: "TutoringSessions/Index", props: {
       section: @section.as_json(
         include: {tutor: {only: %i[id name email]}, course: {}}
       ),
-      tutoring_sessions: sessions.as_json
+      tutoring_sessions: sessions.as_json,
+      can_create_session: TutoringSessionPolicy.new(Current.membership, @section).new?
     }
   end
 
   def show
     authorize @tutoring_session, policy_class: TutoringSessionPolicy
     section = @tutoring_session.section
-    enrollments = section.enrollments.active.includes(:user)
-    attendances = @tutoring_session.attendances.includes(enrollment: :user)
+    can_take_attendance = AttendancePolicy.new(Current.membership, @tutoring_session).update?
+
+    if can_take_attendance
+      enrollments = section.enrollments.active.includes(:user)
+      attendances = @tutoring_session.attendances.includes(enrollment: :user)
+    else
+      enrollments = section.enrollments.active.where(user_id: Current.user.id).includes(:user)
+      attendances = @tutoring_session.attendances
+        .joins(:enrollment)
+        .where(enrollments: {user_id: Current.user.id})
+        .includes(enrollment: :user)
+    end
 
     render inertia: "TutoringSessions/Show", props: {
       tutoring_session: @tutoring_session.as_json(
@@ -31,12 +42,14 @@ class TutoringSessionsController < InertiaController
       ),
       attendances: attendances.as_json(
         include: {enrollment: {include: {user: {only: %i[id name email]}}}}
-      )
+      ),
+      can_manage_session: TutoringSessionPolicy.new(Current.membership, @tutoring_session).update?,
+      can_take_attendance: can_take_attendance
     }
   end
 
   def new
-    authorize :tutoring_session, policy_class: TutoringSessionPolicy
+    authorize @section, policy_class: TutoringSessionPolicy
 
     render inertia: "TutoringSessions/New", props: {
       section: @section.as_json(
@@ -46,8 +59,8 @@ class TutoringSessionsController < InertiaController
   end
 
   def create
-    authorize :tutoring_session, policy_class: TutoringSessionPolicy
     @tutoring_session = @section.tutoring_sessions.build(tutoring_session_params)
+    authorize @tutoring_session, policy_class: TutoringSessionPolicy
 
     if @tutoring_session.save
       redirect_to tutoring_session_path(@tutoring_session), notice: t("flash.tutoring_sessions.created")

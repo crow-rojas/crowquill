@@ -30,6 +30,7 @@ import type { Course, Section, TutoringSession } from "@/types/academic"
 const props = defineProps<{
   section: Section & { course: Course }
   tutoring_sessions: TutoringSession[]
+  can_create_session: boolean
 }>()
 
 const { t } = useI18n()
@@ -84,7 +85,7 @@ function deleteSession(session: TutoringSession) {
           <Calendar class="mr-2 inline h-5 w-5" />
           {{ t("sessions.title") }} — {{ section.name }}
         </h1>
-        <Button v-if="can.take_attendance" size="sm" as-child>
+        <Button v-if="can_create_session" size="sm" as-child>
           <Link :href="newSectionTutoringSessionPath(section.id)">
             <Plus class="mr-1 h-4 w-4" />
             {{ t("sessions.new") }}

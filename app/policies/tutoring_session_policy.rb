@@ -2,31 +2,31 @@
 
 class TutoringSessionPolicy < ApplicationPolicy
   def index?
-    membership.present?
+    can_read_section?(section_for_record)
   end
 
   def show?
-    membership.present?
+    can_read_section?(section_for_record)
   end
 
   def new?
-    tutor_or_above?
+    return true if admin?
+
+    membership&.tutor? && section_owned_by_tutor?(section_for_record)
   end
 
   def create?
-    return true if admin?
-
-    tutor_or_above? && record_section_owned_by_tutor?
+    new?
   end
 
   def edit?
-    tutor_or_above?
+    update?
   end
 
   def update?
     return true if admin?
 
-    tutor_or_above? && record_section_owned_by_tutor?
+    membership&.tutor? && section_owned_by_tutor?(section_for_record)
   end
 
   def destroy?
@@ -35,10 +35,32 @@ class TutoringSessionPolicy < ApplicationPolicy
 
   private
 
-  def record_section_owned_by_tutor?
-    return true unless record&.respond_to?(:section)
-    return true if record.section.nil?
+  def section_for_record
+    return record if record.is_a?(Section)
+    return record.section if record&.respond_to?(:section)
 
-    record.section.tutor_id == membership.user_id
+    nil
+  end
+
+  def can_read_section?(section)
+    return false unless membership.present?
+    return true if admin?
+    return false unless section
+
+    if membership.tutor?
+      section_owned_by_tutor?(section)
+    elsif membership.tutorado?
+      enrolled_in_section?(section)
+    else
+      false
+    end
+  end
+
+  def section_owned_by_tutor?(section)
+    section&.tutor_id == membership.user_id
+  end
+
+  def enrolled_in_section?(section)
+    section.enrollments.active.exists?(user_id: membership.user_id)
   end
 end

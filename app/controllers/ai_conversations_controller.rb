@@ -28,9 +28,10 @@ class AiConversationsController < InertiaController
     authorize :ai_conversation, policy_class: AiConversationPolicy
 
     if params[:ai_conversation][:exercise_set_id].present?
-      ExerciseSet.joins(course: {academic_period: :organization})
+      exercise_sets = ExerciseSet.joins(course: {academic_period: :organization})
         .where(organizations: {id: Current.organization.id})
-        .find(params[:ai_conversation][:exercise_set_id])
+      exercise_sets = exercise_sets.published unless Current.membership&.admin?
+      exercise_sets.find(params[:ai_conversation][:exercise_set_id])
     end
 
     conversation = Current.user.ai_conversations.build(conversation_params)

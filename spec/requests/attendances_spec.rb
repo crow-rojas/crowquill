@@ -106,6 +106,24 @@ RSpec.describe "Attendances", type: :request do
         expect(Attendance.count).to eq(2)
         expect(tutoring_session.reload).to be_completed
       end
+
+      it "does not allow taking attendance for another tutor section" do
+        other_tutor = create(:user)
+        create(:membership, :tutor, user: other_tutor, organization: organization)
+        other_section = create(:section, course: course, tutor: other_tutor, max_students: 10)
+        other_session = create(:tutoring_session, section: other_section)
+        other_student = create(:user)
+        other_enrollment = create(:enrollment, section: other_section, user: other_student)
+
+        patch tutoring_session_attendances_path(other_session), params: {
+          attendances: [
+            {enrollment_id: other_enrollment.id, status: "present"}
+          ]
+        }
+
+        expect(Attendance.count).to eq(0)
+        expect(response).to redirect_to(dashboard_path)
+      end
     end
 
     context "as admin" do

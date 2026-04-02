@@ -18,6 +18,8 @@
   },
   "attendance": {
     "title": "Asistencia",
+    "my_status": "Mi estado de asistencia",
+    "not_recorded": "Aun no registrada",
     "take_attendance": "Tomar Asistencia",
     "save_attendance": "Guardar Asistencia",
     "student": "Estudiante",

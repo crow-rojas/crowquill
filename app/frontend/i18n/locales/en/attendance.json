@@ -18,6 +18,8 @@
   },
   "attendance": {
     "title": "Attendance",
+    "my_status": "My attendance status",
+    "not_recorded": "Not recorded yet",
     "take_attendance": "Take Attendance",
     "save_attendance": "Save Attendance",
     "student": "Student",

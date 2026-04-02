@@ -63,13 +63,27 @@ RSpec.describe "AiConversations", type: :request do
     it "creates a conversation with an exercise set" do
       academic_period = create(:academic_period, organization: organization)
       course = create(:course, academic_period: academic_period)
-      exercise_set = create(:exercise_set, course: course)
+      exercise_set = create(:exercise_set, :published, course: course)
 
       expect {
         post ai_conversations_path, params: {ai_conversation: {title: "Exercise help", exercise_set_id: exercise_set.id}}
       }.to change(AiConversation, :count).by(1)
 
       expect(AiConversation.last.exercise_set).to eq(exercise_set)
+    end
+
+    it "rejects unpublished exercise_set_id for non-admin users" do
+      academic_period = create(:academic_period, organization: organization)
+      course = create(:course, academic_period: academic_period)
+      unpublished_exercise_set = create(:exercise_set, course: course, published: false)
+
+      expect {
+        post ai_conversations_path, params: {
+          ai_conversation: {title: "Exercise help", exercise_set_id: unpublished_exercise_set.id}
+        }
+      }.not_to change(AiConversation, :count)
+
+      expect(response).to have_http_status(:not_found)
     end
 
     it "rejects exercise_set_id from another organization" do

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, Link, router } from "@inertiajs/vue3"
 import { Calendar } from "lucide-vue-next"
+import { computed } from "vue"
 import { useI18n } from "vue-i18n"
 
 import AttendanceGrid from "@/components/AttendanceGrid.vue"
@@ -36,10 +37,13 @@ const props = defineProps<{
   }
   enrollments: Enrollment[]
   attendances: Attendance[]
+  can_manage_session: boolean
+  can_take_attendance: boolean
 }>()
 
 const { t } = useI18n()
 const { can } = usePermissions()
+const ownAttendance = computed(() => props.attendances[0] ?? null)
 
 const section = props.tutoring_session.section
 const course = section.course!
@@ -102,13 +106,22 @@ function deleteSession() {
             {{ t(`sessions.statuses.${tutoring_session.status}`) }}
           </Badge>
         </div>
-        <div v-if="can.manage_sections" class="flex gap-2">
-          <Button variant="outline" size="sm" as-child>
+        <div
+          v-if="can_manage_session || can.manage_sections"
+          class="flex gap-2"
+        >
+          <Button
+            v-if="can_manage_session"
+            variant="outline"
+            size="sm"
+            as-child
+          >
             <Link :href="editTutoringSessionPath(tutoring_session.id)">
               {{ t("common.edit") }}
             </Link>
           </Button>
           <Button
+            v-if="can.manage_sections"
             variant="outline"
             size="sm"
             class="text-destructive"
@@ -125,11 +138,24 @@ function deleteSession() {
         </CardHeader>
         <CardContent>
           <AttendanceGrid
+            v-if="can_take_attendance"
             :tutoring-session-id="tutoring_session.id"
             :enrollments="enrollments"
             :attendances="attendances"
-            :readonly="!can.take_attendance"
           />
+
+          <div v-else class="rounded-lg border p-4">
+            <p class="text-muted-foreground text-sm">
+              {{ t("attendance.my_status") }}
+            </p>
+            <p class="mt-2 text-base font-medium">
+              {{
+                ownAttendance
+                  ? t(`attendance.statuses.${ownAttendance.status}`)
+                  : t("attendance.not_recorded")
+              }}
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>

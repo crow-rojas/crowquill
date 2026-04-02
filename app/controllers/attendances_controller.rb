@@ -4,9 +4,9 @@ class AttendancesController < InertiaController
   before_action :set_tutoring_session
 
   def update
-    authorize :attendance, policy_class: AttendancePolicy
+    authorize @tutoring_session, policy_class: AttendancePolicy
 
-    valid_enrollment_ids = @tutoring_session.section.enrollments.pluck(:id)
+    valid_enrollment_ids = @tutoring_session.section.enrollments.active.pluck(:id)
 
     ActiveRecord::Base.transaction do
       attendance_params.each do |entry|
