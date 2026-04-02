@@ -28,9 +28,16 @@ class ApplicationController < ActionController::Base
   def resolve_membership
     return unless Current.user
 
-    Current.membership = Current.user.memberships.find_by(
-      organization: Organization.find_by(slug: ENV.fetch("DEFAULT_ORG_SLUG", "pimu-uc"))
-    )
+    memberships = Current.user.memberships.includes(:organization).to_a
+    return if memberships.empty?
+
+    default_org_slug = ENV.fetch("DEFAULT_ORG_SLUG", "pimu-uc")
+    preferred_org_slug = dev_user_switch_enabled? ? cookies.signed[:dev_org_slug].presence : nil
+
+    Current.membership =
+      membership_for_slug(memberships, preferred_org_slug) ||
+      membership_for_slug(memberships, default_org_slug) ||
+      memberships.first
   end
 
   def set_locale
@@ -61,5 +68,11 @@ class ApplicationController < ActionController::Base
   def set_current_request_details
     Current.user_agent = request.user_agent
     Current.ip_address = request.ip
+  end
+
+  def membership_for_slug(memberships, slug)
+    return nil if slug.blank?
+
+    memberships.find { |membership| membership.organization&.slug == slug }
   end
 end

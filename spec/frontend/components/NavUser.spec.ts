@@ -72,12 +72,16 @@ function buildAuth(name: string, email: string): Auth {
     dev_user_switch: {
       enabled: true,
       current_user_id: 1,
+      current_membership_id: 1,
       users: [
         {
+          membership_id: 1,
           id: 1,
           name,
           email,
           role: "admin",
+          organization_slug: "pimu-uc",
+          organization_name: "PIMU UC",
         },
       ],
     },

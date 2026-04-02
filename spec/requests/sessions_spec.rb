@@ -69,15 +69,17 @@ RSpec.describe "Sessions", type: :request do
     let(:organization) { create(:organization, slug: ENV.fetch("DEFAULT_ORG_SLUG", "pimu-uc")) }
     let(:current_user) { create(:user) }
     let(:target_user) { create(:user) }
+    let(:current_membership) { create(:membership, :admin, user: current_user, organization: organization) }
+    let(:target_membership) { create(:membership, :tutor, user: target_user, organization: organization) }
 
     before do
-      create(:membership, :admin, user: current_user, organization: organization)
-      create(:membership, :tutor, user: target_user, organization: organization)
+      current_membership
+      target_membership
       sign_in_as current_user
     end
 
     it "returns not found when feature flag is disabled" do
-      post dev_switch_user_url, params: {user_id: target_user.id}
+      post dev_switch_user_url, params: {membership_id: target_membership.id}
 
       expect(response).to have_http_status(:not_found)
     end
@@ -90,7 +92,7 @@ RSpec.describe "Sessions", type: :request do
       end
 
       it "switches to the selected user from the same organization" do
-        post dev_switch_user_url, params: {user_id: target_user.id, return_to: dashboard_path}
+        post dev_switch_user_url, params: {membership_id: target_membership.id, return_to: dashboard_path}
 
         expect(response).to redirect_to(dashboard_url)
 
@@ -98,28 +100,27 @@ RSpec.describe "Sessions", type: :request do
         expect(inertia.props[:role]).to eq("tutor")
       end
 
-      it "rejects switching to users outside current organization" do
+      it "allows switching to users from another organization" do
         outsider = create(:user)
         outsider_org = create(:organization)
-        create(:membership, :tutorado, user: outsider, organization: outsider_org)
+        outsider_membership = create(:membership, :tutorado, user: outsider, organization: outsider_org)
 
-        post dev_switch_user_url, params: {user_id: outsider.id, return_to: dashboard_path}
+        post dev_switch_user_url, params: {membership_id: outsider_membership.id, return_to: dashboard_path}
 
         expect(response).to redirect_to(dashboard_url)
-        expect(flash[:alert]).to eq(I18n.t("flash.sessions.switch_user_unavailable", locale: :en))
 
         get dashboard_url
-        expect(inertia.props[:role]).to eq("admin")
+        expect(inertia.props[:role]).to eq("tutorado")
       end
 
       it "falls back to dashboard for unsafe return paths" do
-        post dev_switch_user_url, params: {user_id: target_user.id, return_to: "https://example.com/malicious"}
+        post dev_switch_user_url, params: {membership_id: target_membership.id, return_to: "https://example.com/malicious"}
 
         expect(response).to redirect_to(dashboard_url)
       end
 
       it "keeps safe internal return paths" do
-        post dev_switch_user_url, params: {user_id: target_user.id, return_to: "/ai_conversations?page=2"}
+        post dev_switch_user_url, params: {membership_id: target_membership.id, return_to: "/ai_conversations?page=2"}
 
         expect(response).to redirect_to("http://www.example.com/ai_conversations?page=2")
       end

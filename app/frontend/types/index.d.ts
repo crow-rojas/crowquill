@@ -3,15 +3,19 @@ import type { LucideIcon } from "lucide-vue-next"
 import type { Membership, Permissions, Role } from "./permissions"
 
 export interface DevSwitchUser {
+  membership_id: number
   id: number
   name: string
   email: string
   role: Role
+  organization_slug: string
+  organization_name: string
 }
 
 export interface DevUserSwitch {
   enabled: boolean
   current_user_id: number | null
+  current_membership_id: number | null
   users: DevSwitchUser[]
 }
 

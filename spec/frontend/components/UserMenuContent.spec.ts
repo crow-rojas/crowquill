@@ -56,6 +56,7 @@ function makeDevUserSwitch(
     {
       enabled: false,
       current_user_id: 1,
+      current_membership_id: 1,
       users: [] as DevUserSwitch["users"],
     },
     overrides,
@@ -120,18 +121,25 @@ describe("UserMenuContent", () => {
           dev_user_switch: makeDevUserSwitch({
             enabled: true,
             current_user_id: 1,
+            current_membership_id: 101,
             users: [
               {
+                membership_id: 101,
                 id: 1,
                 name: "Admin User",
                 email: "admin@crowquill.dev",
                 role: "admin",
+                organization_name: "PIMU UC",
+                organization_slug: "pimu-uc",
               },
               {
+                membership_id: 102,
                 id: 2,
                 name: "Tutor One",
                 email: "tutor1@crowquill.dev",
                 role: "tutor",
+                organization_name: "PIMU UC",
+                organization_slug: "pimu-uc",
               },
             ],
           }),
@@ -147,9 +155,10 @@ describe("UserMenuContent", () => {
     expect(switcherList.classes()).toContain("overflow-y-auto")
     expect(wrapper.text()).toContain("Admin User")
     expect(wrapper.text()).toContain("Tutor One")
+    expect(wrapper.text()).toContain("PIMU UC")
     expect(wrapper.text()).toContain("nav.dev_switcher.current")
 
-    const currentUserButton = wrapper.get('[data-testid="switch-user-1"]')
+    const currentUserButton = wrapper.get('[data-testid="switch-user-101"]')
     expect((currentUserButton.element as HTMLButtonElement).disabled).toBe(true)
   })
 
@@ -162,18 +171,25 @@ describe("UserMenuContent", () => {
           dev_user_switch: makeDevUserSwitch({
             enabled: true,
             current_user_id: 1,
+            current_membership_id: 101,
             users: [
               {
+                membership_id: 101,
                 id: 1,
                 name: "Admin User",
                 email: "admin@crowquill.dev",
                 role: "admin",
+                organization_name: "PIMU UC",
+                organization_slug: "pimu-uc",
               },
               {
+                membership_id: 203,
                 id: 3,
                 name: "Student Two",
                 email: "alumno2@crowquill.dev",
                 role: "tutorado",
+                organization_name: "Centro de Tutorias USM",
+                organization_slug: "mate-usm",
               },
             ],
           }),
@@ -181,10 +197,10 @@ describe("UserMenuContent", () => {
       },
     })
 
-    await wrapper.get('[data-testid="switch-user-3"]').trigger("click")
+    await wrapper.get('[data-testid="switch-user-203"]').trigger("click")
 
     expect(inertiaMocks.post).toHaveBeenCalledWith("/dev/switch_user", {
-      user_id: 3,
+      membership_id: 203,
       return_to: "/dashboard?tab=overview",
     })
   })

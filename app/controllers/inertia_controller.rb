@@ -73,27 +73,32 @@ class InertiaController < ApplicationController
   end
 
   def build_dev_user_switch
-    enabled = dev_user_switch_enabled? && Current.organization.present?
+    enabled = dev_user_switch_enabled? && Current.user.present?
 
     return {
       enabled: false,
       current_user_id: Current.user&.id,
+      current_membership_id: Current.membership&.id,
       users: []
     } unless enabled
 
     role_order = Membership::ROLES.each_with_index.to_h
 
-    users = Current.organization.memberships.includes(:user).filter_map do |membership|
-      next unless membership.user
+    users = Membership.includes(:user, :organization).filter_map do |membership|
+      next unless membership.user && membership.organization
 
       {
+        membership_id: membership.id,
         id: membership.user.id,
         name: membership.user.name,
         email: membership.user.email,
-        role: membership.role
+        role: membership.role,
+        organization_slug: membership.organization.slug,
+        organization_name: membership.organization.name
       }
     end.sort_by do |user|
       [
+        user[:organization_name].to_s.downcase,
         role_order.fetch(user[:role], Membership::ROLES.length),
         user[:name].to_s.downcase
       ]
@@ -102,6 +107,7 @@ class InertiaController < ApplicationController
     {
       enabled: true,
       current_user_id: Current.user&.id,
+      current_membership_id: Current.membership&.id,
       users: users
     }
   end

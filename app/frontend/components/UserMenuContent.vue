@@ -33,18 +33,20 @@ const switchCandidates = computed(() => devUserSwitch.value.users)
 const canSwitchUsers = computed(
   () => devUserSwitch.value.enabled && switchCandidates.value.length > 0,
 )
-const currentSwitchUserId = computed(() => devUserSwitch.value.current_user_id)
+const currentSwitchMembershipId = computed(
+  () => devUserSwitch.value.current_membership_id,
+)
 
 const roleLabel = (role: Role) => t(roleLabelKey[role])
 
-const isCurrentSwitchUser = (userId: number) =>
-  currentSwitchUserId.value === userId
+const isCurrentSwitchMembership = (membershipId: number) =>
+  currentSwitchMembershipId.value === membershipId
 
-const handleUserSwitch = (userId: number) => {
-  if (!canSwitchUsers.value || isCurrentSwitchUser(userId)) return
+const handleUserSwitch = (membershipId: number) => {
+  if (!canSwitchUsers.value || isCurrentSwitchMembership(membershipId)) return
 
   router.post(devSwitchUserPath(), {
-    user_id: userId,
+    membership_id: membershipId,
     return_to: window.location.pathname + window.location.search,
   })
 }
@@ -88,29 +90,39 @@ const handleLogout = () => {
     >
       <DropdownMenuItem
         v-for="candidate in switchCandidates"
-        :key="candidate.id"
+        :key="candidate.membership_id"
         :as-child="true"
       >
         <button
           type="button"
-          class="flex w-full items-center gap-2"
-          :data-testid="`switch-user-${candidate.id}`"
-          :disabled="isCurrentSwitchUser(candidate.id)"
-          @click="handleUserSwitch(candidate.id)"
+          class="grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-2"
+          :data-testid="`switch-user-${candidate.membership_id}`"
+          :disabled="isCurrentSwitchMembership(candidate.membership_id)"
+          @click="handleUserSwitch(candidate.membership_id)"
         >
-          <Users class="h-4 w-4 shrink-0" />
+          <Users class="mt-0.5 h-4 w-4 shrink-0" />
           <div class="min-w-0 flex-1 text-left">
             <p class="truncate text-sm">{{ candidate.name }}</p>
             <p class="text-muted-foreground truncate text-xs">
               {{ candidate.email }}
             </p>
+            <div class="mt-1 flex flex-wrap gap-1">
+              <span
+                class="bg-muted text-muted-foreground max-w-20 truncate rounded px-1.5 py-0.5 text-[10px] leading-none font-medium"
+              >
+                {{ roleLabel(candidate.role) }}
+              </span>
+              <span
+                class="bg-muted text-muted-foreground max-w-40 truncate rounded px-1.5 py-0.5 text-[10px] leading-none font-medium"
+              >
+                {{ t("nav.dev_switcher.org") }}:
+                {{ candidate.organization_name }}
+              </span>
+            </div>
           </div>
-          <span class="text-muted-foreground text-xs">
-            {{ roleLabel(candidate.role) }}
-          </span>
           <span
-            v-if="isCurrentSwitchUser(candidate.id)"
-            class="text-muted-foreground text-xs"
+            v-if="isCurrentSwitchMembership(candidate.membership_id)"
+            class="bg-primary/10 text-primary rounded px-1.5 py-0.5 text-[10px] leading-none font-medium"
           >
             {{ t("nav.dev_switcher.current") }}
           </span>
