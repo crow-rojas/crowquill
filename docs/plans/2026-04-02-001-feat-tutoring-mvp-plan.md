@@ -1,7 +1,7 @@
 ---
 title: "feat: Crowquill Tutoring Platform MVP"
 type: feat
-status: active
+status: completed
 date: 2026-04-02
 deepened: 2026-04-02
 ---
