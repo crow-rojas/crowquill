@@ -50,12 +50,7 @@ const form = useForm({
 
 function submit() {
   form
-    .transform((data) => ({
-      exercise_set: {
-        ...data,
-        published: data.published ? "1" : "0",
-      },
-    }))
+    .transform((data) => ({ exercise_set: data }))
     .post(courseExerciseSetsPath(props.course.id))
 }
 </script>

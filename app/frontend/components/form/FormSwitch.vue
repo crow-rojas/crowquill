@@ -27,9 +27,9 @@ defineEmits<{
         </p>
       </div>
       <Switch
-        :checked="modelValue ?? false"
+        :model-value="modelValue ?? false"
         :disabled="disabled"
-        @update:checked="$emit('update:modelValue', $event)"
+        @update:model-value="$emit('update:modelValue', $event)"
       />
     </div>
   </FormField>
