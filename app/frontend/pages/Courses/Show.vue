@@ -19,6 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { usePermissions } from "@/composables/usePermissions"
 import AppLayout from "@/layouts/AppLayout.vue"
 import {
@@ -93,115 +94,137 @@ function deleteCourse() {
         </div>
       </div>
 
-      <!-- Sections -->
-      <div class="flex items-center justify-between">
-        <h2 class="text-xl font-semibold">{{ t("sections.title") }}</h2>
-        <Button v-if="can.manage_sections" as-child size="sm">
-          <Link :href="newCourseSectionPath(course.id)">
-            <Plus class="mr-1 h-4 w-4" />
-            {{ t("sections.new") }}
-          </Link>
-        </Button>
-      </div>
+      <Tabs default-value="sections" class="w-full">
+        <TabsList class="grid h-auto w-full max-w-md grid-cols-2">
+          <TabsTrigger value="sections" class="gap-2">
+            {{ t("sections.title") }}
+            <span class="text-muted-foreground text-xs">
+              ({{ course.sections.length }})
+            </span>
+          </TabsTrigger>
+          <TabsTrigger value="exercises" class="gap-2">
+            {{ t("exercises.title") }}
+            <span class="text-muted-foreground text-xs">
+              ({{ exercise_sets.length }})
+            </span>
+          </TabsTrigger>
+        </TabsList>
 
-      <div v-if="course.sections.length > 0" class="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>{{ t("sections.name") }}</TableHead>
-              <TableHead>{{ t("sections.tutor") }}</TableHead>
-              <TableHead class="text-right">{{
-                t("sections.max_students")
-              }}</TableHead>
-              <TableHead class="text-right">{{
-                t("common.actions")
-              }}</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow v-for="section in course.sections" :key="section.id">
-              <TableCell class="font-medium">
-                <Link :href="sectionPath(section.id)" class="hover:underline">
-                  {{ section.name }}
-                </Link>
-              </TableCell>
-              <TableCell>{{ section.tutor?.name || "-" }}</TableCell>
-              <TableCell class="text-right">{{
-                section.max_students
-              }}</TableCell>
-              <TableCell class="text-right">
-                <div class="flex flex-wrap justify-end gap-2">
-                  <Button variant="outline" size="sm" as-child>
-                    <Link :href="sectionPath(section.id)">
-                      {{ t("common.view") }}
+        <TabsContent value="sections" class="mt-4 space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl font-semibold">{{ t("sections.title") }}</h2>
+            <Button v-if="can.manage_sections" as-child size="sm">
+              <Link :href="newCourseSectionPath(course.id)">
+                <Plus class="mr-1 h-4 w-4" />
+                {{ t("sections.new") }}
+              </Link>
+            </Button>
+          </div>
+
+          <div v-if="course.sections.length > 0" class="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{{ t("sections.name") }}</TableHead>
+                  <TableHead>{{ t("sections.tutor") }}</TableHead>
+                  <TableHead class="text-right">{{
+                    t("sections.max_students")
+                  }}</TableHead>
+                  <TableHead class="text-right">{{
+                    t("common.actions")
+                  }}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow v-for="section in course.sections" :key="section.id">
+                  <TableCell class="font-medium">
+                    <Link
+                      :href="sectionPath(section.id)"
+                      class="hover:underline"
+                    >
+                      {{ section.name }}
                     </Link>
-                  </Button>
-                  <Button
-                    v-if="section.can_view_sessions"
-                    variant="outline"
-                    size="sm"
-                    as-child
-                  >
-                    <Link :href="sectionTutoringSessionsPath(section.id)">
-                      {{ t("sections.sessions_action") }}
+                  </TableCell>
+                  <TableCell>{{ section.tutor?.name || "-" }}</TableCell>
+                  <TableCell class="text-right">{{
+                    section.max_students
+                  }}</TableCell>
+                  <TableCell class="text-right">
+                    <div class="flex flex-wrap justify-end gap-2">
+                      <Button variant="outline" size="sm" as-child>
+                        <Link :href="sectionPath(section.id)">
+                          {{ t("common.view") }}
+                        </Link>
+                      </Button>
+                      <Button
+                        v-if="section.can_view_sessions"
+                        variant="outline"
+                        size="sm"
+                        as-child
+                      >
+                        <Link :href="sectionTutoringSessionsPath(section.id)">
+                          {{ t("sections.sessions_action") }}
+                        </Link>
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
+
+          <div
+            v-else
+            class="text-muted-foreground flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center"
+          >
+            <Users class="mb-4 h-12 w-12 opacity-40" />
+            <p>{{ t("sections.no_sections") }}</p>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="exercises" class="mt-4 space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl font-semibold">{{ t("exercises.title") }}</h2>
+            <Button v-if="can.manage_exercises" as-child size="sm">
+              <Link :href="newCourseExerciseSetPath(course.id)">
+                <Plus class="mr-1 h-4 w-4" />
+                {{ t("exercises.new") }}
+              </Link>
+            </Button>
+          </div>
+
+          <div
+            v-if="exercise_sets.length === 0"
+            class="text-muted-foreground flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center"
+          >
+            <BookOpen class="mb-4 h-12 w-12 opacity-40" />
+            <p>{{ t("exercises.no_exercises") }}</p>
+          </div>
+
+          <div v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <Card v-for="exercise in exercise_sets" :key="exercise.id">
+              <CardHeader>
+                <div class="flex items-center justify-between">
+                  <CardTitle class="text-lg">
+                    <Link
+                      :href="exerciseSetPath(exercise.id)"
+                      class="hover:underline"
+                    >
+                      {{ exercise.title }}
                     </Link>
-                  </Button>
+                  </CardTitle>
+                  <Badge v-if="!exercise.published" variant="secondary">
+                    {{ t("exercises.draft") }}
+                  </Badge>
                 </div>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </div>
-
-      <div
-        v-else
-        class="text-muted-foreground flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center"
-      >
-        <Users class="mb-4 h-12 w-12 opacity-40" />
-        <p>{{ t("sections.no_sections") }}</p>
-      </div>
-
-      <!-- Exercises -->
-      <div class="flex items-center justify-between">
-        <h2 class="text-xl font-semibold">{{ t("exercises.title") }}</h2>
-        <Button v-if="can.manage_exercises" as-child size="sm">
-          <Link :href="newCourseExerciseSetPath(course.id)">
-            <Plus class="mr-1 h-4 w-4" />
-            {{ t("exercises.new") }}
-          </Link>
-        </Button>
-      </div>
-
-      <div
-        v-if="exercise_sets.length === 0"
-        class="text-muted-foreground flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center"
-      >
-        <BookOpen class="mb-4 h-12 w-12 opacity-40" />
-        <p>{{ t("exercises.no_exercises") }}</p>
-      </div>
-
-      <div v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <Card v-for="exercise in exercise_sets" :key="exercise.id">
-          <CardHeader>
-            <div class="flex items-center justify-between">
-              <CardTitle class="text-lg">
-                <Link
-                  :href="exerciseSetPath(exercise.id)"
-                  class="hover:underline"
-                >
-                  {{ exercise.title }}
-                </Link>
-              </CardTitle>
-              <Badge v-if="!exercise.published" variant="secondary">
-                {{ t("exercises.draft") }}
-              </Badge>
-            </div>
-            <CardDescription>
-              {{ t("exercises.week_number") }}: {{ exercise.week_number }}
-            </CardDescription>
-          </CardHeader>
-        </Card>
-      </div>
+                <CardDescription>
+                  {{ t("exercises.week_number") }}: {{ exercise.week_number }}
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   </AppLayout>
 </template>
