@@ -14,12 +14,28 @@ RSpec.describe "Sessions", type: :request do
 
   describe "POST /sign_in" do
     context "with valid credentials" do
-      it "redirects to the root url" do
+      it "redirects to the dashboard url" do
         post sign_in_url, params: {email: user.email, password: "Secret1*3*5*"}
         expect(response).to redirect_to(dashboard_url)
+      end
+
+      it "allows dashboard access when user has a membership" do
+        org = create(:organization, slug: "pimu-uc")
+        create(:membership, user: user, organization: org, role: "tutorado")
+
+        post sign_in_url, params: {email: user.email, password: "Secret1*3*5*"}
+        follow_redirect!
 
         get dashboard_url
         expect(response).to have_http_status(:success)
+      end
+
+      it "redirects to onboarding when user has no membership" do
+        post sign_in_url, params: {email: user.email, password: "Secret1*3*5*"}
+        follow_redirect!
+
+        get dashboard_url
+        expect(response).to redirect_to(onboarding_url)
       end
     end
 

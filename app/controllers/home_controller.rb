@@ -2,7 +2,9 @@
 
 class HomeController < InertiaController
   skip_before_action :authenticate
+  skip_before_action :require_membership
   before_action :perform_authentication
+  skip_verify_authorized :index
 
   def index
   end

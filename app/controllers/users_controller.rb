@@ -2,7 +2,9 @@
 
 class UsersController < InertiaController
   skip_before_action :authenticate, only: %i[new create]
+  skip_before_action :require_membership
   before_action :require_no_authentication, only: %i[new create]
+  skip_verify_authorized :new, :create, :destroy
 
   def new
     @user = User.new

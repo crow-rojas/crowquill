@@ -1,8 +1,13 @@
 import type { LucideIcon } from "lucide-vue-next"
 
+import type { Membership, Permissions, Role } from "./permissions"
+
 export interface Auth {
   user: User
   session: Pick<Session, "id">
+  membership: Membership | null
+  current_role: Role | null
+  can: Permissions
 }
 
 export interface BreadcrumbItem {
