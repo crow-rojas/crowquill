@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from "@inertiajs/vue3"
-import { LayoutGrid } from "lucide-vue-next"
+import { CalendarDays, LayoutGrid } from "lucide-vue-next"
 import { computed } from "vue"
 import { useI18n } from "vue-i18n"
 
@@ -15,20 +15,34 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { dashboardPath } from "@/routes"
+import { usePermissions } from "@/composables/usePermissions"
+import { academicPeriodsPath, dashboardPath } from "@/routes"
 import { type NavItem } from "@/types"
 
 import AppLogo from "./AppLogo.vue"
 
 const { t } = useI18n()
+const { can } = usePermissions()
 
-const mainNavItems = computed<NavItem[]>(() => [
-  {
-    title: t("nav.dashboard"),
-    href: dashboardPath(),
-    icon: LayoutGrid,
-  },
-])
+const mainNavItems = computed<NavItem[]>(() => {
+  const items: NavItem[] = [
+    {
+      title: t("nav.dashboard"),
+      href: dashboardPath(),
+      icon: LayoutGrid,
+    },
+  ]
+
+  if (can.value.manage_academic_periods) {
+    items.push({
+      title: t("nav.academic_periods"),
+      href: academicPeriodsPath(),
+      icon: CalendarDays,
+    })
+  }
+
+  return items
+})
 </script>
 
 <template>

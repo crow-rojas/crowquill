@@ -10,7 +10,9 @@
     "appearance": "Apariencia",
     "language": "Idioma",
     "sessions": "Sesiones",
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "academic_periods": "Periodos Academicos",
+    "my_sections": "Mis Secciones"
   },
   "settings": {
     "title": "Configuración",

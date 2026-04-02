@@ -1,0 +1,53 @@
+{
+  "academic_periods": {
+    "title": "Periodos Academicos",
+    "new": "Nuevo Periodo",
+    "edit": "Editar Periodo",
+    "name": "Nombre",
+    "start_date": "Fecha de inicio",
+    "end_date": "Fecha de termino",
+    "status": "Estado",
+    "statuses": {
+      "draft": "Borrador",
+      "active": "Activo",
+      "archived": "Archivado"
+    },
+    "no_periods": "No hay periodos academicos",
+    "created_successfully": "Periodo academico creado exitosamente",
+    "updated_successfully": "Periodo academico actualizado exitosamente",
+    "deleted_successfully": "Periodo academico eliminado exitosamente",
+    "confirm_delete": "Estas seguro de que deseas eliminar este periodo academico?",
+    "courses_count": "cursos"
+  },
+  "courses": {
+    "title": "Cursos",
+    "new": "Nuevo Curso",
+    "edit": "Editar Curso",
+    "name": "Nombre",
+    "description": "Descripcion",
+    "no_courses": "No hay cursos",
+    "created_successfully": "Curso creado exitosamente",
+    "updated_successfully": "Curso actualizado exitosamente",
+    "deleted_successfully": "Curso eliminado exitosamente",
+    "confirm_delete": "Estas seguro de que deseas eliminar este curso?",
+    "sections_count": "secciones"
+  },
+  "sections": {
+    "title": "Secciones",
+    "new": "Nueva Seccion",
+    "edit": "Editar Seccion",
+    "show": "Detalle de Seccion",
+    "name": "Nombre",
+    "schedule": "Horario",
+    "max_students": "Maximo de estudiantes",
+    "tutor": "Tutor",
+    "no_sections": "No hay secciones",
+    "enrolled_students": "Estudiantes inscritos",
+    "created_successfully": "Seccion creada exitosamente",
+    "updated_successfully": "Seccion actualizada exitosamente",
+    "deleted_successfully": "Seccion eliminada exitosamente",
+    "confirm_delete": "Estas seguro de que deseas eliminar esta seccion?",
+    "select_tutor": "Selecciona un tutor",
+    "no_schedule": "Sin horario definido"
+  }
+}
