@@ -1,0 +1,15 @@
+{
+  "ai": {
+    "title": "Chat con IA",
+    "new_conversation": "Nueva conversaci\u00f3n",
+    "conversations": "Conversaciones",
+    "no_conversations": "No tienes conversaciones a\u00fan. Inicia una nueva para comenzar.",
+    "send": "Enviar",
+    "type_message": "Escribe tu mensaje...",
+    "thinking": "Pensando...",
+    "error_occurred": "Ocurri\u00f3 un error. Por favor intenta de nuevo.",
+    "retry": "Reintentar",
+    "start_from_exercise": "Iniciar desde ejercicio",
+    "chat_with_ai": "Chatea con el tutor IA"
+  }
+}

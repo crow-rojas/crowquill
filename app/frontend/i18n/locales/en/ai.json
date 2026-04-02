@@ -1,0 +1,15 @@
+{
+  "ai": {
+    "title": "AI Chat",
+    "new_conversation": "New conversation",
+    "conversations": "Conversations",
+    "no_conversations": "You have no conversations yet. Start a new one to begin.",
+    "send": "Send",
+    "type_message": "Type your message...",
+    "thinking": "Thinking...",
+    "error_occurred": "An error occurred. Please try again.",
+    "retry": "Retry",
+    "start_from_exercise": "Start from exercise",
+    "chat_with_ai": "Chat with AI tutor"
+  }
+}

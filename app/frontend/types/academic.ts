@@ -69,6 +69,28 @@ export interface Attendance {
   updated_at: string
 }
 
+export interface AiConversation {
+  id: number
+  user_id: number
+  exercise_set_id: number | null
+  title: string
+  ai_messages?: AiMessage[]
+  created_at: string
+  updated_at: string
+}
+
+export interface AiMessage {
+  id: number
+  ai_conversation_id: number
+  role: "user" | "assistant"
+  content: string
+  status: "streaming" | "complete" | "failed"
+  input_tokens: number | null
+  output_tokens: number | null
+  created_at: string
+  updated_at: string
+}
+
 export interface Enrollment {
   id: number
   section_id: number

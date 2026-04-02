@@ -1,17 +1,21 @@
 import { createI18n } from "vue-i18n"
 
 import enAcademic from "@/i18n/locales/en/academic.json"
+import enAi from "@/i18n/locales/en/ai.json"
 import enAttendance from "@/i18n/locales/en/attendance.json"
 import enAuth from "@/i18n/locales/en/auth.json"
 import enCommon from "@/i18n/locales/en/common.json"
+import enDashboard from "@/i18n/locales/en/dashboard.json"
 import enEnrollment from "@/i18n/locales/en/enrollment.json"
 import enExercises from "@/i18n/locales/en/exercises.json"
 import enNav from "@/i18n/locales/en/nav.json"
 import enOnboarding from "@/i18n/locales/en/onboarding.json"
 import esAcademic from "@/i18n/locales/es/academic.json"
+import esAi from "@/i18n/locales/es/ai.json"
 import esAttendance from "@/i18n/locales/es/attendance.json"
 import esAuth from "@/i18n/locales/es/auth.json"
 import esCommon from "@/i18n/locales/es/common.json"
+import esDashboard from "@/i18n/locales/es/dashboard.json"
 import esEnrollment from "@/i18n/locales/es/enrollment.json"
 import esExercises from "@/i18n/locales/es/exercises.json"
 import esNav from "@/i18n/locales/es/nav.json"
@@ -43,6 +47,8 @@ const i18n = createI18n({
       ...esEnrollment,
       ...esExercises,
       ...esAttendance,
+      ...esDashboard,
+      ...esAi,
     },
     en: {
       ...enCommon,
@@ -53,6 +59,8 @@ const i18n = createI18n({
       ...enEnrollment,
       ...enExercises,
       ...enAttendance,
+      ...enDashboard,
+      ...enAi,
     },
   },
 })

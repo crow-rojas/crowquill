@@ -96,3 +96,4 @@ group :test do
   # Clean database state between tests
   gem "database_cleaner-active_record"
 end
+gem "anthropic"

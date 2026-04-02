@@ -35,6 +35,10 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :ai_conversations, only: %i[index show create] do
+    resources :ai_messages, only: %i[create]
+  end
+
   get :dashboard, to: "dashboard#index"
   get :onboarding, to: "onboarding#index"
 

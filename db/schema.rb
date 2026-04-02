@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_02_044902) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_02_050749) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -23,6 +23,28 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_02_044902) do
     t.string "status", default: "draft", null: false
     t.datetime "updated_at", null: false
     t.index ["organization_id"], name: "index_academic_periods_on_organization_id"
+  end
+
+  create_table "ai_conversations", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "exercise_set_id"
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["exercise_set_id"], name: "index_ai_conversations_on_exercise_set_id"
+    t.index ["user_id"], name: "index_ai_conversations_on_user_id"
+  end
+
+  create_table "ai_messages", force: :cascade do |t|
+    t.bigint "ai_conversation_id", null: false
+    t.text "content", default: "", null: false
+    t.datetime "created_at", null: false
+    t.integer "input_tokens"
+    t.integer "output_tokens"
+    t.string "role", null: false
+    t.string "status", default: "complete", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ai_conversation_id"], name: "index_ai_messages_on_ai_conversation_id"
   end
 
   create_table "attendances", force: :cascade do |t|
@@ -132,6 +154,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_02_044902) do
   end
 
   add_foreign_key "academic_periods", "organizations"
+  add_foreign_key "ai_conversations", "exercise_sets"
+  add_foreign_key "ai_conversations", "users"
+  add_foreign_key "ai_messages", "ai_conversations"
   add_foreign_key "attendances", "enrollments"
   add_foreign_key "attendances", "tutoring_sessions"
   add_foreign_key "courses", "academic_periods"
