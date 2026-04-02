@@ -26,6 +26,22 @@ RSpec.describe AiMessage do
       message = build(:ai_message, status: "invalid")
       expect(message).not_to be_valid
     end
+
+    it "rejects content longer than 10,000 characters" do
+      message = build(:ai_message, content: "a" * 10_001, status: "complete")
+      expect(message).not_to be_valid
+      expect(message.errors[:content]).to be_present
+    end
+
+    it "allows content up to 10,000 characters" do
+      message = build(:ai_message, content: "a" * 10_000, status: "complete")
+      expect(message).to be_valid
+    end
+
+    it "skips content length validation for streaming messages" do
+      message = build(:ai_message, content: "", status: "streaming")
+      expect(message).to be_valid
+    end
   end
 
   describe "associations" do

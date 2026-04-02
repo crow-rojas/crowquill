@@ -103,6 +103,33 @@ RSpec.describe "Enrollments", type: :request do
       end
     end
 
+    context "re-enrollment after withdrawal" do
+      before { tutorado_membership && sign_in_as(tutorado_user) }
+
+      it "re-enrolls a withdrawn student successfully" do
+        enrollment = create(:enrollment, section: section, user: tutorado_user, status: "withdrawn")
+
+        post section_enrollments_path(section)
+
+        expect(enrollment.reload.status).to eq("active")
+        expect(response).to redirect_to(section_path(section))
+        expect(flash[:notice]).to eq("Enrolled successfully")
+      end
+    end
+
+    context "admin enrolling user from another organization" do
+      before { admin_membership && sign_in_as(admin_user) }
+
+      it "rejects enrollment of user from another org" do
+        other_org = create(:organization)
+        other_user = create(:user)
+        create(:membership, :tutorado, user: other_user, organization: other_org)
+
+        post section_enrollments_path(section), params: {enrollment: {user_id: other_user.id}}
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
     context "as tutor" do
       before { sign_in_as(tutor_user) }
 

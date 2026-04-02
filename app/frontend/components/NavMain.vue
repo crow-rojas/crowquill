@@ -17,6 +17,14 @@ defineProps<{
 
 const page = usePage()
 const { t } = useI18n()
+
+function isActive(itemHref: string): boolean {
+  const cleanUrl = page.url.split("?")[0]
+  if (itemHref === "/") {
+    return cleanUrl === "/"
+  }
+  return cleanUrl === itemHref || cleanUrl.startsWith(itemHref + "/")
+}
 </script>
 
 <template>
@@ -26,11 +34,7 @@ const { t } = useI18n()
       <SidebarMenuItem v-for="item in items" :key="item.title">
         <SidebarMenuButton
           as-child
-          :is-active="
-            item.href === '/'
-              ? page.url === '/'
-              : page.url === item.href || page.url.startsWith(item.href + '/')
-          "
+          :is-active="isActive(item.href)"
           :tooltip="item.title"
         >
           <Link :href="item.href">

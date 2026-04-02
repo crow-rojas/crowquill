@@ -6,8 +6,12 @@ class AttendancesController < InertiaController
   def update
     authorize! nil, policy_class: AttendancePolicy
 
+    valid_enrollment_ids = @tutoring_session.section.enrollments.pluck(:id)
+
     ActiveRecord::Base.transaction do
       attendance_params.each do |entry|
+        next unless valid_enrollment_ids.include?(entry[:enrollment_id].to_i)
+
         attendance = @tutoring_session.attendances.find_or_initialize_by(
           enrollment_id: entry[:enrollment_id]
         )
@@ -16,7 +20,9 @@ class AttendancesController < InertiaController
         attendance.save!
       end
 
-      @tutoring_session.update!(status: "completed")
+      if attendance_params.present? && @tutoring_session.scheduled?
+        @tutoring_session.update!(status: "completed")
+      end
     end
 
     redirect_to tutoring_session_path(@tutoring_session), notice: "Attendance saved successfully."

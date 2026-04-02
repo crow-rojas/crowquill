@@ -15,7 +15,7 @@ class UsersController < InertiaController
 
     if @user.save
       session_record = @user.sessions.create!
-      cookies.signed.permanent[:session_token] = {value: session_record.id, httponly: true}
+      cookies.signed.permanent[:session_token] = {value: session_record.id, httponly: true, secure: Rails.env.production?, same_site: :lax}
 
       send_email_verification
       redirect_to dashboard_path, notice: "Welcome! You have signed up successfully"

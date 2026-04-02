@@ -36,9 +36,35 @@ RSpec.describe TutoringSessionPolicy do
   end
 
   describe "#create?" do
-    it "allows tutor or above" do
-      expect(described_class.new(admin_membership).create?).to be true
-      expect(described_class.new(tutor_membership).create?).to be true
+    it "allows admin for any section" do
+      other_tutor = create(:user)
+      create(:membership, :tutor, user: other_tutor, organization: organization)
+      academic_period = create(:academic_period, organization: organization)
+      course = create(:course, academic_period: academic_period)
+      section = create(:section, course: course, tutor: other_tutor)
+      session = build(:tutoring_session, section: section)
+
+      expect(described_class.new(admin_membership, session).create?).to be true
+    end
+
+    it "allows tutor for own section" do
+      academic_period = create(:academic_period, organization: organization)
+      course = create(:course, academic_period: academic_period)
+      section = create(:section, course: course, tutor: tutor_membership.user)
+      session = build(:tutoring_session, section: section)
+
+      expect(described_class.new(tutor_membership, session).create?).to be true
+    end
+
+    it "denies tutor for another tutor's section" do
+      other_tutor = create(:user)
+      create(:membership, :tutor, user: other_tutor, organization: organization)
+      academic_period = create(:academic_period, organization: organization)
+      course = create(:course, academic_period: academic_period)
+      section = create(:section, course: course, tutor: other_tutor)
+      session = build(:tutoring_session, section: section)
+
+      expect(described_class.new(tutor_membership, session).create?).to be false
     end
 
     it "denies tutorado" do

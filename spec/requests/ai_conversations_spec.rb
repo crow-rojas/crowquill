@@ -61,13 +61,25 @@ RSpec.describe "AiConversations", type: :request do
     end
 
     it "creates a conversation with an exercise set" do
-      exercise_set = create(:exercise_set)
+      academic_period = create(:academic_period, organization: organization)
+      course = create(:course, academic_period: academic_period)
+      exercise_set = create(:exercise_set, course: course)
 
       expect {
         post ai_conversations_path, params: {ai_conversation: {title: "Exercise help", exercise_set_id: exercise_set.id}}
       }.to change(AiConversation, :count).by(1)
 
       expect(AiConversation.last.exercise_set).to eq(exercise_set)
+    end
+
+    it "rejects exercise_set_id from another organization" do
+      other_org = create(:organization)
+      other_period = create(:academic_period, organization: other_org)
+      other_course = create(:course, academic_period: other_period)
+      other_exercise_set = create(:exercise_set, course: other_course)
+
+      post ai_conversations_path, params: {ai_conversation: {title: "Hack attempt", exercise_set_id: other_exercise_set.id}}
+      expect(response).to have_http_status(:not_found)
     end
 
     it "fails without title" do

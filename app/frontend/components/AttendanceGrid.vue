@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useForm } from "@inertiajs/vue3"
-import { computed } from "vue"
+import { computed, watch } from "vue"
 import { useI18n } from "vue-i18n"
 
 import { Button } from "@/components/ui/button"
@@ -45,6 +45,15 @@ const initialEntries = computed<AttendanceEntry[]>(() =>
 const form = useForm<{ attendances: AttendanceEntry[] }>({
   attendances: initialEntries.value,
 })
+
+watch(
+  () => [props.enrollments, props.attendances],
+  () => {
+    form.defaults({ attendances: initialEntries.value })
+    form.reset()
+  },
+  { deep: true },
+)
 
 function getStatus(enrollmentId: number): string {
   return (

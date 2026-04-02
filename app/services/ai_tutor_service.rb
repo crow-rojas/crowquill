@@ -66,8 +66,6 @@ class AiTutorService
       .order(:created_at)
       .pluck(:role, :content)
 
-    messages = history.map { |role, content| {role: role, content: content} }
-    messages << {role: "user", content: user_message}
-    messages
+    history.map { |role, content| {role: role, content: content} }
   end
 end

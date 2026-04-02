@@ -14,6 +14,7 @@ RSpec.describe AiTutorService do
 
   describe "#call" do
     it "returns content and token counts on success" do
+      create(:ai_message, ai_conversation: conversation, role: "user", content: "How do I solve x^2 = 4?", status: "complete")
       allow(mock_messages_resource).to receive(:create).and_return(mock_response)
 
       service = described_class.new(conversation, "How do I solve x^2 = 4?", client: mock_client)
@@ -28,6 +29,7 @@ RSpec.describe AiTutorService do
     it "builds correct message payload with system prompt" do
       create(:ai_message, ai_conversation: conversation, role: "user", content: "Hello", status: "complete")
       create(:ai_message, :assistant, ai_conversation: conversation, content: "Hi! How can I help?", status: "complete")
+      create(:ai_message, ai_conversation: conversation, role: "user", content: "What is 2+2?", status: "complete")
 
       allow(mock_messages_resource).to receive(:create).and_return(mock_response)
 
@@ -50,6 +52,7 @@ RSpec.describe AiTutorService do
 
     it "never includes PII in the API payload" do
       create(:ai_message, ai_conversation: conversation, role: "user", content: "Help me", status: "complete")
+      create(:ai_message, ai_conversation: conversation, role: "user", content: "More help please", status: "complete")
 
       allow(mock_messages_resource).to receive(:create).and_return(mock_response)
 
@@ -68,9 +71,28 @@ RSpec.describe AiTutorService do
       end
     end
 
+    it "does not duplicate the user message already saved in the database" do
+      # Simulate controller flow: user message is saved to DB before calling the service
+      create(:ai_message, ai_conversation: conversation, role: "user", content: "What is 2+2?", status: "complete")
+
+      allow(mock_messages_resource).to receive(:create).and_return(mock_response)
+
+      service = described_class.new(conversation, "What is 2+2?", client: mock_client)
+      service.call
+
+      expect(mock_messages_resource).to have_received(:create).with(
+        hash_including(
+          messages: [
+            {role: "user", content: "What is 2+2?"}
+          ]
+        )
+      )
+    end
+
     it "excludes streaming messages from history" do
       create(:ai_message, ai_conversation: conversation, role: "user", content: "First", status: "complete")
       create(:ai_message, :assistant, :streaming, ai_conversation: conversation, content: "")
+      create(:ai_message, ai_conversation: conversation, role: "user", content: "Second", status: "complete")
 
       allow(mock_messages_resource).to receive(:create).and_return(mock_response)
 
@@ -91,6 +113,7 @@ RSpec.describe AiTutorService do
       exercise_set = create(:exercise_set, content: "Solve $x^2 + 1 = 0$")
       conversation_with_exercise = create(:ai_conversation, user: user, exercise_set: exercise_set)
 
+      create(:ai_message, ai_conversation: conversation_with_exercise, role: "user", content: "Help me", status: "complete")
       allow(mock_messages_resource).to receive(:create).and_return(mock_response)
 
       service = described_class.new(conversation_with_exercise, "Help me", client: mock_client)
@@ -104,6 +127,7 @@ RSpec.describe AiTutorService do
     end
 
     it "handles API errors gracefully" do
+      create(:ai_message, ai_conversation: conversation, role: "user", content: "Help", status: "complete")
       allow(mock_messages_resource).to receive(:create).and_raise(Anthropic::Errors::APIError.new(url: "https://api.anthropic.com", status: 429, message: "Rate limited"))
 
       service = described_class.new(conversation, "Help", client: mock_client)
@@ -116,6 +140,7 @@ RSpec.describe AiTutorService do
     end
 
     it "handles connection errors gracefully" do
+      create(:ai_message, ai_conversation: conversation, role: "user", content: "Help", status: "complete")
       allow(mock_messages_resource).to receive(:create).and_raise(Anthropic::Errors::APIConnectionError.new(url: "https://api.anthropic.com", message: "Connection refused"))
 
       service = described_class.new(conversation, "Help", client: mock_client)

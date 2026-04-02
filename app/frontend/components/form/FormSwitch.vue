@@ -8,7 +8,7 @@ defineProps<{
   modelValue?: boolean
   label?: string
   description?: string
-  error?: string
+  error?: string | string[]
   disabled?: boolean
 }>()
 

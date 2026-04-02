@@ -6,7 +6,7 @@ class Attendance < ApplicationRecord
   belongs_to :tutoring_session
   belongs_to :enrollment
 
-  validates :status, presence: true, inclusion: {in: STATUSES}
+  validates :status, presence: true
   validates :enrollment_id, uniqueness: {scope: :tutoring_session_id}
 
   enum :status, STATUSES.index_by(&:itself), validate: true

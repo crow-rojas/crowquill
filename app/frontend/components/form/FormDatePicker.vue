@@ -6,7 +6,7 @@ import FormField from "./FormField.vue"
 defineProps<{
   modelValue?: string
   label?: string
-  error?: string
+  error?: string | string[]
   required?: boolean
   disabled?: boolean
   min?: string

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Head } from "@inertiajs/vue3"
-import { computed } from "vue"
 import { useI18n } from "vue-i18n"
 
 import AdminDashboard from "@/components/dashboard/AdminDashboard.vue"
@@ -21,18 +20,8 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ]
 
-const dashboardComponent = computed(() => {
-  switch (props.role) {
-    case "admin":
-      return AdminDashboard
-    case "tutor":
-      return TutorDashboard
-    case "tutorado":
-      return TutoradoDashboard
-    default:
-      return null
-  }
-})
+const hasRole =
+  props.role === "admin" || props.role === "tutor" || props.role === "tutorado"
 </script>
 
 <template>
@@ -44,13 +33,11 @@ const dashboardComponent = computed(() => {
     >
       <h1 class="text-2xl font-bold">{{ t("dashboard.title") }}</h1>
 
-      <component
-        :is="dashboardComponent"
-        v-if="dashboardComponent"
-        v-bind="props"
-      />
+      <AdminDashboard v-if="props.role === 'admin'" v-bind="props" />
+      <TutorDashboard v-else-if="props.role === 'tutor'" v-bind="props" />
+      <TutoradoDashboard v-else-if="props.role === 'tutorado'" v-bind="props" />
 
-      <div v-else class="text-muted-foreground py-8 text-center">
+      <div v-if="!hasRole" class="text-muted-foreground py-8 text-center">
         {{ t("dashboard.welcome") }}
       </div>
     </div>

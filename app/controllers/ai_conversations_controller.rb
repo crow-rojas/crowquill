@@ -26,6 +26,13 @@ class AiConversationsController < InertiaController
 
   def create
     authorize! nil, policy_class: AiConversationPolicy
+
+    if params[:ai_conversation][:exercise_set_id].present?
+      ExerciseSet.joins(course: {academic_period: :organization})
+        .where(organizations: {id: Current.organization.id})
+        .find(params[:ai_conversation][:exercise_set_id])
+    end
+
     conversation = Current.user.ai_conversations.build(conversation_params)
 
     if conversation.save

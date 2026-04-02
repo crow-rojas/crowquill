@@ -6,7 +6,9 @@ class ExerciseSetPolicy < ApplicationPolicy
   end
 
   def show?
-    membership.present?
+    return true if admin?
+
+    membership.present? && record&.published?
   end
 
   def new?

@@ -17,7 +17,7 @@ export interface SelectOption {
 defineProps<{
   modelValue?: string
   label?: string
-  error?: string
+  error?: string | string[]
   required?: boolean
   placeholder?: string
   disabled?: boolean

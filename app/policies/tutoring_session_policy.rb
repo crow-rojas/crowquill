@@ -14,7 +14,9 @@ class TutoringSessionPolicy < ApplicationPolicy
   end
 
   def create?
-    tutor_or_above?
+    return true if admin?
+
+    tutor_or_above? && record_section_owned_by_tutor?
   end
 
   def edit?
@@ -22,10 +24,21 @@ class TutoringSessionPolicy < ApplicationPolicy
   end
 
   def update?
-    tutor_or_above?
+    return true if admin?
+
+    tutor_or_above? && record_section_owned_by_tutor?
   end
 
   def destroy?
     admin?
+  end
+
+  private
+
+  def record_section_owned_by_tutor?
+    return true unless record&.respond_to?(:section)
+    return true if record.section.nil?
+
+    record.section.tutor_id == membership.user_id
   end
 end

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# TODO: Extract query logic into dedicated query objects (DashboardQuery::Admin, etc.)
 class DashboardController < InertiaController
   skip_verify_authorized :index
 

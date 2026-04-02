@@ -17,9 +17,22 @@ RSpec.describe ExerciseSetPolicy do
   end
 
   describe "#show?" do
-    it "allows any member to view exercises" do
-      [admin_membership, tutor_membership, tutorado_membership].each do |membership|
-        expect(described_class.new(membership).show?).to be true
+    it "allows admin to view any exercise set" do
+      unpublished = build(:exercise_set, published: false)
+      expect(described_class.new(admin_membership, unpublished).show?).to be true
+    end
+
+    it "allows member to view published exercise set" do
+      published = build(:exercise_set, :published)
+      [tutor_membership, tutorado_membership].each do |m|
+        expect(described_class.new(m, published).show?).to be true
+      end
+    end
+
+    it "denies non-admin from viewing unpublished exercise set" do
+      unpublished = build(:exercise_set, published: false)
+      [tutor_membership, tutorado_membership].each do |m|
+        expect(described_class.new(m, unpublished).show?).to be false
       end
     end
   end

@@ -1,9 +1,16 @@
 <script setup lang="ts">
-defineProps<{
+import { computed } from "vue"
+
+const props = defineProps<{
   label?: string
-  error?: string
+  error?: string | string[]
   required?: boolean
 }>()
+
+const errorMessage = computed(() => {
+  if (!props.error) return undefined
+  return Array.isArray(props.error) ? props.error[0] : props.error
+})
 </script>
 
 <template>
@@ -16,6 +23,8 @@ defineProps<{
       <span v-if="required" class="text-destructive ml-0.5">*</span>
     </label>
     <slot />
-    <p v-if="error" class="text-destructive text-sm">{{ error }}</p>
+    <p v-if="errorMessage" class="text-destructive text-sm">
+      {{ errorMessage }}
+    </p>
   </div>
 </template>

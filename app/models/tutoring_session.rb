@@ -7,7 +7,7 @@ class TutoringSession < ApplicationRecord
   has_many :attendances, dependent: :destroy
 
   validates :date, presence: true
-  validates :status, presence: true, inclusion: {in: STATUSES}
+  validates :status, presence: true
 
   enum :status, STATUSES.index_by(&:itself), validate: true
 

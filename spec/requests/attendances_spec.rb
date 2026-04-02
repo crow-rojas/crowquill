@@ -63,6 +63,36 @@ RSpec.describe "Attendances", type: :request do
         expect(Attendance.find_by(enrollment: enrollment2).notes).to eq("Doctor appointment")
       end
 
+      it "ignores enrollment_ids from a different section" do
+        other_section = create(:section, course: course, tutor: tutor_user, max_students: 10)
+        other_student = create(:user)
+        other_enrollment = create(:enrollment, section: other_section, user: other_student)
+
+        expect {
+          patch tutoring_session_attendances_path(tutoring_session), params: {
+            attendances: [
+              {enrollment_id: enrollment1.id, status: "present"},
+              {enrollment_id: other_enrollment.id, status: "present"}
+            ]
+          }
+        }.to change(Attendance, :count).by(1)
+
+        expect(Attendance.find_by(enrollment: other_enrollment)).to be_nil
+        expect(Attendance.find_by(enrollment: enrollment1)).to be_present
+      end
+
+      it "does not mark session completed when already cancelled" do
+        tutoring_session.update!(status: "cancelled")
+
+        patch tutoring_session_attendances_path(tutoring_session), params: {
+          attendances: [
+            {enrollment_id: enrollment1.id, status: "present"}
+          ]
+        }
+
+        expect(tutoring_session.reload.status).to eq("cancelled")
+      end
+
       it "performs upsert atomically" do
         create(:attendance, tutoring_session: tutoring_session, enrollment: enrollment1, status: "absent")
 

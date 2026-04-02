@@ -12,7 +12,7 @@ export interface CheckboxOption {
 const props = defineProps<{
   modelValue?: string[]
   label?: string
-  error?: string
+  error?: string | string[]
   required?: boolean
   disabled?: boolean
   options: CheckboxOption[]

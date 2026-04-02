@@ -6,7 +6,7 @@ class Membership < ApplicationRecord
   belongs_to :user
   belongs_to :organization
 
-  validates :role, presence: true, inclusion: {in: ROLES}
+  validates :role, presence: true
   validates :user_id, uniqueness: {scope: :organization_id}
 
   enum :role, ROLES.index_by(&:itself), validate: true

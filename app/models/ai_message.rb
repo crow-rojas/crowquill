@@ -6,9 +6,10 @@ class AiMessage < ApplicationRecord
 
   belongs_to :ai_conversation
 
-  validates :role, presence: true, inclusion: {in: ROLES}
+  validates :role, presence: true
   validates :content, presence: true, unless: -> { status == "streaming" }
-  validates :status, presence: true, inclusion: {in: STATUSES}
+  validates :content, length: {maximum: 10_000}, unless: -> { status_streaming? }
+  validates :status, presence: true
 
   enum :role, ROLES.index_by(&:itself), validate: true
   enum :status, STATUSES.index_by(&:itself), validate: true, prefix: true

@@ -21,10 +21,6 @@ class ExerciseSetsController < InertiaController
   def show
     authorize! @exercise_set, policy_class: ExerciseSetPolicy
 
-    unless Current.membership.admin? || @exercise_set.published?
-      raise Authorization::NotAuthorizedError, "Not authorized"
-    end
-
     render inertia: "ExerciseSets/Show", props: {
       exercise_set: @exercise_set.as_json(include: :course)
     }

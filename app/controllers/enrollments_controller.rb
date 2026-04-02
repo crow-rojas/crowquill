@@ -28,7 +28,16 @@ class EnrollmentsController < InertiaController
 
       existing = @section.enrollments.find_by(user_id: enrollment_user.id)
       if existing
-        redirect_to section_path(@section)
+        if existing.active?
+          redirect_to section_path(@section)
+          return
+        end
+
+        if existing.update(status: "active", commitment_accepted_at: Time.current)
+          redirect_to section_path(@section), notice: "Enrolled successfully"
+        else
+          redirect_to section_path(@section), inertia: {errors: existing.errors}
+        end
         return
       end
 
@@ -79,7 +88,7 @@ class EnrollmentsController < InertiaController
 
   def enrollment_user
     if Current.membership.admin? && params.dig(:enrollment, :user_id)
-      User.find(params[:enrollment][:user_id])
+      Current.organization.users.find(params[:enrollment][:user_id])
     else
       Current.user
     end

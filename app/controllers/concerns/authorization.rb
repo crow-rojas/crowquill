@@ -28,7 +28,7 @@ module Authorization
   private
 
   def policy_for(record)
-    return record.class if record.is_a?(ApplicationRecord)
+    return "#{record.class}Policy".constantize if record.is_a?(ApplicationRecord)
 
     "#{controller_name.classify}Policy".constantize
   rescue NameError
