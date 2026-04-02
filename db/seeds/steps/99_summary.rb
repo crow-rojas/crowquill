@@ -1,0 +1,26 @@
+# frozen_string_literal: true
+
+puts ""
+puts "=== Seed complete ==="
+puts "Organizations: #{Organization.count}"
+Organization.order(:name).each do |organization|
+  puts "  - #{organization.name}: #{organization.memberships.count} memberships, #{organization.academic_periods.count} periods"
+end
+puts "Users: #{User.count}"
+puts "Memberships: #{Membership.count}"
+puts "Academic Periods: #{AcademicPeriod.count}"
+puts "Courses: #{Course.count}"
+puts "Sections: #{Section.count}"
+puts "Enrollments: #{Enrollment.count} (#{Enrollment.where(status: 'active').count} active, #{Enrollment.where(status: 'withdrawn').count} withdrawn)"
+puts "Tutoring Sessions: #{TutoringSession.count} (#{TutoringSession.where(status: 'completed').count} completed, #{TutoringSession.where(status: 'scheduled').count} scheduled, #{TutoringSession.where(status: 'cancelled').count} cancelled)"
+puts "Attendance Records: #{Attendance.count}"
+puts "Exercise Sets: #{ExerciseSet.count} (#{ExerciseSet.where(published: true).count} published, #{ExerciseSet.where(published: false).count} draft)"
+puts "AI Conversations: #{AiConversation.count}"
+puts "AI Messages: #{AiMessage.count}"
+puts ""
+puts "=== Login credentials (all passwords: #{CrowquillSeeds::DEFAULT_PASSWORD}) ==="
+puts "  Global admin:   admin@crowquill.dev"
+puts "  USM admin:      coordinacion@crowquill.dev"
+puts "  Tutor sample:   tutor1@crowquill.dev"
+puts "  Student sample: alumno1@crowquill.dev"
+puts "==========================================================="
