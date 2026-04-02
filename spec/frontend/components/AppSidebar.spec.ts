@@ -80,7 +80,7 @@ function mockPageAuth(activePeriodId: number | null) {
         },
       },
     },
-  } as ReturnType<typeof usePage>)
+  } as unknown as ReturnType<typeof usePage>)
 }
 
 function mockPermissions(options: {
