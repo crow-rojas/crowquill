@@ -18,6 +18,8 @@
     "or": "o",
     "and": "y",
     "optional": "Opcional",
-    "required": "Requerido"
+    "required": "Requerido",
+    "actions": "Acciones",
+    "view": "Ver"
   }
 }

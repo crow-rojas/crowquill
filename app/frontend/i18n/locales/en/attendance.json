@@ -1,0 +1,34 @@
+{
+  "sessions": {
+    "title": "Tutoring Sessions",
+    "new": "New Session",
+    "edit": "Edit Session",
+    "date": "Date",
+    "status": "Status",
+    "no_sessions": "No tutoring sessions yet",
+    "created_successfully": "Session created successfully",
+    "updated_successfully": "Session updated successfully",
+    "deleted_successfully": "Session deleted successfully",
+    "confirm_delete": "Are you sure you want to delete this session?",
+    "statuses": {
+      "scheduled": "Scheduled",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    }
+  },
+  "attendance": {
+    "title": "Attendance",
+    "take_attendance": "Take Attendance",
+    "save_attendance": "Save Attendance",
+    "student": "Student",
+    "status": "Status",
+    "notes": "Notes",
+    "statuses": {
+      "present": "Present",
+      "absent": "Absent",
+      "justified": "Justified"
+    },
+    "saved_successfully": "Attendance saved successfully",
+    "no_enrollments": "No enrolled students"
+  }
+}

@@ -6,6 +6,7 @@ class Section < ApplicationRecord
 
   has_many :enrollments, dependent: :destroy
   has_many :students, through: :enrollments, source: :user
+  has_many :tutoring_sessions, dependent: :destroy
 
   validates :name, presence: true
   validates :max_students, presence: true, numericality: {greater_than: 0}

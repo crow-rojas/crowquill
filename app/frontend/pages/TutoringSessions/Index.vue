@@ -1,0 +1,142 @@
+<script setup lang="ts">
+import { Head, Link, router } from "@inertiajs/vue3"
+import { Calendar, Plus } from "lucide-vue-next"
+import { useI18n } from "vue-i18n"
+
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { usePermissions } from "@/composables/usePermissions"
+import AppLayout from "@/layouts/AppLayout.vue"
+import { academicPeriodsPath, coursePath, sectionPath } from "@/routes"
+import type { BreadcrumbItem } from "@/types"
+import type { Course, Section, TutoringSession } from "@/types/academic"
+
+const props = defineProps<{
+  section: Section & { course: Course }
+  tutoring_sessions: TutoringSession[]
+}>()
+
+const { t } = useI18n()
+const { can } = usePermissions()
+
+const breadcrumbs: BreadcrumbItem[] = [
+  { title: t("nav.dashboard"), href: "/dashboard" },
+  { title: t("academic_periods.title"), href: academicPeriodsPath() },
+  {
+    title: props.section.course.name,
+    href: coursePath(props.section.course.id),
+  },
+  {
+    title: props.section.name,
+    href: sectionPath(props.section.id),
+  },
+  {
+    title: t("sessions.title"),
+    href: `/sections/${props.section.id}/tutoring_sessions`,
+  },
+]
+
+function statusVariant(
+  status: string,
+): "default" | "secondary" | "destructive" | "outline" {
+  switch (status) {
+    case "completed":
+      return "default"
+    case "cancelled":
+      return "destructive"
+    default:
+      return "secondary"
+  }
+}
+
+function deleteSession(session: TutoringSession) {
+  if (confirm(t("sessions.confirm_delete"))) {
+    router.delete(`/tutoring_sessions/${session.id}`)
+  }
+}
+</script>
+
+<template>
+  <Head :title="`${section.name} — ${t('sessions.title')}`" />
+
+  <AppLayout :breadcrumbs="breadcrumbs">
+    <div class="flex flex-col gap-6 p-4 md:p-6">
+      <div
+        class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
+      >
+        <h1 class="text-2xl font-semibold tracking-tight">
+          <Calendar class="mr-2 inline h-5 w-5" />
+          {{ t("sessions.title") }} — {{ section.name }}
+        </h1>
+        <Button v-if="can.take_attendance" size="sm" as-child>
+          <Link :href="`/sections/${section.id}/tutoring_sessions/new`">
+            <Plus class="mr-1 h-4 w-4" />
+            {{ t("sessions.new") }}
+          </Link>
+        </Button>
+      </div>
+
+      <div
+        v-if="tutoring_sessions.length === 0"
+        class="text-muted-foreground py-8 text-center"
+      >
+        {{ t("sessions.no_sessions") }}
+      </div>
+
+      <Table v-else>
+        <TableHeader>
+          <TableRow>
+            <TableHead>{{ t("sessions.date") }}</TableHead>
+            <TableHead>{{ t("sessions.status") }}</TableHead>
+            <TableHead class="text-right">
+              {{ t("common.actions") }}
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow v-for="session in tutoring_sessions" :key="session.id">
+            <TableCell>
+              <Link
+                :href="`/tutoring_sessions/${session.id}`"
+                class="font-medium hover:underline"
+              >
+                {{ session.date }}
+              </Link>
+            </TableCell>
+            <TableCell>
+              <Badge :variant="statusVariant(session.status)">
+                {{ t(`sessions.statuses.${session.status}`) }}
+              </Badge>
+            </TableCell>
+            <TableCell class="text-right">
+              <div class="flex justify-end gap-2">
+                <Button variant="outline" size="sm" as-child>
+                  <Link :href="`/tutoring_sessions/${session.id}`">
+                    {{ t("common.view") }}
+                  </Link>
+                </Button>
+                <Button
+                  v-if="can.manage_sections"
+                  variant="outline"
+                  size="sm"
+                  class="text-destructive"
+                  @click="deleteSession(session)"
+                >
+                  {{ t("common.delete") }}
+                </Button>
+              </div>
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    </div>
+  </AppLayout>
+</template>

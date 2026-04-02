@@ -1,0 +1,34 @@
+{
+  "sessions": {
+    "title": "Sesiones de Tutoria",
+    "new": "Nueva Sesion",
+    "edit": "Editar Sesion",
+    "date": "Fecha",
+    "status": "Estado",
+    "no_sessions": "No hay sesiones de tutoria aun",
+    "created_successfully": "Sesion creada exitosamente",
+    "updated_successfully": "Sesion actualizada exitosamente",
+    "deleted_successfully": "Sesion eliminada exitosamente",
+    "confirm_delete": "Estas seguro de que deseas eliminar esta sesion?",
+    "statuses": {
+      "scheduled": "Programada",
+      "completed": "Completada",
+      "cancelled": "Cancelada"
+    }
+  },
+  "attendance": {
+    "title": "Asistencia",
+    "take_attendance": "Tomar Asistencia",
+    "save_attendance": "Guardar Asistencia",
+    "student": "Estudiante",
+    "status": "Estado",
+    "notes": "Notas",
+    "statuses": {
+      "present": "Presente",
+      "absent": "Ausente",
+      "justified": "Justificado"
+    },
+    "saved_successfully": "Asistencia guardada exitosamente",
+    "no_enrollments": "No hay estudiantes inscritos"
+  }
+}
