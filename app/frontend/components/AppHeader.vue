@@ -38,6 +38,10 @@ import { getInitials } from "@/composables/useInitials"
 import { dashboardPath } from "@/routes"
 import type { BreadcrumbItem, NavItem } from "@/types"
 
+interface HeaderNavItem extends NavItem {
+  href: string
+}
+
 interface Props {
   breadcrumbs?: BreadcrumbItem[]
 }
@@ -59,7 +63,7 @@ const activeItemStyles = computed(
       : "",
 )
 
-const mainNavItems: NavItem[] = [
+const mainNavItems: HeaderNavItem[] = [
   {
     title: t("nav.dashboard"),
     href: dashboardPath(),
@@ -67,7 +71,7 @@ const mainNavItems: NavItem[] = [
   },
 ]
 
-const rightNavItems: NavItem[] = [
+const rightNavItems: HeaderNavItem[] = [
   {
     title: "Repository",
     href: "https://github.com/inertia-rails/vue-starter-kit",

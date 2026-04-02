@@ -23,7 +23,19 @@ vi.mock("@/components/ui/sidebar", () => ({
     template: '<li :data-active="isActive"><slot/></li>',
     props: ["asChild", "isActive", "tooltip"],
   },
+  SidebarMenuSub: { template: "<ul><slot/></ul>" },
+  SidebarMenuSubButton: {
+    template: '<li :data-sub-active="isActive"><slot/></li>',
+    props: ["asChild", "isActive"],
+  },
+  SidebarMenuSubItem: { template: "<div><slot/></div>" },
   SidebarMenuItem: { template: "<div><slot/></div>" },
+}))
+
+vi.mock("@/components/ui/collapsible", () => ({
+  Collapsible: { template: "<div><slot/></div>", props: ["defaultOpen"] },
+  CollapsibleTrigger: { template: "<div><slot/></div>", props: ["asChild"] },
+  CollapsibleContent: { template: "<div><slot/></div>" },
 }))
 
 function mockPage(url: string) {
@@ -125,5 +137,54 @@ describe("NavMain", () => {
 
     const button = wrapper.find("[data-active]")
     expect(button.attributes("data-active")).toBe("true")
+  })
+
+  it("marks grouped parent and child active when child href matches", () => {
+    mockPage("/academic_periods/1/courses")
+    const wrapper = mount(NavMain, {
+      props: {
+        items: [
+          {
+            title: "Academic",
+            icon: fakeIcon,
+            items: [
+              {
+                title: "Periods",
+                href: "/academic_periods",
+                icon: fakeIcon,
+              },
+            ],
+          },
+        ],
+      },
+    })
+
+    expect(wrapper.find('[data-active="true"]').exists()).toBe(true)
+    expect(wrapper.find('[data-sub-active="true"]').exists()).toBe(true)
+  })
+
+  it("keeps grouped parent inactive when no child href matches", () => {
+    mockPage("/dashboard")
+    const wrapper = mount(NavMain, {
+      props: {
+        items: [
+          {
+            title: "Academic",
+            icon: fakeIcon,
+            items: [
+              {
+                title: "Periods",
+                href: "/academic_periods",
+                icon: fakeIcon,
+              },
+            ],
+          },
+        ],
+      },
+    })
+
+    const groupButton = wrapper.find("[data-active]")
+    expect(groupButton.attributes("data-active")).toBe("false")
+    expect(wrapper.find('[data-sub-active="true"]').exists()).toBe(false)
   })
 })

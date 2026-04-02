@@ -102,8 +102,9 @@ The fast user switcher is not role-restricted by policy. It is gated by:
 
 Sidebar behavior is role-aware through shared permissions:
 
-- admin sees academic management navigation
-- tutor and tutorado see My Sections path
+- admin sees Dashboard + Academic Management group + AI Chat
+- tutor sees Dashboard + Teaching group (My Sections) + AI Chat
+- tutorado sees Dashboard + Learning group (My Sections) + AI Chat
 - all roles see AI Chat
 
 ## Source References

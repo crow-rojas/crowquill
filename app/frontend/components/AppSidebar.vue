@@ -37,21 +37,35 @@ const mainNavItems = computed<NavItem[]>(() => {
     },
   ]
 
-  // Admin: academic management (periods → courses → sections/exercises/sessions)
+  // Admin: grouped academic management
   if (can.value.manage_academic_periods) {
     items.push({
-      title: t("nav.academic_periods"),
-      href: academicPeriodsPath(),
+      title: t("nav.academic_management"),
       icon: CalendarDays,
+      defaultOpen: true,
+      items: [
+        {
+          title: t("nav.academic_periods"),
+          href: academicPeriodsPath(),
+          icon: CalendarDays,
+        },
+      ],
     })
   }
 
-  // Tutor/Tutorado: browse academic structure to find their sections
+  // Tutor/Tutorado: grouped learning/teaching entry point
   if (isTutor.value || isTutorado.value) {
     items.push({
-      title: t("nav.my_sections"),
-      href: academicPeriodsPath(),
+      title: isTutor.value ? t("nav.teaching") : t("nav.learning"),
       icon: Users,
+      defaultOpen: true,
+      items: [
+        {
+          title: t("nav.my_sections"),
+          href: academicPeriodsPath(),
+          icon: Users,
+        },
+      ],
     })
   }
 
