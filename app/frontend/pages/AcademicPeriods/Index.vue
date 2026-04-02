@@ -6,12 +6,13 @@ import { useI18n } from "vue-i18n"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import { usePermissions } from "@/composables/usePermissions"
 import AppLayout from "@/layouts/AppLayout.vue"
 import {
@@ -81,46 +82,67 @@ function deletePeriod(period: AcademicPeriod) {
         <p>{{ t("academic_periods.no_periods") }}</p>
       </div>
 
-      <div v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <Card v-for="period in props.academic_periods" :key="period.id">
-          <CardHeader>
-            <div class="flex items-start justify-between gap-2">
-              <div>
-                <CardTitle class="text-lg">
-                  <Link
-                    :href="academicPeriodPath(period.id)"
-                    class="hover:underline"
-                  >
-                    {{ period.name }}
-                  </Link>
-                </CardTitle>
-                <CardDescription>
-                  {{ period.start_date }} &mdash; {{ period.end_date }}
-                </CardDescription>
-              </div>
-              <Badge :variant="statusVariant(period.status)">
-                {{ t(`academic_periods.statuses.${period.status}`) }}
-              </Badge>
-            </div>
-          </CardHeader>
-          <CardContent v-if="can.manage_academic_periods">
-            <div class="flex gap-2">
-              <Button variant="outline" size="sm" as-child>
-                <Link :href="editAcademicPeriodPath(period.id)">
-                  {{ t("common.edit") }}
+      <div v-else class="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{{ t("academic_periods.name") }}</TableHead>
+              <TableHead>{{ t("academic_periods.start_date") }}</TableHead>
+              <TableHead>{{ t("academic_periods.end_date") }}</TableHead>
+              <TableHead>{{ t("academic_periods.status") }}</TableHead>
+              <TableHead class="text-right">{{
+                t("common.actions")
+              }}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow v-for="period in props.academic_periods" :key="period.id">
+              <TableCell class="font-medium">
+                <Link
+                  :href="academicPeriodPath(period.id)"
+                  class="hover:underline"
+                >
+                  {{ period.name }}
                 </Link>
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                class="text-destructive"
-                @click="deletePeriod(period)"
-              >
-                {{ t("common.delete") }}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+              </TableCell>
+              <TableCell>{{ period.start_date }}</TableCell>
+              <TableCell>{{ period.end_date }}</TableCell>
+              <TableCell>
+                <Badge :variant="statusVariant(period.status)">
+                  {{ t(`academic_periods.statuses.${period.status}`) }}
+                </Badge>
+              </TableCell>
+              <TableCell class="text-right">
+                <div class="flex flex-wrap justify-end gap-2">
+                  <Button variant="outline" size="sm" as-child>
+                    <Link :href="academicPeriodPath(period.id)">
+                      {{ t("common.view") }}
+                    </Link>
+                  </Button>
+                  <Button
+                    v-if="can.manage_academic_periods"
+                    variant="outline"
+                    size="sm"
+                    as-child
+                  >
+                    <Link :href="editAcademicPeriodPath(period.id)">
+                      {{ t("common.edit") }}
+                    </Link>
+                  </Button>
+                  <Button
+                    v-if="can.manage_academic_periods"
+                    variant="outline"
+                    size="sm"
+                    class="text-destructive"
+                    @click="deletePeriod(period)"
+                  >
+                    {{ t("common.delete") }}
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
       </div>
     </div>
   </AppLayout>
