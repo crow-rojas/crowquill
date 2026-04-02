@@ -38,7 +38,7 @@ RSpec.describe AiTutorService do
 
       expect(mock_messages_resource).to have_received(:create).with(
         hash_including(
-          model: "claude-sonnet-4-20250514",
+          model: ENV.fetch("AI_TUTOR_MODEL", "claude-haiku-4-5-20251001"),
           max_tokens: 2048,
           system: a_string_including("Socratic math tutor"),
           messages: [

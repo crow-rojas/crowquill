@@ -25,7 +25,7 @@ class AiTutorService
   def call
     messages = build_messages
     response = client.messages.create(
-      model: "claude-sonnet-4-20250514",
+      model: ENV.fetch("AI_TUTOR_MODEL", "claude-haiku-4-5-20251001"),
       max_tokens: 2048,
       system: system_prompt,
       messages: messages

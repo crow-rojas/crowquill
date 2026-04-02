@@ -99,3 +99,4 @@ end
 gem "anthropic"
 
 gem "pundit", "~> 2.5"
+gem "dotenv-rails", groups: [:development, :test]
