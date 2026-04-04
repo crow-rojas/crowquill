@@ -16,7 +16,6 @@ import AppLayout from "@/layouts/AppLayout.vue"
 import {
   academicPeriodCoursesPath,
   academicPeriodPath,
-  academicPeriodsPath,
   dashboardPath,
 } from "@/routes"
 import type { BreadcrumbItem } from "@/types"
@@ -30,10 +29,9 @@ const { t } = useI18n()
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: t("nav.dashboard"), href: dashboardPath() },
-  { title: t("academic_periods.title"), href: academicPeriodsPath() },
   {
-    title: `${props.academic_period.year}-${props.academic_period.semester}`,
-    href: academicPeriodPath(props.academic_period.id),
+    title: t("nav.courses"),
+    href: academicPeriodCoursesPath(props.academic_period.id),
   },
   {
     title: t("courses.new"),

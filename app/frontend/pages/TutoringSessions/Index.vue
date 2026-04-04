@@ -13,10 +13,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { usePermissions } from "@/composables/usePermissions"
 import AppLayout from "@/layouts/AppLayout.vue"
 import {
-  academicPeriodsPath,
+  academicPeriodCoursesPath,
   coursePath,
   dashboardPath,
   newSectionTutoringSessionPath,
@@ -31,14 +30,17 @@ const props = defineProps<{
   section: Section & { course: Course }
   tutoring_sessions: TutoringSession[]
   can_create_session: boolean
+  can_delete_session: boolean
 }>()
 
 const { t } = useI18n()
-const { can } = usePermissions()
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: t("nav.dashboard"), href: dashboardPath() },
-  { title: t("academic_periods.title"), href: academicPeriodsPath() },
+  {
+    title: t("nav.courses"),
+    href: academicPeriodCoursesPath(props.section.course.academic_period_id),
+  },
   {
     title: props.section.course.name,
     href: coursePath(props.section.course.id),
@@ -133,7 +135,7 @@ function deleteSession(session: TutoringSession) {
                   </Link>
                 </Button>
                 <Button
-                  v-if="can.manage_sections"
+                  v-if="can_delete_session"
                   variant="outline"
                   size="sm"
                   class="text-destructive"

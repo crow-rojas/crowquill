@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { usePermissions } from "@/composables/usePermissions"
 import AppLayout from "@/layouts/AppLayout.vue"
 import {
-  academicPeriodsPath,
+  academicPeriodCoursesPath,
   courseExerciseSetsPath,
   coursePath,
   dashboardPath,
@@ -29,7 +29,12 @@ const { can } = usePermissions()
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: t("nav.dashboard"), href: dashboardPath() },
-  { title: t("academic_periods.title"), href: academicPeriodsPath() },
+  {
+    title: t("nav.courses"),
+    href: academicPeriodCoursesPath(
+      props.exercise_set.course.academic_period_id,
+    ),
+  },
   {
     title: props.exercise_set.course.name,
     href: coursePath(props.exercise_set.course.id),

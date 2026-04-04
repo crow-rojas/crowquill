@@ -13,7 +13,8 @@ class TutoringSessionsController < InertiaController
         include: {tutor: {only: %i[id name email]}, course: {}}
       ),
       tutoring_sessions: sessions.as_json,
-      can_create_session: TutoringSessionPolicy.new(Current.membership, @section).new?
+      can_create_session: TutoringSessionPolicy.new(Current.membership, @section).new?,
+      can_delete_session: SectionPolicy.new(Current.membership, @section).destroy?
     }
   end
 
@@ -44,7 +45,8 @@ class TutoringSessionsController < InertiaController
         include: {enrollment: {include: {user: {only: %i[id name email]}}}}
       ),
       can_manage_session: TutoringSessionPolicy.new(Current.membership, @tutoring_session).update?,
-      can_take_attendance: can_take_attendance
+      can_take_attendance: can_take_attendance,
+      can_delete_session: SectionPolicy.new(Current.membership, @tutoring_session.section).destroy?
     }
   end
 

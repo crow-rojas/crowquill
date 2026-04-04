@@ -42,7 +42,7 @@ vi.mock("@/composables/usePermissions", () => ({
 }))
 
 vi.mock("@/routes", () => ({
-  academicPeriodsPath: () => "/academic_periods",
+  academicPeriodCoursesPath: (id: number) => `/academic_periods/${id}/courses`,
   coursePath: (id: number) => `/courses/${id}`,
   dashboardPath: () => "/dashboard",
   editSectionPath: (id: number) => `/sections/${id}/edit`,

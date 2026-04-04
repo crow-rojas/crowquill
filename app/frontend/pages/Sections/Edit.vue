@@ -14,7 +14,12 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import AppLayout from "@/layouts/AppLayout.vue"
-import { academicPeriodsPath, dashboardPath, sectionPath } from "@/routes"
+import {
+  academicPeriodCoursesPath,
+  coursePath,
+  dashboardPath,
+  sectionPath,
+} from "@/routes"
 import type { BreadcrumbItem } from "@/types"
 import type { Section } from "@/types/academic"
 
@@ -33,7 +38,14 @@ const { t } = useI18n()
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: t("nav.dashboard"), href: dashboardPath() },
-  { title: t("academic_periods.title"), href: academicPeriodsPath() },
+  {
+    title: t("nav.courses"),
+    href: academicPeriodCoursesPath(props.section.course!.academic_period_id),
+  },
+  {
+    title: props.section.course!.name,
+    href: coursePath(props.section.course!.id),
+  },
   { title: t("sections.edit"), href: sectionPath(props.section.id) },
 ]
 

@@ -21,32 +21,73 @@ RSpec.describe "Courses", type: :request do
   let(:course) { create(:course, academic_period: academic_period) }
 
   describe "GET /academic_periods/:academic_period_id/courses" do
-    before { course }
+    let(:assigned_course) { create(:course, academic_period: academic_period, name: "Assigned") }
+    let(:unrelated_course) { create(:course, academic_period: academic_period, name: "Unrelated") }
 
     context "as admin" do
       before { admin_membership && sign_in_as(admin_user) }
 
-      it "returns success" do
+      it "returns all courses in the period" do
+        assigned_course
+        unrelated_course
+
         get academic_period_courses_path(academic_period)
+
         expect(response).to have_http_status(:success)
+        course_ids = inertia.props[:courses].map { |c| c["id"] }
+        expect(course_ids).to contain_exactly(assigned_course.id, unrelated_course.id)
       end
     end
 
     context "as tutor" do
       before { tutor_membership && sign_in_as(tutor_user) }
 
-      it "returns success" do
+      it "returns only courses with assigned sections" do
+        create(:section, course: assigned_course, tutor: tutor_user)
+        other_tutor_membership
+        create(:section, course: unrelated_course, tutor: other_tutor_user)
+
         get academic_period_courses_path(academic_period)
+
         expect(response).to have_http_status(:success)
+        course_ids = inertia.props[:courses].map { |c| c["id"] }
+        expect(course_ids).to contain_exactly(assigned_course.id)
+      end
+
+      it "returns each course once even with multiple sections" do
+        create(:section, course: assigned_course, tutor: tutor_user, name: "Section A")
+        create(:section, course: assigned_course, tutor: tutor_user, name: "Section B")
+
+        get academic_period_courses_path(academic_period)
+
+        course_ids = inertia.props[:courses].map { |c| c["id"] }
+        expect(course_ids).to contain_exactly(assigned_course.id)
       end
     end
 
     context "as tutorado" do
       before { tutorado_membership && sign_in_as(tutorado_user) }
 
-      it "returns success" do
+      it "returns only courses with active enrollments" do
+        tutor_membership
+        section = create(:section, course: assigned_course, tutor: tutor_user)
+        create(:enrollment, section: section, user: tutorado_user, status: "active")
+        create(:section, course: unrelated_course, tutor: tutor_user)
+
         get academic_period_courses_path(academic_period)
+
         expect(response).to have_http_status(:success)
+        course_ids = inertia.props[:courses].map { |c| c["id"] }
+        expect(course_ids).to contain_exactly(assigned_course.id)
+      end
+
+      it "returns empty list when not enrolled anywhere" do
+        assigned_course
+        unrelated_course
+
+        get academic_period_courses_path(academic_period)
+
+        expect(inertia.props[:courses]).to be_empty
       end
     end
   end

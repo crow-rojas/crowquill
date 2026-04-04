@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table"
 import { usePermissions } from "@/composables/usePermissions"
 import AppLayout from "@/layouts/AppLayout.vue"
 import {
-  academicPeriodsPath,
+  academicPeriodCoursesPath,
   coursePath,
   dashboardPath,
   editSectionPath,
@@ -32,11 +32,14 @@ const props = defineProps<{
 }>()
 
 const { t } = useI18n()
-const { can } = usePermissions()
+const { can, isTutorado } = usePermissions()
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: t("nav.dashboard"), href: dashboardPath() },
-  { title: t("academic_periods.title"), href: academicPeriodsPath() },
+  {
+    title: t("nav.courses"),
+    href: academicPeriodCoursesPath(props.section.course.academic_period_id),
+  },
   {
     title: props.section.course.name,
     href: coursePath(props.section.course.id),
@@ -252,7 +255,7 @@ function deleteSection() {
               </Link>
             </Button>
             <CommitmentDialog
-              v-if="!current_enrollment"
+              v-if="isTutorado && !current_enrollment"
               :section-id="section.id"
               :disabled="is_full"
             />
@@ -261,7 +264,10 @@ function deleteSection() {
         <p v-if="is_full" class="text-muted-foreground text-sm">
           {{ t("enrollment.full_section") }}
         </p>
-        <p v-if="current_enrollment" class="text-sm text-green-600">
+        <p
+          v-if="isTutorado && current_enrollment"
+          class="text-sm text-green-600"
+        >
           {{ t("enrollment.committed") }}
         </p>
       </div>

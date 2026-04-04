@@ -8,10 +8,9 @@ import AttendanceGrid from "@/components/AttendanceGrid.vue"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { usePermissions } from "@/composables/usePermissions"
 import AppLayout from "@/layouts/AppLayout.vue"
 import {
-  academicPeriodsPath,
+  academicPeriodCoursesPath,
   coursePath,
   dashboardPath,
   editTutoringSessionPath,
@@ -39,10 +38,10 @@ const props = defineProps<{
   attendances: Attendance[]
   can_manage_session: boolean
   can_take_attendance: boolean
+  can_delete_session: boolean
 }>()
 
 const { t } = useI18n()
-const { can } = usePermissions()
 const ownAttendance = computed(() => props.attendances[0] ?? null)
 
 const section = props.tutoring_session.section
@@ -50,7 +49,10 @@ const course = section.course!
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: t("nav.dashboard"), href: dashboardPath() },
-  { title: t("academic_periods.title"), href: academicPeriodsPath() },
+  {
+    title: t("nav.courses"),
+    href: academicPeriodCoursesPath(course.academic_period_id),
+  },
   {
     title: course.name,
     href: coursePath(course.id),
@@ -106,10 +108,7 @@ function deleteSession() {
             {{ t(`sessions.statuses.${tutoring_session.status}`) }}
           </Badge>
         </div>
-        <div
-          v-if="can_manage_session || can.manage_sections"
-          class="flex gap-2"
-        >
+        <div v-if="can_manage_session || can_delete_session" class="flex gap-2">
           <Button
             v-if="can_manage_session"
             variant="outline"
@@ -121,7 +120,7 @@ function deleteSession() {
             </Link>
           </Button>
           <Button
-            v-if="can.manage_sections"
+            v-if="can_delete_session"
             variant="outline"
             size="sm"
             class="text-destructive"

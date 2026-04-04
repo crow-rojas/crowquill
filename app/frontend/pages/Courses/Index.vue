@@ -15,8 +15,7 @@ import {
 import { usePermissions } from "@/composables/usePermissions"
 import AppLayout from "@/layouts/AppLayout.vue"
 import {
-  academicPeriodPath,
-  academicPeriodsPath,
+  academicPeriodCoursesPath,
   coursePath,
   courseSectionsPath,
   dashboardPath,
@@ -36,14 +35,9 @@ const { can } = usePermissions()
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: t("nav.dashboard"), href: dashboardPath() },
-  { title: t("academic_periods.title"), href: academicPeriodsPath() },
   {
-    title: `${props.academic_period.year}-${props.academic_period.semester}`,
-    href: academicPeriodPath(props.academic_period.id),
-  },
-  {
-    title: t("courses.title"),
-    href: academicPeriodPath(props.academic_period.id),
+    title: t("nav.courses"),
+    href: academicPeriodCoursesPath(props.academic_period.id),
   },
 ]
 

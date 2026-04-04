@@ -6,7 +6,7 @@ class CoursesController < InertiaController
 
   def index
     authorize :course, policy_class: CoursePolicy
-    courses = @academic_period.courses.order(:name)
+    courses = visible_courses(@academic_period.courses).order(:name)
 
     render inertia: "Courses/Index", props: {
       academic_period: @academic_period.as_json,
@@ -93,6 +93,20 @@ class CoursesController < InertiaController
 
   def course_params
     params.require(:course).permit(:name, :description)
+  end
+
+  def visible_courses(scope)
+    return scope if Current.membership&.admin?
+
+    if Current.membership&.tutor?
+      scope.joins(:sections).where(sections: {tutor_id: Current.user.id}).distinct
+    elsif Current.membership&.tutorado?
+      scope.joins(sections: :enrollments)
+        .where(enrollments: {user_id: Current.user.id, status: "active"})
+        .distinct
+    else
+      scope.none
+    end
   end
 
   def visible_sections(scope)
