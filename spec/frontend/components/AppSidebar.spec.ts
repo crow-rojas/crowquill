@@ -3,15 +3,10 @@ import { mount } from "@vue/test-utils"
 import { describe, expect, it, vi } from "vitest"
 
 import AppSidebar from "@/components/AppSidebar.vue"
-import { usePermissions } from "@/composables/usePermissions"
 
 vi.mock("@inertiajs/vue3", () => ({
   usePage: vi.fn(),
   Link: { template: "<a :href='href'><slot/></a>", props: ["href"] },
-}))
-
-vi.mock("@/composables/usePermissions", () => ({
-  usePermissions: vi.fn(),
 }))
 
 vi.mock("vue-i18n", () => ({
@@ -19,7 +14,7 @@ vi.mock("vue-i18n", () => ({
 }))
 
 vi.mock("@/routes", () => ({
-  academicPeriodPath: (id: number) => `/academic_periods/${id}`,
+  academicPeriodCoursesPath: (id: number) => `/academic_periods/${id}/courses`,
   academicPeriodsPath: () => "/academic_periods",
   aiConversationsPath: () => "/ai_conversations",
   dashboardPath: () => "/dashboard",
@@ -85,29 +80,6 @@ function mockPageAuth(activePeriodId: number | null) {
   } as unknown as ReturnType<typeof usePage>)
 }
 
-function mockPermissions(options: {
-  manageAcademicPeriods: boolean
-  isTutor: boolean
-  isTutorado: boolean
-}) {
-  vi.mocked(usePermissions).mockReturnValue({
-    can: {
-      value: {
-        manage_sections: false,
-        manage_exercises: false,
-        manage_academic_periods: options.manageAcademicPeriods,
-        manage_courses: false,
-        take_attendance: false,
-        view_attendance_statistics: false,
-        manage_enrollments: false,
-        create_ai_conversations: true,
-      },
-    },
-    isTutor: { value: options.isTutor },
-    isTutorado: { value: options.isTutorado },
-  } as ReturnType<typeof usePermissions>)
-}
-
 function mountAndReadItems(): NavNode[] {
   const wrapper = mount(AppSidebar)
   const text = wrapper.get("[data-testid='nav-items']").text()
@@ -115,82 +87,59 @@ function mountAndReadItems(): NavNode[] {
 }
 
 describe("AppSidebar", () => {
-  it("shows academic management items for admins", () => {
+  it("shows Courses link pointing to active period courses", () => {
     mockPageAuth(10)
-    mockPermissions({
-      manageAcademicPeriods: true,
-      isTutor: false,
-      isTutorado: false,
-    })
 
     const items = mountAndReadItems()
 
-    const academicGroup = items.find(
-      (item) => item.title === "nav.academic_management",
-    )
-    expect(academicGroup).toBeDefined()
+    const courses = items.find((item) => item.title === "nav.courses")
+    expect(courses).toBeDefined()
+    expect(courses?.href).toBe("/academic_periods/10/courses")
+  })
+
+  it("falls back to academic periods path when no active period", () => {
+    mockPageAuth(null)
+
+    const items = mountAndReadItems()
+
+    const courses = items.find((item) => item.title === "nav.courses")
+    expect(courses).toBeDefined()
+    expect(courses?.href).toBe("/academic_periods")
+  })
+
+  it("does not show academic management, teaching, or learning groups", () => {
+    mockPageAuth(10)
+
+    const items = mountAndReadItems()
+
+    const titles = items.map((item) => item.title)
+    expect(titles).not.toContain("nav.academic_management")
+    expect(titles).not.toContain("nav.teaching")
+    expect(titles).not.toContain("nav.learning")
+  })
+
+  it("always includes AI chat item", () => {
+    mockPageAuth(5)
+
+    const items = mountAndReadItems()
+
     expect(
-      academicGroup?.items?.some((item) => item.title === "nav.current_period"),
-    ).toBe(true)
-    expect(
-      academicGroup?.items?.some(
+      items.some(
         (item) =>
-          item.title === "nav.academic_periods" &&
-          item.href === "/academic_periods",
+          item.title === "nav.ai_chat" && item.href === "/ai_conversations",
       ),
     ).toBe(true)
   })
 
-  it("shows learning group for tutorados and uses fallback href when no active period", () => {
-    mockPageAuth(null)
-    mockPermissions({
-      manageAcademicPeriods: false,
-      isTutor: false,
-      isTutorado: true,
-    })
+  it("renders Dashboard, Courses, and AI Chat in order", () => {
+    mockPageAuth(1)
 
     const items = mountAndReadItems()
 
-    const learningGroup = items.find((item) => item.title === "nav.learning")
-    expect(learningGroup).toBeDefined()
-    expect(learningGroup?.items).toEqual([
-      {
-        title: "nav.current_period",
-        href: "/academic_periods",
-      },
+    expect(items.map((i) => i.title)).toEqual([
+      "nav.dashboard",
+      "nav.courses",
+      "nav.ai_chat",
     ])
-  })
-
-  it("always includes AI chat item for all roles", () => {
-    const scenarios = [
-      {
-        manageAcademicPeriods: true,
-        isTutor: false,
-        isTutorado: false,
-      },
-      {
-        manageAcademicPeriods: false,
-        isTutor: true,
-        isTutorado: false,
-      },
-      {
-        manageAcademicPeriods: false,
-        isTutor: false,
-        isTutorado: true,
-      },
-    ]
-
-    for (const scenario of scenarios) {
-      mockPageAuth(5)
-      mockPermissions(scenario)
-      const items = mountAndReadItems()
-
-      expect(
-        items.some(
-          (item) =>
-            item.title === "nav.ai_chat" && item.href === "/ai_conversations",
-        ),
-      ).toBe(true)
-    }
   })
 })

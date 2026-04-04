@@ -15,11 +15,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { SidebarTrigger } from "@/components/ui/sidebar"
+import { usePermissions } from "@/composables/usePermissions"
 import { academicPeriodPath, academicPeriodsPath } from "@/routes"
 import type { Auth, BreadcrumbItemType } from "@/types"
 
 const { t } = useI18n()
 const page = usePage()
+const { can } = usePermissions()
 
 const auth = computed(() => page.props.auth as Partial<Auth> | undefined)
 const academicPeriodContext = computed(() => {
@@ -38,6 +40,7 @@ const activePeriodLabel = computed(() => {
   if (!period) return t("nav.no_active_period")
   return `${period.year}-${period.semester}`
 })
+const isAdmin = computed(() => can.value.manage_academic_periods)
 
 withDefaults(
   defineProps<{
@@ -65,7 +68,11 @@ withDefaults(
       </template>
     </div>
 
-    <div v-if="hasAcademicPeriods" class="ml-2 flex shrink-0 items-center">
+    <!-- Admin: dropdown with period switching + manage link -->
+    <div
+      v-if="isAdmin && hasAcademicPeriods"
+      class="ml-2 flex shrink-0 items-center"
+    >
       <DropdownMenu>
         <DropdownMenuTrigger :as-child="true">
           <Button
@@ -110,11 +117,25 @@ withDefaults(
           <DropdownMenuSeparator />
           <DropdownMenuItem :as-child="true">
             <Link :href="academicPeriodsPath()" class="block w-full">
-              {{ t("nav.view_all_periods") }}
+              {{ t("nav.manage_periods") }}
             </Link>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+    </div>
+
+    <!-- Non-admin: read-only period badge -->
+    <div
+      v-else-if="!isAdmin && activeAcademicPeriod"
+      class="ml-2 flex shrink-0 items-center"
+    >
+      <div
+        data-testid="period-badge-readonly"
+        class="border-input bg-background text-muted-foreground flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-sm"
+      >
+        <CalendarDays class="h-4 w-4 shrink-0" />
+        <span class="truncate">{{ activePeriodLabel }}</span>
+      </div>
     </div>
   </header>
 </template>
