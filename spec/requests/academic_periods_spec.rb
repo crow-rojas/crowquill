@@ -91,9 +91,10 @@ RSpec.describe "AcademicPeriods", type: :request do
     let(:valid_params) do
       {
         academic_period: {
-          name: "2026 Semester 2",
-          start_date: "2026-08-01",
-          end_date: "2026-12-15",
+          year: 2030,
+          semester: 2,
+          start_date: "2030-08-01",
+          end_date: "2030-12-15",
           status: "draft"
         }
       }
@@ -114,7 +115,7 @@ RSpec.describe "AcademicPeriods", type: :request do
       end
 
       it "redirects back on validation failure" do
-        post academic_periods_path, params: {academic_period: {name: ""}}
+        post academic_periods_path, params: {academic_period: {year: nil, semester: nil}}
         expect(response).to redirect_to(new_academic_period_path)
       end
     end
@@ -165,13 +166,14 @@ RSpec.describe "AcademicPeriods", type: :request do
       before { admin_membership && sign_in_as(admin_user) }
 
       it "updates the academic period" do
-        patch academic_period_path(academic_period), params: {academic_period: {name: "Updated Name"}}
-        expect(academic_period.reload.name).to eq("Updated Name")
+        patch academic_period_path(academic_period), params: {academic_period: {year: 2031, semester: 2}}
+        expect(academic_period.reload.year).to eq(2031)
+        expect(academic_period.semester).to eq(2)
         expect(response).to redirect_to(academic_period_path(academic_period))
       end
 
       it "redirects back on validation failure" do
-        patch academic_period_path(academic_period), params: {academic_period: {name: ""}}
+        patch academic_period_path(academic_period), params: {academic_period: {semester: 5}}
         expect(response).to redirect_to(edit_academic_period_path(academic_period))
       end
     end
@@ -180,7 +182,7 @@ RSpec.describe "AcademicPeriods", type: :request do
       before { tutor_membership && sign_in_as(tutor_user) }
 
       it "is not authorized" do
-        patch academic_period_path(academic_period), params: {academic_period: {name: "Nope"}}
+        patch academic_period_path(academic_period), params: {academic_period: {year: 2031}}
         expect(response).to redirect_to(dashboard_path)
       end
     end

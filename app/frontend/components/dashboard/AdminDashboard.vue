@@ -45,7 +45,11 @@ function sessionStatusClass(session: DashboardSession): string {
       </CardHeader>
       <CardContent>
         <div class="text-2xl font-bold">
-          {{ props.active_period?.name ?? t("dashboard.no_active_period") }}
+          {{
+            props.active_period
+              ? `${props.active_period.year}-${props.active_period.semester}`
+              : t("dashboard.no_active_period")
+          }}
         </div>
       </CardContent>
     </Card>

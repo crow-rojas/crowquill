@@ -61,7 +61,8 @@ RSpec.describe "Dashboard", type: :request do
         get dashboard_path
 
         expect(inertia.props[:active_period]).to be_present
-        expect(inertia.props[:active_period]["name"]).to eq(academic_period.name)
+        expect(inertia.props[:active_period]["year"]).to eq(academic_period.year)
+        expect(inertia.props[:active_period]["semester"]).to eq(academic_period.semester)
       end
 
       it "counts students and tutors correctly" do

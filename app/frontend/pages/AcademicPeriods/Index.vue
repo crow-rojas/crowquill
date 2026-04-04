@@ -102,8 +102,11 @@ function deletePeriod(period: AcademicPeriod) {
                   :href="academicPeriodPath(period.id)"
                   class="hover:underline"
                 >
-                  {{ period.name }}
+                  {{ period.year }}-{{ period.semester }}
                 </Link>
+                <div v-if="period.name" class="text-muted-foreground text-xs">
+                  {{ period.name }}
+                </div>
               </TableCell>
               <TableCell>{{ period.start_date }}</TableCell>
               <TableCell>{{ period.end_date }}</TableCell>

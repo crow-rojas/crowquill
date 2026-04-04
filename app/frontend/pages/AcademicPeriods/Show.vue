@@ -38,7 +38,7 @@ const breadcrumbs: BreadcrumbItem[] = [
   { title: t("nav.dashboard"), href: dashboardPath() },
   { title: t("academic_periods.title"), href: academicPeriodsPath() },
   {
-    title: props.academic_period.name,
+    title: `${props.academic_period.year}-${props.academic_period.semester}`,
     href: academicPeriodPath(props.academic_period.id),
   },
 ]
@@ -64,7 +64,7 @@ function deletePeriod() {
 </script>
 
 <template>
-  <Head :title="academic_period.name" />
+  <Head :title="`${academic_period.year}-${academic_period.semester}`" />
 
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="flex flex-col gap-6 p-4 md:p-6">
@@ -73,8 +73,13 @@ function deletePeriod() {
       >
         <div class="flex items-center gap-3">
           <h1 class="text-2xl font-semibold tracking-tight">
-            {{ academic_period.name }}
+            {{ academic_period.year }}-{{ academic_period.semester }}
           </h1>
+          <span
+            v-if="academic_period.name"
+            class="text-muted-foreground text-sm"
+            >{{ academic_period.name }}</span
+          >
           <Badge :variant="statusVariant(academic_period.status)">
             {{ t(`academic_periods.statuses.${academic_period.status}`) }}
           </Badge>

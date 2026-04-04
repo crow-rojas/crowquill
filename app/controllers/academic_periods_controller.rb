@@ -65,6 +65,6 @@ class AcademicPeriodsController < InertiaController
   end
 
   def academic_period_params
-    params.require(:academic_period).permit(:name, :start_date, :end_date, :status)
+    params.require(:academic_period).permit(:year, :semester, :name, :start_date, :end_date, :status)
   end
 end

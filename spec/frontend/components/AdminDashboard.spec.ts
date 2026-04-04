@@ -50,6 +50,8 @@ function defaultProps(
     role: "admin",
     active_period: {
       id: 1,
+      year: 2026,
+      semester: 1,
       name: "Spring 2026",
       start_date: "2026-01-15",
       end_date: "2026-06-15",
@@ -80,7 +82,7 @@ describe("AdminDashboard", () => {
       props: defaultProps(),
     })
 
-    expect(wrapper.text()).toContain("Spring 2026")
+    expect(wrapper.text()).toContain("2026-1")
   })
 
   it("renders no-data state when active_period is null", () => {

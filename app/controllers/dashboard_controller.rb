@@ -43,7 +43,7 @@ class DashboardController < InertiaController
 
     render inertia: "dashboard/index", props: {
       role: "admin",
-      active_period: active_period&.as_json(only: %i[id name start_date end_date status]),
+      active_period: active_period&.as_json(only: %i[id year semester name start_date end_date status]),
       total_students: total_students,
       total_tutors: total_tutors,
       active_sections: active_sections,

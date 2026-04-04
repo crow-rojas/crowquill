@@ -10,18 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_02_050749) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_04_002341) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "academic_periods", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "end_date", null: false
-    t.string "name", null: false
+    t.string "name"
     t.bigint "organization_id", null: false
+    t.integer "semester", null: false
     t.date "start_date", null: false
     t.string "status", default: "draft", null: false
     t.datetime "updated_at", null: false
+    t.integer "year", null: false
+    t.index ["organization_id", "year", "semester"], name: "index_academic_periods_on_org_year_semester", unique: true
     t.index ["organization_id"], name: "index_academic_periods_on_organization_id"
   end
 

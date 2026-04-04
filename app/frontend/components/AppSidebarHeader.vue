@@ -34,7 +34,9 @@ const hasAcademicPeriods = computed(
 )
 const activePeriodId = computed(() => activeAcademicPeriod.value?.id ?? null)
 const activePeriodLabel = computed(() => {
-  return activeAcademicPeriod.value?.name || t("nav.no_active_period")
+  const period = activeAcademicPeriod.value
+  if (!period) return t("nav.no_active_period")
+  return `${period.year}-${period.semester}`
 })
 
 withDefaults(
@@ -49,21 +51,32 @@ withDefaults(
 
 <template>
   <header
-    class="border-sidebar-border/70 flex h-16 shrink-0 items-center gap-2 border-b px-6 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 md:px-4"
+    class="border-sidebar-border/70 flex h-16 min-w-0 shrink-0 items-center gap-2 border-b px-3 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 md:px-4"
   >
-    <div class="flex items-center gap-2">
-      <SidebarTrigger class="-ml-1" />
+    <div class="flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
+      <SidebarTrigger class="-ml-1 shrink-0" />
       <template v-if="breadcrumbs && breadcrumbs.length > 0">
-        <Breadcrumbs :breadcrumbs="breadcrumbs" />
+        <div
+          data-testid="sidebar-header-breadcrumb-wrap"
+          class="min-w-0 flex-1 overflow-x-auto"
+        >
+          <Breadcrumbs :breadcrumbs="breadcrumbs" />
+        </div>
       </template>
     </div>
 
-    <div v-if="hasAcademicPeriods" class="ml-auto flex items-center gap-2">
+    <div v-if="hasAcademicPeriods" class="ml-2 flex shrink-0 items-center">
       <DropdownMenu>
         <DropdownMenuTrigger :as-child="true">
-          <Button variant="outline" size="sm" class="h-8 max-w-56 gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            class="h-8 max-w-[8.5rem] gap-1.5 px-2.5 sm:max-w-56 sm:gap-2"
+          >
             <CalendarDays class="h-4 w-4 shrink-0" />
-            <span class="truncate">{{ activePeriodLabel }}</span>
+            <span data-testid="active-period-label" class="truncate">
+              {{ activePeriodLabel }}
+            </span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" class="w-72">
@@ -78,10 +91,19 @@ withDefaults(
               :href="academicPeriodPath(period.id)"
               class="flex w-full items-center justify-between gap-3"
             >
-              <span class="truncate">{{ period.name }}</span>
+              <div class="min-w-0">
+                <span class="truncate font-medium"
+                  >{{ period.year }}-{{ period.semester }}</span
+                >
+                <span
+                  v-if="period.name"
+                  class="text-muted-foreground ml-2 truncate text-xs"
+                  >{{ period.name }}</span
+                >
+              </div>
               <Check
                 v-if="period.id === activePeriodId"
-                class="text-primary h-4 w-4"
+                class="text-primary h-4 w-4 shrink-0"
               />
             </Link>
           </DropdownMenuItem>

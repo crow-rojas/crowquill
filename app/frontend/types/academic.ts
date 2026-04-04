@@ -1,6 +1,8 @@
 export interface AcademicPeriod {
   id: number
-  name: string
+  year: number
+  semester: 1 | 2
+  name: string | null
   start_date: string
   end_date: string
   status: "draft" | "active" | "archived"

@@ -259,7 +259,7 @@ const rightNavItems: HeaderNavItem[] = [
       class="border-sidebar-border/70 flex w-full border-b"
     >
       <div
-        class="mx-auto flex h-12 w-full items-center justify-start px-4 text-neutral-500 md:max-w-7xl"
+        class="mx-auto flex h-12 w-full min-w-0 items-center justify-start px-4 text-neutral-500 md:max-w-7xl"
       >
         <Breadcrumbs :breadcrumbs="breadcrumbs" />
       </div>

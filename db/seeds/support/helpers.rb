@@ -33,19 +33,19 @@ module CrowquillSeeds
       if reference_date.month <= 7
         {
           archived: {
-            name: "2do Semestre #{year - 1}",
+            year: year - 1, semester: 2, name: "2do Semestre #{year - 1}",
             start_date: Date.new(year - 1, 8, 1),
             end_date: Date.new(year - 1, 12, 20),
             status: "archived"
           },
           active: {
-            name: "1er Semestre #{year}",
+            year: year, semester: 1, name: "1er Semestre #{year}",
             start_date: Date.new(year, 3, 1),
             end_date: Date.new(year, 7, 31),
             status: "active"
           },
           draft: {
-            name: "2do Semestre #{year}",
+            year: year, semester: 2, name: "2do Semestre #{year}",
             start_date: Date.new(year, 8, 1),
             end_date: Date.new(year, 12, 20),
             status: "draft"
@@ -54,19 +54,19 @@ module CrowquillSeeds
       else
         {
           archived: {
-            name: "1er Semestre #{year}",
+            year: year, semester: 1, name: "1er Semestre #{year}",
             start_date: Date.new(year, 3, 1),
             end_date: Date.new(year, 7, 31),
             status: "archived"
           },
           active: {
-            name: "2do Semestre #{year}",
+            year: year, semester: 2, name: "2do Semestre #{year}",
             start_date: Date.new(year, 8, 1),
             end_date: Date.new(year, 12, 20),
             status: "active"
           },
           draft: {
-            name: "1er Semestre #{year + 1}",
+            year: year + 1, semester: 1, name: "1er Semestre #{year + 1}",
             start_date: Date.new(year + 1, 3, 1),
             end_date: Date.new(year + 1, 7, 31),
             status: "draft"
@@ -75,8 +75,9 @@ module CrowquillSeeds
       end
     end
 
-    def seed_period(organization:, name:, start_date:, end_date:, status:)
-      AcademicPeriod.find_or_create_by!(organization: organization, name: name) do |period|
+    def seed_period(organization:, year:, semester:, name:, start_date:, end_date:, status:)
+      AcademicPeriod.find_or_create_by!(organization: organization, year: year, semester: semester) do |period|
+        period.name = name
         period.start_date = start_date
         period.end_date = end_date
         period.status = status

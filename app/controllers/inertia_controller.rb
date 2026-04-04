@@ -67,8 +67,8 @@ class InertiaController < ApplicationController
     active_period = academic_periods.find { |period| period.status == "active" }
 
     {
-      active: active_period&.as_json(only: %i[id name start_date end_date status]),
-      available: academic_periods.as_json(only: %i[id name start_date end_date status])
+      active: active_period&.as_json(only: %i[id year semester name start_date end_date status]),
+      available: academic_periods.as_json(only: %i[id year semester name start_date end_date status])
     }
   end
 

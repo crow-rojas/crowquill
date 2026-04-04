@@ -70,7 +70,9 @@ function mockPageAuth(activePeriodId: number | null) {
           active: activePeriodId
             ? {
                 id: activePeriodId,
-                name: "2026-1",
+                year: 2026,
+                semester: 1,
+                name: null,
                 start_date: "2026-03-01",
                 end_date: "2026-07-01",
                 status: "active",

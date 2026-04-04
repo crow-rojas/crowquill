@@ -8,6 +8,8 @@ CrowquillSeeds.state[:organizations].each do |slug, organization|
   CrowquillSeeds.state[:periods_by_org][slug] = period_templates.transform_values do |template|
     CrowquillSeeds.seed_period(
       organization: organization,
+      year: template[:year],
+      semester: template[:semester],
       name: template[:name],
       start_date: template[:start_date],
       end_date: template[:end_date],
