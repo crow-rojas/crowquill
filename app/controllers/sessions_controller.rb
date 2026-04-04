@@ -37,7 +37,13 @@ class SessionsController < InertiaController
     cookies.signed.permanent[:dev_org_slug] = dev_org_cookie_options(target_membership.organization.slug)
     Current.session = switched_session
 
-    redirect_to switch_return_path, notice: t("flash.sessions.switched_user", email: target_membership.user.email)
+    return_path = if target_membership.organization_id == Current.organization&.id
+      switch_return_path
+    else
+      dashboard_path
+    end
+
+    redirect_to return_path, notice: t("flash.sessions.switched_user", email: target_membership.user.email)
   end
 
   def destroy
