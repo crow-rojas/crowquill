@@ -115,6 +115,147 @@ RSpec.describe "TutoringSessions", type: :request do
         expect(response).to redirect_to(dashboard_path)
       end
     end
+
+    describe "exercise sets" do
+      let(:period_start) { academic_period.start_date }
+
+      context "when session matches a specific week" do
+        let(:tutoring_session) { create(:tutoring_session, section: section, date: period_start + 14.days) }
+        let!(:week3_exercise) { create(:exercise_set, :published, course: course, week_number: 3) }
+        let!(:week1_exercise) { create(:exercise_set, :published, course: course, week_number: 1) }
+
+        before { sign_in_as(tutor_user) }
+
+        it "returns week-matched exercise sets" do
+          get tutoring_session_path(tutoring_session)
+
+          expect(response).to have_http_status(:success)
+          expect(inertia.props[:exercise_match_type]).to eq("week")
+          exercise_ids = inertia.props[:exercise_sets].map { |e| e["id"] }
+          expect(exercise_ids).to include(week3_exercise.id)
+          expect(exercise_ids).not_to include(week1_exercise.id)
+        end
+
+        it "sets ai_chat_exercise_set_id to the first matched exercise set" do
+          get tutoring_session_path(tutoring_session)
+
+          expect(inertia.props[:ai_chat_exercise_set_id]).to eq(week3_exercise.id)
+        end
+      end
+
+      context "when no week match exists" do
+        let(:tutoring_session) { create(:tutoring_session, section: section, date: period_start + 14.days) }
+        let!(:week1_exercise) { create(:exercise_set, :published, course: course, week_number: 1) }
+        let!(:week5_exercise) { create(:exercise_set, :published, course: course, week_number: 5) }
+
+        before { sign_in_as(tutor_user) }
+
+        it "falls back to all course exercise sets" do
+          get tutoring_session_path(tutoring_session)
+
+          expect(inertia.props[:exercise_match_type]).to eq("all")
+          exercise_ids = inertia.props[:exercise_sets].map { |e| e["id"] }
+          expect(exercise_ids).to include(week1_exercise.id, week5_exercise.id)
+        end
+
+        it "sets ai_chat_exercise_set_id to nil" do
+          get tutoring_session_path(tutoring_session)
+
+          expect(inertia.props[:ai_chat_exercise_set_id]).to be_nil
+        end
+      end
+
+      context "when session is before period start" do
+        let(:tutoring_session) { create(:tutoring_session, section: section, date: period_start - 7.days) }
+        let!(:week1_exercise) { create(:exercise_set, :published, course: course, week_number: 1) }
+
+        before { sign_in_as(tutor_user) }
+
+        it "clamps to week 1" do
+          get tutoring_session_path(tutoring_session)
+
+          expect(inertia.props[:exercise_match_type]).to eq("week")
+          exercise_ids = inertia.props[:exercise_sets].map { |e| e["id"] }
+          expect(exercise_ids).to include(week1_exercise.id)
+        end
+      end
+
+      context "as tutorado" do
+        let(:tutoring_session) { create(:tutoring_session, section: section, date: period_start + 14.days) }
+        let!(:published_exercise) { create(:exercise_set, :published, course: course, week_number: 3) }
+        let!(:unpublished_exercise) { create(:exercise_set, course: course, week_number: 3) }
+
+        before do
+          tutorado_membership
+          create(:enrollment, section: section, user: tutorado_user)
+          sign_in_as(tutorado_user)
+        end
+
+        it "only sees published exercise sets" do
+          get tutoring_session_path(tutoring_session)
+
+          exercise_ids = inertia.props[:exercise_sets].map { |e| e["id"] }
+          expect(exercise_ids).to include(published_exercise.id)
+          expect(exercise_ids).not_to include(unpublished_exercise.id)
+        end
+      end
+
+      context "as admin" do
+        let(:tutoring_session) { create(:tutoring_session, section: section, date: period_start + 14.days) }
+        let!(:published_exercise) { create(:exercise_set, :published, course: course, week_number: 3) }
+        let!(:unpublished_exercise) { create(:exercise_set, course: course, week_number: 3) }
+
+        before { admin_membership && sign_in_as(admin_user) }
+
+        it "sees both published and unpublished exercise sets" do
+          get tutoring_session_path(tutoring_session)
+
+          exercise_ids = inertia.props[:exercise_sets].map { |e| e["id"] }
+          expect(exercise_ids).to include(published_exercise.id, unpublished_exercise.id)
+        end
+      end
+    end
+
+    describe "student summaries" do
+      let(:tutoring_session) { create(:tutoring_session, section: section) }
+      let(:other_session) { create(:tutoring_session, section: section, date: Date.tomorrow) }
+      let!(:enrollment1) { create(:enrollment, section: section, user: create(:user)) }
+      let!(:enrollment2) { create(:enrollment, section: section, user: create(:user)) }
+
+      before do
+        create(:attendance, tutoring_session: tutoring_session, enrollment: enrollment1, status: "present")
+        create(:attendance, tutoring_session: other_session, enrollment: enrollment1, status: "absent")
+        create(:attendance, tutoring_session: tutoring_session, enrollment: enrollment2, status: "justified")
+      end
+
+      context "as tutor" do
+        before { sign_in_as(tutor_user) }
+
+        it "returns student attendance summaries" do
+          get tutoring_session_path(tutoring_session)
+
+          summaries = inertia.props[:student_summaries]
+          expect(summaries[enrollment1.id.to_s]["present"]).to eq(1)
+          expect(summaries[enrollment1.id.to_s]["absent"]).to eq(1)
+          expect(summaries[enrollment1.id.to_s]["justified"]).to eq(0)
+          expect(summaries[enrollment2.id.to_s]["justified"]).to eq(1)
+        end
+      end
+
+      context "as tutorado" do
+        before do
+          tutorado_membership
+          create(:enrollment, section: section, user: tutorado_user)
+          sign_in_as(tutorado_user)
+        end
+
+        it "does not include student summaries" do
+          get tutoring_session_path(tutoring_session)
+
+          expect(inertia.props[:student_summaries]).to be_nil
+        end
+      end
+    end
   end
 
   describe "POST /sections/:section_id/tutoring_sessions" do

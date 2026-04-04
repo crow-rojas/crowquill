@@ -34,6 +34,13 @@ class TutoringSessionsController < InertiaController
         .includes(enrollment: :user)
     end
 
+    exercise_sets, exercise_match_type = load_exercise_sets(section)
+    ai_chat_exercise_set_id = exercise_match_type == "week" ? exercise_sets.first&.id : nil
+
+    student_summaries = if can_take_attendance
+      build_student_summaries(section)
+    end
+
     render inertia: "TutoringSessions/Show", props: {
       tutoring_session: @tutoring_session.as_json(
         include: {section: {include: {course: {}, tutor: {only: %i[id name email]}}}}
@@ -46,7 +53,11 @@ class TutoringSessionsController < InertiaController
       ),
       can_manage_session: TutoringSessionPolicy.new(Current.membership, @tutoring_session).update?,
       can_take_attendance: can_take_attendance,
-      can_delete_session: SectionPolicy.new(Current.membership, @tutoring_session.section).destroy?
+      can_delete_session: SectionPolicy.new(Current.membership, @tutoring_session.section).destroy?,
+      exercise_sets: exercise_sets.as_json(only: %i[id title week_number content published]),
+      exercise_match_type: exercise_match_type,
+      ai_chat_exercise_set_id: ai_chat_exercise_set_id,
+      student_summaries: student_summaries
     }
   end
 
@@ -115,5 +126,34 @@ class TutoringSessionsController < InertiaController
 
   def tutoring_session_params
     params.require(:tutoring_session).permit(:date, :status)
+  end
+
+  def load_exercise_sets(section)
+    course = section.course
+    academic_period = course.academic_period
+    session_week = [(((@tutoring_session.date - academic_period.start_date).to_i / 7) + 1), 1].max
+
+    week_sets = course.exercise_sets.where(week_number: session_week).ordered
+    week_sets = week_sets.published unless Current.membership&.admin?
+
+    if week_sets.any?
+      [week_sets, "week"]
+    else
+      all_sets = course.exercise_sets.ordered
+      all_sets = all_sets.published unless Current.membership&.admin?
+      [all_sets, "all"]
+    end
+  end
+
+  def build_student_summaries(section)
+    raw = Attendance.where(tutoring_session_id: section.tutoring_session_ids)
+      .group(:enrollment_id, :status).count
+
+    summaries = {}
+    raw.each do |(enrollment_id, status), count|
+      summaries[enrollment_id] ||= {"present" => 0, "absent" => 0, "justified" => 0}
+      summaries[enrollment_id][status] = count
+    end
+    summaries
   end
 end

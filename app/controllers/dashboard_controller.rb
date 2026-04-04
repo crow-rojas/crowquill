@@ -76,7 +76,8 @@ class DashboardController < InertiaController
           enrollments_count: enrollment_counts[s.id] || 0
         )
       },
-      upcoming_sessions: upcoming_sessions.map { |s| session_json(s) }
+      upcoming_sessions: upcoming_sessions.map { |s| session_json(s) },
+      next_session: upcoming_sessions.first ? session_json(upcoming_sessions.first) : nil
     }
   end
 
@@ -110,7 +111,8 @@ class DashboardController < InertiaController
         )
       },
       upcoming_sessions: upcoming_sessions.map { |s| session_json(s) },
-      recent_exercises: recent_exercises.as_json(only: %i[id title week_number course_id])
+      recent_exercises: recent_exercises.as_json(only: %i[id title week_number course_id]),
+      next_session: upcoming_sessions.first ? session_json(upcoming_sessions.first) : nil
     }
   end
 

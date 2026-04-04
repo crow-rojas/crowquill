@@ -46,6 +46,7 @@ export interface TutorDashboardProps {
   role: "tutor"
   my_sections: DashboardSection[]
   upcoming_sessions: DashboardSession[]
+  next_session: DashboardSession | null
 }
 
 export interface TutoradoDashboardProps {
@@ -53,6 +54,7 @@ export interface TutoradoDashboardProps {
   my_sections: DashboardSection[]
   upcoming_sessions: DashboardSession[]
   recent_exercises: DashboardExercise[]
+  next_session: DashboardSession | null
 }
 
 export type DashboardProps =

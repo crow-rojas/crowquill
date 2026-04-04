@@ -127,6 +127,25 @@ RSpec.describe "Dashboard", type: :request do
 
         expect(inertia.props[:upcoming_sessions].length).to eq(1)
       end
+
+      it "includes next_session when upcoming sessions exist" do
+        section = create(:section, course: course, tutor: tutor_user)
+        create(:tutoring_session, section: section, date: Date.current + 2)
+        next_session = create(:tutoring_session, section: section, date: Date.current + 1)
+
+        get dashboard_path
+
+        expect(inertia.props[:next_session]).to be_present
+        expect(inertia.props[:next_session]["id"]).to eq(next_session.id)
+      end
+
+      it "returns null next_session when no upcoming sessions" do
+        create(:section, course: course, tutor: tutor_user)
+
+        get dashboard_path
+
+        expect(inertia.props[:next_session]).to be_nil
+      end
     end
 
     context "as tutorado" do
@@ -191,6 +210,29 @@ RSpec.describe "Dashboard", type: :request do
         get dashboard_path
 
         expect(inertia.props[:my_sections]).to be_empty
+      end
+
+      it "includes next_session when upcoming sessions exist" do
+        tutor_membership
+        section = create(:section, course: course, tutor: tutor_user)
+        create(:enrollment, section: section, user: tutorado_user, status: "active")
+        create(:tutoring_session, section: section, date: Date.current + 2)
+        next_session = create(:tutoring_session, section: section, date: Date.current + 1)
+
+        get dashboard_path
+
+        expect(inertia.props[:next_session]).to be_present
+        expect(inertia.props[:next_session]["id"]).to eq(next_session.id)
+      end
+
+      it "returns null next_session when no upcoming sessions" do
+        tutor_membership
+        section = create(:section, course: course, tutor: tutor_user)
+        create(:enrollment, section: section, user: tutorado_user, status: "active")
+
+        get dashboard_path
+
+        expect(inertia.props[:next_session]).to be_nil
       end
     end
   end
