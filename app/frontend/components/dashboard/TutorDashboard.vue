@@ -3,6 +3,7 @@ import { Link } from "@inertiajs/vue3"
 import { ClipboardCheck, Users } from "lucide-vue-next"
 import { useI18n } from "vue-i18n"
 
+import NextSessionCard from "@/components/dashboard/NextSessionCard.vue"
 import {
   Card,
   CardContent,
@@ -22,6 +23,8 @@ function formatDate(date: string): string {
 </script>
 
 <template>
+  <NextSessionCard :session="props.next_session" />
+
   <div class="grid gap-4 md:grid-cols-2">
     <Card>
       <CardHeader>

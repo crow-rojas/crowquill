@@ -19,6 +19,9 @@
     "week": "Week",
     "ai_chat": "AI Chat",
     "ai_chat_description": "Get help with your exercises",
-    "no_active_period": "No active period"
+    "no_active_period": "No active period",
+    "next_session": "Next Session",
+    "go_to_session": "Go to Session",
+    "no_upcoming_sessions": "No upcoming sessions"
   }
 }

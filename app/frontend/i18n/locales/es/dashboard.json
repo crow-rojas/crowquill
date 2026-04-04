@@ -19,6 +19,9 @@
     "week": "Semana",
     "ai_chat": "Chat con IA",
     "ai_chat_description": "Obt\u00e9n ayuda con tus ejercicios",
-    "no_active_period": "No hay periodo activo"
+    "no_active_period": "No hay periodo activo",
+    "next_session": "Proxima Sesion",
+    "go_to_session": "Ir a la Sesion",
+    "no_upcoming_sessions": "No hay sesiones proximas"
   }
 }

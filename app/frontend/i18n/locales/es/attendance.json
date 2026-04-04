@@ -14,7 +14,22 @@
       "scheduled": "Programada",
       "completed": "Completada",
       "cancelled": "Cancelada"
-    }
+    },
+    "exercises_tab": "Ejercicios",
+    "students_tab": "Estudiantes",
+    "attendance_tab": "Asistencia",
+    "week_exercises": "Ejercicios Semana {week}",
+    "all_exercises": "Todos los Ejercicios del Curso",
+    "no_exercises": "No hay ejercicios disponibles",
+    "student_name": "Estudiante",
+    "student_email": "Correo",
+    "attendance_present": "Presente",
+    "attendance_absent": "Ausente",
+    "attendance_justified": "Justificado",
+    "ai_tutor": "Tutor IA",
+    "ai_tutor_description": "Obtén ayuda con los ejercicios del tutor IA",
+    "start_ai_chat": "Iniciar Chat IA",
+    "my_attendance": "Mi Asistencia"
   },
   "attendance": {
     "title": "Asistencia",

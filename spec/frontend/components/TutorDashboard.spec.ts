@@ -65,6 +65,7 @@ function defaultProps(
     role: "tutor",
     my_sections: [],
     upcoming_sessions: [],
+    next_session: null,
     ...overrides,
   }
 }

@@ -82,6 +82,7 @@ function defaultProps(
     my_sections: [],
     upcoming_sessions: [],
     recent_exercises: [],
+    next_session: null,
     ...overrides,
   }
 }

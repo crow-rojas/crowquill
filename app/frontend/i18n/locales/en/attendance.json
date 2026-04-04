@@ -14,7 +14,22 @@
       "scheduled": "Scheduled",
       "completed": "Completed",
       "cancelled": "Cancelled"
-    }
+    },
+    "exercises_tab": "Exercises",
+    "students_tab": "Students",
+    "attendance_tab": "Attendance",
+    "week_exercises": "Week {week} Exercises",
+    "all_exercises": "All Course Exercises",
+    "no_exercises": "No exercises available",
+    "student_name": "Student",
+    "student_email": "Email",
+    "attendance_present": "Present",
+    "attendance_absent": "Absent",
+    "attendance_justified": "Justified",
+    "ai_tutor": "AI Tutor",
+    "ai_tutor_description": "Get help with the exercises from the AI tutor",
+    "start_ai_chat": "Start AI Chat",
+    "my_attendance": "My Attendance"
   },
   "attendance": {
     "title": "Attendance",
